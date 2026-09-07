@@ -3,8 +3,11 @@
    Spacing / Radius / Layout / Grid / Typography / Color). Ningún color,
    sombra o tipografía se define fuera de los tokens generados desde Figma.
 
-     .home              columna: AppBar · contenido scrolleable · NavigationBar
-     .home__content     stack de secciones con el margen del grid mobile
+     .home              columna que ocupa todo el alto, topada a ancho móvil
+       .home__scroll      único bloque que scrollea
+         .home__bar         AppBar sticky (colapsa por scroll — ver el .tsx)
+         .home__content     stack de secciones con el margen del grid mobile
+       .home__nav         NavigationBar fija, fuera del scroll
      .home__grid        2 de las 4 columnas del grid mobile (gutter 16)
      .home__tile        composición interna de la Card contadora
      .home__promo-*     composición interna de la Card de promoción
@@ -13,17 +16,52 @@
 .home {
   display: flex;
   flex-direction: column;
-  block-size: 100%;
-  min-block-size: 0;
+  /* todo el alto de la pantalla donde corra el prototipo */
+  block-size: 100dvh;
+  /* columna de ancho móvil centrada: en el teléfono llena el viewport, en
+     pantallas anchas se topa. 480 es el ancho de contenido que el propio DS
+     usa en las configuraciones `dialog` / `navigation` del AppBar. */
+  max-inline-size: 480px;
+  margin-inline: auto;
   background-color: var(--semantic-color-bg-canvas);
   font-family: var(--typography-font-family);
 }
 
-/* ── contenido ───────────────────────────────────────────────────────────── */
-.home__content {
+/* solo cuando sobra ancho se dibujan los cantos de la columna */
+@media (min-width: 481px) {
+  .home {
+    border-inline: 1px solid var(--semantic-color-border-subtle);
+  }
+}
+
+/* ── scroll ──────────────────────────────────────────────────────────────── */
+/* El único elemento que scrollea. La NavigationBar queda fuera. */
+.home__scroll {
   flex: 1 1 auto;
   min-block-size: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* El AppBar se queda arriba; el cambio expandido ↔ colapsado lo maneja el
+   componente de pantalla, aquí solo se ancla. */
+.home__bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+}
+
+/* Colapsada (`inline`), el slot trailing reparte el ancho a medias con el
+   texto — el CSS del AppBar asume IconButtons ahí, y aquí lleva un Button.
+   Se le deja solo su ancho de contenido para que el headline no se trunque.
+   En `stacked` no aplica: ahí ese `flex` es lo que empuja el botón a la
+   derecha. Es un ajuste de layout, no cambia tipografía ni color. */
+.home__bar .app-bar[data-layout='inline'] .app-bar__trailing {
+  flex: 0 0 auto;
+}
+
+/* ── contenido ───────────────────────────────────────────────────────────── */
+.home__content {
   display: flex;
   flex-direction: column;
   gap: var(--layout-stack-section); /* 32px */
@@ -91,6 +129,7 @@
 }
 
 /* ── navegación ──────────────────────────────────────────────────────────── */
+/* Fuera del contenedor de scroll → fija al borde inferior por construcción. */
 .home__nav {
   flex: 0 0 auto;
   padding-block-end: env(safe-area-inset-bottom, 0px);

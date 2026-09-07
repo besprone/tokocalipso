@@ -1,0 +1,12 @@
+/* Reset mínimo del shell del prototipo — nada de esto es del design system.
+   Solo hace que la pantalla pueda ocupar todo el alto del viewport. */
+html,
+body,
+#root {
+  block-size: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--semantic-color-bg-subtle);
+}

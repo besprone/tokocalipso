@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Add,
   ArrowRight,
@@ -31,7 +31,19 @@ import './HomeSolicitudes.css';
  *   Card + ItemContent       contadores de solicitudes (grid 2×2 del mobile grid)
  *   Carousel + Card          promociones y campañas
  *   NavigationBar            navegación principal anclada al borde inferior
+ *
+ * Shell: la pantalla ocupa todo el alto disponible y se topa en una columna
+ * de ancho móvil centrada. Solo el bloque de contenido scrollea — el AppBar
+ * queda sticky arriba y la NavigationBar fija abajo, fuera del scroll.
+ *
+ * El AppBar sigue el patrón `Colapsada ↔ expandida` del sistema: expandido
+ * (`stacked`) en el tope, colapsado (`inline` `sm`) al bajar, y de vuelta a
+ * expandido al volver al tope. `elevation` pasa a `raised` en cuanto el
+ * contenido se mueve — es el estado on-scroll que define el DS.
  */
+
+/** Umbral de scroll (px) a partir del cual la barra colapsa. */
+const UMBRAL_COLAPSO = 24;
 
 type Contador = {
   value: string;
@@ -71,86 +83,107 @@ const promociones: Promo[] = [
 
 export function HomeSolicitudes() {
   const [seccion, setSeccion] = useState('tramites');
+  const [colapsada, setColapsada] = useState(false);
+  const [enTope, setEnTope] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const ultimaY = useRef(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const y = el.scrollTop;
+      setEnTope(y <= 0);
+      // colapsa al bajar; se expande sola al volver al tope
+      if (y > ultimaY.current && y > UMBRAL_COLAPSO) setColapsada(true);
+      if (y <= 0) setColapsada(false);
+      ultimaY.current = y;
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const ayuda = (
+    <IconButton emphasis="ghost" scheme="neutral" size="lg" icon={<Help />} aria-label="Ayuda" />
+  );
+  const nuevo = (
+    <Button emphasis="primary" size="sm" icon={<Add />}>
+      Nuevo
+    </Button>
+  );
 
   return (
     <div className="home">
-      <AppBar
-        configuration="home"
-        layout="stacked"
-        size="sm"
-        headline="Hola, Gerardo!"
-        aria-label="Inicio"
-        leading={
-          <IconButton
-            emphasis="ghost"
-            scheme="neutral"
-            size="lg"
-            icon={<Help />}
-            aria-label="Ayuda"
+      <div className="home__scroll" ref={scrollRef}>
+        <div className="home__bar">
+          <AppBar
+            configuration="home"
+            size="sm"
+            layout={colapsada ? 'inline' : 'stacked'}
+            elevation={enTope ? 'flat' : 'raised'}
+            headline="Hola, Gerardo!"
+            aria-label="Inicio"
+            leading={ayuda}
+            trailing={nuevo}
           />
-        }
-        trailing={
-          <Button emphasis="primary" size="sm" icon={<Add />}>
-            Nuevo
-          </Button>
-        }
-      />
+        </div>
 
-      <main className="home__content">
-        <section className="home__section" aria-labelledby="home-solicitudes">
-          <ItemContent
-            id="home-solicitudes"
-            className="home__section-header"
-            layout="horizontal"
-            label="Tus solicitudes"
-            action={<Link href="#solicitudes">ver todas</Link>}
-          />
+        <main className="home__content">
+          <section className="home__section" aria-labelledby="home-solicitudes">
+            <ItemContent
+              id="home-solicitudes"
+              className="home__section-header"
+              layout="horizontal"
+              label="Tus solicitudes"
+              action={<Link href="#solicitudes">ver todas</Link>}
+            />
 
-          <div className="home__grid">
-            {contadores.map((contador) => (
-              <Card
-                key={contador.label}
-                interactive
-                elevation="flat"
-                aria-label={`${contador.value} solicitudes ${contador.label.toLowerCase()}`}
-                onClick={() => undefined}
-              >
-                <div className="home__tile">
-                  <div className="home__tile-top">
-                    <span className="home__tile-value">{contador.value}</span>
-                    <ItemTrailing type="icon" icon={<ArrowRight />} />
+            <div className="home__grid">
+              {contadores.map((contador) => (
+                <Card
+                  key={contador.label}
+                  interactive
+                  elevation="flat"
+                  aria-label={`${contador.value} solicitudes ${contador.label.toLowerCase()}`}
+                  onClick={() => undefined}
+                >
+                  <div className="home__tile">
+                    <div className="home__tile-top">
+                      <span className="home__tile-value">{contador.value}</span>
+                      <ItemTrailing type="icon" icon={<ArrowRight />} />
+                    </div>
+                    <ItemContent size="md" label={contador.label} />
                   </div>
-                  <ItemContent size="md" label={contador.label} />
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
+                </Card>
+              ))}
+            </div>
+          </section>
 
-        <section className="home__section" aria-labelledby="home-promos">
-          <ItemContent
-            id="home-promos"
-            className="home__section-header"
-            layout="horizontal"
-            label="Promociones y campañas"
-            action={<Link href="#promociones">ver todas</Link>}
-          />
+          <section className="home__section" aria-labelledby="home-promos">
+            <ItemContent
+              id="home-promos"
+              className="home__section-header"
+              layout="horizontal"
+              label="Promociones y campañas"
+              action={<Link href="#promociones">ver todas</Link>}
+            />
 
-          <Carousel aria-label="Promociones y campañas" itemsPerView={1} loop>
-            {promociones.map((promo) => (
-              <Card key={promo.id} elevation="flat">
-                <span className="home__promo-media" aria-hidden="true" />
-                <div className="home__promo-body">
-                  <ItemContent label={promo.title} supporting={promo.body} />
-                  <Button emphasis="secondary" size="sm">
-                    ver más
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </Carousel>
-        </section>
-      </main>
+            <Carousel aria-label="Promociones y campañas" itemsPerView={1} loop>
+              {promociones.map((promo) => (
+                <Card key={promo.id} elevation="flat">
+                  <span className="home__promo-media" aria-hidden="true" />
+                  <div className="home__promo-body">
+                    <ItemContent label={promo.title} supporting={promo.body} />
+                    <Button emphasis="secondary" size="sm">
+                      ver más
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </Carousel>
+          </section>
+        </main>
+      </div>
 
       <div className="home__nav">
         <NavigationBar
