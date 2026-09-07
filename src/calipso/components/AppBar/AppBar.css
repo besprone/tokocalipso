@@ -95,13 +95,6 @@
   align-items: center;
   flex-shrink: 0;
 }
-/* Elementos sin "overhang" (no aportan padding interno como el IconButton):
-   los separo 12px del borde para que su arista quede en el mismo grid óptico
-   (16 sm / 24 md·lg) que el glifo de un IconButton leading. */
-.app-bar__leading > .brand {
-  margin-inline-start: var(--internalLayout-space-150); /* 12px */
-}
-
 .app-bar__trailing {
   display: flex;
   align-items: center;
@@ -112,11 +105,24 @@
   flex: 1 1 auto;
   min-inline-size: 0;
 }
-/* mismo criterio que el leading: un Avatar / AvatarAction al final no tiene
-   overhang → 12px del borde para alinear con el glifo del IconButton leading. */
-.app-bar__trailing > .avatar:last-child,
-.app-bar__trailing > .avatar-action:last-child {
-  margin-inline-end: var(--internalLayout-space-150); /* 12px */
+
+/* Alineación óptica del canto exterior a la retícula (16 sm / 24 md·lg).
+   La distancia entre el borde de la barra y la retícula es fija (12px:
+   sm padding 4 → 16 · md/lg padding 12 → 24). Lo que debe caer en la
+   retícula es el canto VISIBLE del primer/último componente del slot, y la
+   distancia de su caja a ese canto la declara cada componente en
+   `--optical-inset` (IconButton/Button; los que pintan fondo — Avatar,
+   Brand, SearchField, Badge — se quedan en el baseline 0). Así cualquier
+   componente nuevo cae en retícula sin tocar el AppBar. */
+.app-bar__leading,
+.app-bar__trailing {
+  --optical-inset: 0px;
+}
+.app-bar__leading > *:first-child {
+  margin-inline-start: calc(var(--internalLayout-space-150) - var(--optical-inset, 0px));
+}
+.app-bar__trailing > *:last-child {
+  margin-inline-end: calc(var(--internalLayout-space-150) - var(--optical-inset, 0px));
 }
 
 /* ── texto ───────────────────────────────────────────────────────────────── */

@@ -9,6 +9,10 @@
   padding: var(--_outer-padding);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  /* inset óptico: distancia de la caja al canto VISIBLE. Filled = la píldora
+     (solo el outer padding). Ghost = el glifo (outer + padding del ícono),
+     ver override en `emphasis`. Lo consume el AppBar para caer en retícula. */
+  --optical-inset: var(--_outer-padding);
 }
 
 /* ── size ──────────────────────────────────────────────────────────── */
@@ -43,6 +47,8 @@
 .icon-button[data-emphasis="ghost"] {
   --_btn-bg:     transparent;
   --_icon-color: var(--semantic-color-icon-brand);
+  /* sin píldora visible → el canto es el glifo */
+  --optical-inset: calc(var(--_outer-padding) + var(--_icon-padding));
 }
 
 /* ── scheme="neutral" (mismo emphasis, tokens de gris en vez de verde) ─── */

@@ -13,7 +13,7 @@ src/
 
 `src/calipso/` es una copia literal de `src/{components,lib,styles,tokens}` de
 [besprone/pruebaca](https://github.com/besprone/pruebaca) en el commit
-`29af4bf`. Cualquier cambio al sistema se hace en ese repo y se vuelve a copiar
+`84e86b2`. Cualquier cambio al sistema se hace en ese repo y se vuelve a copiar
 aquí; los archivos de `src/calipso/` no se modifican en este proyecto.
 
 ## Pantallas

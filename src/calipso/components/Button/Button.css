@@ -29,6 +29,11 @@
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  /* inset óptico: distancia de la caja al canto VISIBLE. El padding horizontal
+     del `.button` es 0 → filled = la píldora está en el borde de la caja.
+     Ghost = el label (`--_state-px`), ver override en `emphasis`. Lo consume
+     el AppBar para caer en retícula. */
+  --optical-inset: 0px;
 }
 
 /* ── tamaños ─────────────────────────────────────────────────────────────── */
@@ -81,6 +86,8 @@
   --_btn-bg:    transparent;
   --_text-color:var(--semantic-color-text-brand);
   --_icon-color:var(--semantic-color-icon-brand);
+  /* sin píldora visible → el canto es el label */
+  --optical-inset: var(--_state-px);
 }
 .button[data-emphasis="destructive"] {
   --_btn-bg:    var(--semantic-color-bg-danger);
