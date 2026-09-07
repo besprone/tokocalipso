@@ -1,0 +1,128 @@
+/* ── reset & base ──────────────────────────────────────────────────── */
+.icon-button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: var(--_btn-radius);
+  padding: var(--_outer-padding);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── size ──────────────────────────────────────────────────────────── */
+.icon-button[data-size="sm"] {
+  --_outer-padding: var(--internalLayout-space-75);
+  --_icon-padding:  var(--internalLayout-space-100);
+  --_btn-radius:    var(--controls-radius-125);
+  --_icon-size:     16px;
+}
+.icon-button[data-size="md"] {
+  --_outer-padding: var(--internalLayout-space-25);
+  --_icon-padding:  var(--internalLayout-space-125);
+  --_btn-radius:    var(--controls-radius-150);
+  --_icon-size:     20px;
+}
+.icon-button[data-size="lg"] {
+  --_outer-padding: 0px;
+  --_icon-padding:  var(--internalLayout-space-150);
+  --_btn-radius:    var(--controls-radius-150);
+  --_icon-size:     24px;
+}
+
+/* ── emphasis × scheme (brand def.) ──────────────────────────────────── */
+.icon-button[data-emphasis="primary"] {
+  --_btn-bg:     var(--semantic-color-bg-brand);
+  --_icon-color: var(--semantic-color-icon-onBrand);
+}
+.icon-button[data-emphasis="secondary"] {
+  --_btn-bg:     var(--semantic-color-bg-brandSoft);
+  --_icon-color: var(--semantic-color-icon-brand);
+}
+.icon-button[data-emphasis="ghost"] {
+  --_btn-bg:     transparent;
+  --_icon-color: var(--semantic-color-icon-brand);
+}
+
+/* ── scheme="neutral" (mismo emphasis, tokens de gris en vez de verde) ─── */
+.icon-button[data-scheme="neutral"][data-emphasis="primary"] {
+  --_btn-bg:     var(--semantic-color-bg-neutral);
+  --_icon-color: var(--semantic-color-icon-onNeutral);
+}
+.icon-button[data-scheme="neutral"][data-emphasis="secondary"] {
+  --_btn-bg:     var(--semantic-color-bg-neutralSoft);
+  --_icon-color: var(--semantic-color-icon-neutral);
+}
+.icon-button[data-scheme="neutral"][data-emphasis="ghost"] {
+  --_btn-bg:     transparent;
+  --_icon-color: var(--semantic-color-icon-neutral);
+}
+
+/* ── btn (capa visual: bg + border-radius + clip) ──────────────────── */
+.icon-button__btn {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: var(--_btn-radius);
+  background-color: var(--_btn-bg);
+}
+
+/* ── state layer (overlay + padding del ícono) ─────────────────────── */
+.icon-button__state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--_icon-padding);
+  color: var(--_icon-color);
+}
+
+/* el ícono hereda el tamaño del size token */
+.icon-button__state > * {
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ── estados interactivos ──────────────────────────────────────────── */
+.icon-button:hover:not(:disabled) .icon-button__state {
+  background-color: var(--semantic-color-state-hover);
+}
+
+.icon-button:active:not(:disabled) .icon-button__state {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* focus ring sobre la capa btn (queda clippeado al border-radius) */
+.icon-button:focus-visible .icon-button__btn {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+/* ── disabled / loading ────────────────────────────────────────────── */
+/* loading también activa :disabled en el <button>, así que una sola    */
+/* cadena de reglas cubre ambos estados para filled.                     */
+
+.icon-button:disabled {
+  cursor: not-allowed;
+}
+
+/* btn: surface en vez de brand/brandSoft cuando disabled o loading */
+.icon-button[data-emphasis="primary"]:disabled .icon-button__btn,
+.icon-button[data-emphasis="secondary"]:disabled .icon-button__btn {
+  background-color: var(--semantic-color-bg-surface);
+}
+
+/* state layer: overlay disabled sobre filled (incluye loading) */
+.icon-button[data-emphasis="primary"]:disabled .icon-button__state,
+.icon-button[data-emphasis="secondary"]:disabled .icon-button__state {
+  background-color: var(--semantic-color-state-disabled);
+}
+
+/* ícono desaturado solo en disabled real (loading usa color normal para el spinner) */
+.icon-button:disabled:not([data-loading]) .icon-button__state {
+  color: var(--semantic-color-icon-disabled);
+}
+
+/* spinner → CircularProgress (componente externo) */

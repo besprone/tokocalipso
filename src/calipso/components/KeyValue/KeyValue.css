@@ -1,0 +1,24 @@
+/* ── KeyValue ─────────────────────────────────────────────────────────────
+   Grupo de filas key–value. Figma: `components_key_value_group`.
+
+   .key-value                 flex-col · radio 16 · elevación opcional
+     .key-value-row ·N          cada fila trae su propio bg (surface|canvas)
+
+   `divider` NO dibuja líneas — solo agrega separación (`space-25`, 2px)
+   entre filas. Sin `divider`, las filas quedan adyacentes (gap 0).
+──────────────────────────────────────────────────────────────────────────── */
+
+.key-value {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: var(--containers-radius-200); /* 16px */
+  gap: 0;
+}
+.key-value[data-divider] {
+  gap: var(--internalLayout-space-25); /* 2px */
+}
+.key-value[data-elevation='2'] {
+  box-shadow: var(--Elevation-elevation-2);
+}

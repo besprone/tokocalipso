@@ -1,0 +1,160 @@
+/* ── Typography tokens — Figma (Calipso 2.0) ────────────────────────────────
+   Fuente base: Open Sans (Google Fonts)
+   Pesos: 500 (Medium), 600 (SemiBold), 700 (Bold)
+   Generado desde: src/tokens/figma-typography-tokens.ts
+──────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&display=swap');
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+:root {
+  --typography-font-family: 'Open Sans', system-ui, sans-serif;
+}
+
+/* Aplica la fuente globalmente */
+body {
+  font-family: var(--typography-font-family);
+}
+
+/* ── Custom properties por token ─────────────────────────────────────────── */
+/* Uso: --typography-{category}-{variant}-{prop}                             */
+/* Props: -size (px) | -line-height (px) | -weight                          */
+
+:root {
+  /* Display */
+  --typography-display-lg-size:        48px;
+  --typography-display-lg-line-height: 56px;
+  --typography-display-lg-weight:      500;
+
+  --typography-display-lg-emphasized-size:        48px;
+  --typography-display-lg-emphasized-line-height: 56px;
+  --typography-display-lg-emphasized-weight:      700;
+
+  --typography-display-md-size:        32px;
+  --typography-display-md-line-height: 40px;
+  --typography-display-md-weight:      500;
+
+  --typography-display-md-semiemphasized-size:        32px;
+  --typography-display-md-semiemphasized-line-height: 40px;
+  --typography-display-md-semiemphasized-weight:      600;
+
+  --typography-display-md-emphasized-size:        32px;
+  --typography-display-md-emphasized-line-height: 40px;
+  --typography-display-md-emphasized-weight:      700;
+
+  --typography-display-sm-size:        28px;
+  --typography-display-sm-line-height: 36px;
+  --typography-display-sm-weight:      500;
+
+  --typography-display-sm-emphasized-size:        28px;
+  --typography-display-sm-emphasized-line-height: 36px;
+  --typography-display-sm-emphasized-weight:      700;
+
+  /* Headline */
+  --typography-headline-sm-size:        24px;
+  --typography-headline-sm-line-height: 32px;
+  --typography-headline-sm-weight:      500;
+
+  --typography-headline-sm-semiemphasized-size:        24px;
+  --typography-headline-sm-semiemphasized-line-height: 32px;
+  --typography-headline-sm-semiemphasized-weight:      600;
+
+  --typography-headline-sm-emphasized-size:        24px;
+  --typography-headline-sm-emphasized-line-height: 32px;
+  --typography-headline-sm-emphasized-weight:      700;
+
+  --typography-headline-xs-size:        22px;
+  --typography-headline-xs-line-height: 30px;
+  --typography-headline-xs-weight:      500;
+
+  --typography-headline-xs-semiemphasized-size:        22px;
+  --typography-headline-xs-semiemphasized-line-height: 30px;
+  --typography-headline-xs-semiemphasized-weight:      600;
+
+  --typography-headline-xs-emphasized-size:        22px;
+  --typography-headline-xs-emphasized-line-height: 30px;
+  --typography-headline-xs-emphasized-weight:      700;
+
+  /* Body */
+  --typography-body-lg-size:        16px;
+  --typography-body-lg-line-height: 24px;
+  --typography-body-lg-weight:      500;
+
+  --typography-body-lg-semiemphasized-size:        16px;
+  --typography-body-lg-semiemphasized-line-height: 24px;
+  --typography-body-lg-semiemphasized-weight:      600;
+
+  --typography-body-lg-emphasized-size:        16px;
+  --typography-body-lg-emphasized-line-height: 24px;
+  --typography-body-lg-emphasized-weight:      700;
+
+  --typography-body-md-size:        14px;
+  --typography-body-md-line-height: 20px;
+  --typography-body-md-weight:      500;
+
+  --typography-body-md-semiemphasized-size:        14px;
+  --typography-body-md-semiemphasized-line-height: 20px;
+  --typography-body-md-semiemphasized-weight:      600;
+
+  --typography-body-md-emphasized-size:        14px;
+  --typography-body-md-emphasized-line-height: 20px;
+  --typography-body-md-emphasized-weight:      700;
+
+  --typography-body-sm-size:        12px;
+  --typography-body-sm-line-height: 17px;
+  --typography-body-sm-weight:      500;
+
+  --typography-body-sm-semiemphasized-size:        12px;
+  --typography-body-sm-semiemphasized-line-height: 17px;
+  --typography-body-sm-semiemphasized-weight:      600;
+
+  --typography-body-sm-emphasized-size:        12px;
+  --typography-body-sm-emphasized-line-height: 17px;
+  --typography-body-sm-emphasized-weight:      700;
+
+  --typography-body-xs-size:        10px;
+  --typography-body-xs-line-height: 15px;
+  --typography-body-xs-weight:      500;
+
+  --typography-body-xs-emphasized-size:        10px;
+  --typography-body-xs-emphasized-line-height: 15px;
+  --typography-body-xs-emphasized-weight:      700;
+
+  /* Button */
+  --typography-button-lg-size:        16px;
+  --typography-button-lg-line-height: 24px;
+  --typography-button-lg-weight:      600;
+
+  --typography-button-md-size:        14px;
+  --typography-button-md-line-height: 20px;
+  --typography-button-md-weight:      600;
+
+  --typography-button-sm-size:        10px;
+  --typography-button-sm-line-height: 14px;
+  --typography-button-sm-weight:      600;
+
+  /* Superscript */
+  --typography-superscript-lg-size:        16px;
+  --typography-superscript-lg-line-height: 24px;
+  --typography-superscript-lg-weight:      500;
+
+  --typography-superscript-lg-emphasized-size:        16px;
+  --typography-superscript-lg-emphasized-line-height: 24px;
+  --typography-superscript-lg-emphasized-weight:      700;
+
+  --typography-superscript-md-size:        14px;
+  --typography-superscript-md-line-height: 20px;
+  --typography-superscript-md-weight:      500;
+
+  --typography-superscript-md-emphasized-size:        14px;
+  --typography-superscript-md-emphasized-line-height: 20px;
+  --typography-superscript-md-emphasized-weight:      700;
+
+  --typography-superscript-sm-size:        12px;
+  --typography-superscript-sm-line-height: 16px;
+  --typography-superscript-sm-weight:      500;
+
+  --typography-superscript-sm-emphasized-size:        12px;
+  --typography-superscript-sm-emphasized-line-height: 16px;
+  --typography-superscript-sm-emphasized-weight:      700;
+}

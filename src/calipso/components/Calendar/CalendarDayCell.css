@@ -1,0 +1,132 @@
+/* ── CalendarDayCell ────────────────────────────────────────────────────────
+   Building block interno del Calendar. Figma: `_building_blocks_calendar_cell_day`.
+   type (default · today · selected) × state (default · hover · pressed · disabled)
+   × size (sm · xs). El `hover` es extensión web (no está en Figma) — usa la capa
+   de estado global igual que Checkbox/Radio/Button.
+
+   Capas (espeja Figma):
+     .calendar-day-cell            target 48×48 (sm) / 40×40 (xs), <button>
+     .calendar-day-cell__content   círculo 40 (sm) / 32 (xs) — bg/borde por type
+       ::after                     capa de estado (hover/pressed/disabled)
+     .calendar-day-cell__label     número (Typography/Body/lg)
+──────────────────────────────────────────────────────────────────────────── */
+
+.calendar-day-cell {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.calendar-day-cell[data-size='sm'] {
+  --_cell: 48px;
+  --_circle: var(--sectionSpacing-space-500); /* 40px */
+}
+.calendar-day-cell[data-size='xs'] {
+  --_cell: 40px;
+  --_circle: 32px;
+}
+.calendar-day-cell {
+  width: var(--_cell);
+  height: var(--_cell);
+}
+
+/* ── content (círculo) ──────────────────────────────────────────────────── */
+.calendar-day-cell__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--_circle);
+  height: var(--_circle);
+  border-radius: var(--circular-items-radius-round);
+  border: 1px solid transparent;
+  transition:
+    background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    border-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* capa de estado — se compone ENCIMA del fondo (transparente / brand / outline).
+   inset -1px para cubrir hasta el borde exterior (mismo diámetro que el fondo). */
+.calendar-day-cell__content::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background-color: transparent;
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* ── label ──────────────────────────────────────────────────────────────── */
+.calendar-day-cell__label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-lg-size); /* 16 */
+  line-height: var(--typography-body-lg-line-height); /* 24 */
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+  color: var(--semantic-color-text-primary);
+}
+
+/* ── type: today (outline brand) ────────────────────────────────────────── */
+.calendar-day-cell[data-type='today'] .calendar-day-cell__content {
+  border-color: var(--semantic-color-border-brand);
+}
+.calendar-day-cell[data-type='today'] .calendar-day-cell__label {
+  color: var(--semantic-color-text-brand);
+}
+
+/* ── type: selected (relleno brand) ─────────────────────────────────────── */
+.calendar-day-cell[data-type='selected'] .calendar-day-cell__content {
+  background-color: var(--semantic-color-bg-brand);
+}
+.calendar-day-cell[data-type='selected'] .calendar-day-cell__label {
+  color: var(--semantic-color-text-onBrand);
+}
+
+/* ── día de otro mes (atenuado, navegable) ─────────────────────────────── */
+.calendar-day-cell[data-outside]:not(:disabled) .calendar-day-cell__label {
+  color: var(--semantic-color-text-tertiary);
+}
+
+/* ── state: hover (solo dispositivos con puntero) ──────────────────────── */
+@media (hover: hover) {
+  .calendar-day-cell:hover:not(:disabled) .calendar-day-cell__content::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+
+/* ── state: pressed ─────────────────────────────────────────────────────── */
+.calendar-day-cell:active:not(:disabled) .calendar-day-cell__content::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* ── state: disabled (días fuera de rango / fuera de mes) ────────────────── */
+.calendar-day-cell:disabled {
+  cursor: default;
+}
+.calendar-day-cell:disabled:not([data-type='selected']) .calendar-day-cell__label {
+  color: var(--semantic-color-text-disabled);
+}
+.calendar-day-cell[data-type='today']:disabled .calendar-day-cell__content {
+  border-color: var(--semantic-color-border-disabled);
+}
+.calendar-day-cell:disabled .calendar-day-cell__content::after {
+  background-color: var(--semantic-color-state-disabled);
+}
+
+/* ── focus (accesibilidad de teclado) ──────────────────────────────────── */
+.calendar-day-cell:focus-visible .calendar-day-cell__content {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-day-cell__content,
+  .calendar-day-cell__content::after {
+    transition: none;
+  }
+}

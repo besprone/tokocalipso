@@ -1,0 +1,55 @@
+/* ── Link ──────────────────────────────────────────────────────────────────
+   Texto interactivo de navegación (a otra vista o URL). NO es un botón — no
+   dispara acciones. Figma: `components_link`.
+
+   Es inline: fluye dentro del texto. Siempre subrayado (indicador de enlace).
+
+   state — vía pseudo-clases (real) o `data-state` (forzado para demos):
+     default  → text + underline: text/linkDefault
+     hover    → text/linkHover   (solo @media (hover: hover))
+     pressed  → text/linkPressed (:active o data-state="pressed")
+
+   Tipografía: Body/lg-link (Open Sans Medium · 16 / 24). Grosor del subrayado
+   10% del tamaño de fuente (Figma). Color del subrayado = color del texto.
+──────────────────────────────────────────────────────────────────────────── */
+
+.link {
+  color: var(--semantic-color-text-linkDefault);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-lg-size); /* 16px */
+  line-height: var(--typography-body-lg-line-height); /* 24px */
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+  text-decoration-line: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 0.1em; /* Figma: decoration 10% */
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+  transition: color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: var(--semantic-color-text-linkHover);
+  }
+}
+
+.link[data-state='hover'] {
+  color: var(--semantic-color-text-linkHover);
+}
+
+.link:active,
+.link[data-state='pressed'] {
+  color: var(--semantic-color-text-linkPressed);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}

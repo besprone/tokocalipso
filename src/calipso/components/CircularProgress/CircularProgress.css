@@ -1,0 +1,93 @@
+/* ── CircularProgress ──────────────────────────────────────────────────
+   viewBox="0 0 24 24", cx=cy=12, r=10.5, stroke-width=3
+   Outer edge = 10.5 + 1.5 = 12  → justo en el borde del viewBox
+   El arco usa pathLength="100" → dasharray/offset en unidades 0–100.
+
+   indeterminate → svg gira + el arco varía su dasharray en bucle
+                   (ciclo = 4 × var(--linear-200-duration-ms) = 800ms).
+   determinate   → arco estático rotado -90° (arranca a las 12);
+                   stroke-dashoffset = 100 − value (inline).
+──────────────────────────────────────────────────────────────────────── */
+
+/* ── base ───────────────────────────────────────────────────────────── */
+.circular-progress {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ── tamaños ────────────────────────────────────────────────────────── */
+.circular-progress[data-size="xs"] { width: 16px; height: 16px; }
+.circular-progress[data-size="sm"] { width: 20px; height: 20px; }
+.circular-progress[data-size="md"] { width: 24px; height: 24px; }
+
+/* ── track (anillo base) ────────────────────────────────────────────── */
+.circular-progress__track {
+  fill: none;
+  stroke: var(--semantic-color-bg-subtle);
+  stroke-width: 3;
+}
+
+/* ── arco activo ────────────────────────────────────────────────────── */
+.circular-progress__arc {
+  fill: none;
+  stroke: var(--semantic-color-bg-brand);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* determinate: arranca a las 12 + anima el avance */
+.circular-progress:not([data-indeterminate]) .circular-progress__arc {
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* ── indeterminate — svg gira + arco en bucle ───────────────────────── */
+.circular-progress[data-indeterminate] {
+  animation: circular-progress-rotate
+    calc(var(--linear-200-duration-ms) * 4)
+    var(--linear-200-easing)
+    infinite;
+}
+.circular-progress[data-indeterminate] .circular-progress__arc {
+  stroke-dasharray: 1.5, 100;
+  animation: circular-progress-dash
+    calc(var(--linear-200-duration-ms) * 4)
+    var(--linear-200-easing)
+    infinite;
+}
+
+/* ── keyframes ──────────────────────────────────────────────────────── */
+@keyframes circular-progress-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes circular-progress-dash {
+  0% {
+    stroke-dasharray: 1.5, 100;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 74, 100;
+    stroke-dashoffset: -24;
+  }
+  100% {
+    stroke-dasharray: 74, 100;
+    stroke-dashoffset: -100;
+  }
+}
+
+/* ── accesibilidad: reduce motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .circular-progress[data-indeterminate],
+  .circular-progress[data-indeterminate] .circular-progress__arc {
+    animation-play-state: paused;
+  }
+  .circular-progress:not([data-indeterminate]) .circular-progress__arc {
+    transition: none;
+  }
+}

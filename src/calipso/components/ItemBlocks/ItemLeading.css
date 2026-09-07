@@ -1,0 +1,145 @@
+/* ── ItemLeading ─────────────────────────────────────────────────────────────
+   Bloque del borde izquierdo de un row. Figma: `_building_blocks_leading`.
+
+     [data-type="icon"]          glifo — 20px (sm) · 24px (md) · icon/secondary
+     [data-type="img"]           marco circular bg/canvas, overflow clip · xs–xl
+     [data-type="avatar"]        <Avatar> (o slot) · xs–xl
+     [data-type="number"]        círculo bg/accentPrimaryMuted 32px + número
+     [data-type="checkbox"]      <Checkbox> en columna de 24px, alto de fila
+     [data-type="radiobutton"]   <Radio> idem
+     [data-type="paymentStatus"] slot (timeline)
+
+   img/avatar: badge `+` opcional abajo-derecha (`badge` prop).
+──────────────────────────────────────────────────────────────────────────── */
+
+.item-leading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── icon ────────────────────────────────────────────────────────────────── */
+.item-leading__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--semantic-color-icon-secondary);
+}
+.item-leading[data-type='icon'] .item-leading__icon > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+.item-leading[data-type='icon'][data-size='md'] .item-leading__icon > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+
+/* ── img / avatar frame ──────────────────────────────────────────────────── */
+.item-leading__frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: clip;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-canvas);
+}
+.item-leading__frame--avatar {
+  background-color: transparent;
+}
+.item-leading__frame > :not(.item-leading__badge) {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.item-leading[data-type='img'][data-size='xs'] .item-leading__frame,
+.item-leading[data-type='avatar'][data-size='xs'] .item-leading__frame {
+  inline-size: 24px;
+  block-size: 24px;
+}
+.item-leading[data-type='img'][data-size='sm'] .item-leading__frame,
+.item-leading[data-type='avatar'][data-size='sm'] .item-leading__frame {
+  inline-size: 32px;
+  block-size: 32px;
+}
+.item-leading[data-type='img'][data-size='md'] .item-leading__frame,
+.item-leading[data-type='avatar'][data-size='md'] .item-leading__frame {
+  inline-size: 40px;
+  block-size: 40px;
+}
+.item-leading[data-type='img'][data-size='lg'] .item-leading__frame,
+.item-leading[data-type='avatar'][data-size='lg'] .item-leading__frame {
+  inline-size: 48px;
+  block-size: 48px;
+}
+.item-leading[data-type='img'][data-size='xl'] .item-leading__frame,
+.item-leading[data-type='avatar'][data-size='xl'] .item-leading__frame {
+  inline-size: 56px;
+  block-size: 56px;
+}
+
+/* ── badge `+` ───────────────────────────────────────────────────────────── */
+.item-leading__badge {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 2px solid var(--semantic-color-border-inverse);
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-accentSecondary);
+  color: var(--semantic-color-border-inverse);
+}
+.item-leading__badge > svg {
+  inline-size: 12px;
+  block-size: 12px;
+}
+.item-leading[data-size='xs'] .item-leading__badge > svg,
+.item-leading[data-size='sm'] .item-leading__badge > svg {
+  inline-size: 8px;
+  block-size: 8px;
+}
+.item-leading[data-size='lg'] .item-leading__badge > svg,
+.item-leading[data-size='xl'] .item-leading__badge > svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+/* ── number ──────────────────────────────────────────────────────────────── */
+.item-leading__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  overflow: clip;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-accentPrimaryMuted);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-lg-semiemphasized-size); /* 16 */
+  line-height: var(--typography-body-lg-semiemphasized-line-height); /* 24 */
+  font-weight: var(--typography-body-lg-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-onAccentPrimary);
+}
+
+/* ── checkbox / radiobutton ──────────────────────────────────────────────── */
+.item-leading__control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 24px;
+  min-block-size: 56px;
+}
+
+/* ── paymentStatus ───────────────────────────────────────────────────────── */
+.item-leading__payment {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  min-inline-size: 24px;
+  align-self: stretch;
+}

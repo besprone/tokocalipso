@@ -1,0 +1,169 @@
+/* ── Badge ─────────────────────────────────────────────────────────────────
+   Elemento informativo compacto, no interactivo. Figma: `components_badge`.
+
+   Ejes de variación (data-*):
+     data-semantic  success · neutral · info · warning · error ·
+                    accentPrimary (mint) · accentSecondary (orchid)
+     data-variant   soft (fondo tenue) · outline (contorno sobre surface) ·
+                    filled (sólido, texto onX)
+     data-size      xxs · xs · md            (circle: siempre 6px)
+     data-type      text · circle
+
+   Cada semantic define su paleta en 5 custom props privadas; `data-variant`
+   las combina en --_bg / --_bc / --_fg. El ícono hereda color vía
+   `currentColor` (en Figma icon/X == text/X para todos estos roles).
+──────────────────────────────────────────────────────────────────────────── */
+
+.badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--_pad-y) var(--_pad-x);
+  border: 1px solid var(--_bc);
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--_bg);
+  color: var(--_fg);
+  overflow: hidden;
+  font-family: var(--typography-font-family);
+  font-weight: var(--typography-body-xs-weight); /* 500 */
+}
+
+/* ── size ──────────────────────────────────────────────────────────────── */
+.badge[data-size='xxs'] {
+  --_pad-x: var(--internalLayout-space-50); /* 4 */
+  --_pad-y: var(--internalLayout-space-0); /* 0 */
+  --_icon: var(--size-12);
+  --_font-size: var(--typography-body-xs-size); /* 10 */
+  --_line-height: var(--typography-body-xs-line-height); /* 15 */
+  min-width: 16px;
+  min-height: 16px;
+}
+.badge[data-size='xs'] {
+  --_pad-x: var(--internalLayout-space-75); /* 6 */
+  --_pad-y: var(--internalLayout-space-25); /* 2 */
+  --_icon: var(--size-12);
+  --_font-size: var(--typography-body-xs-size); /* 10 */
+  --_line-height: var(--typography-body-xs-line-height); /* 15 */
+  min-width: 19px;
+  min-height: 19px; /* contenido de 1 carácter → círculo, no rectángulo alto */
+}
+.badge[data-size='md'] {
+  --_pad-x: var(--internalLayout-space-75); /* 6 */
+  --_pad-y: var(--internalLayout-space-25); /* 2 */
+  --_icon: var(--size-16);
+  --_font-size: var(--typography-body-sm-size); /* 12 */
+  --_line-height: var(--typography-body-sm-line-height); /* 17 */
+  min-width: 19px;
+}
+
+/* ── semantic (paleta) ─────────────────────────────────────────────────── */
+.badge[data-semantic='success'] {
+  --_soft-bg: var(--semantic-color-bg-successMuted);
+  --_border: var(--semantic-color-border-success);
+  --_ink: var(--semantic-color-text-success);
+  --_filled-bg: var(--semantic-color-bg-success);
+  --_filled-ink: var(--semantic-color-text-onSuccess);
+}
+.badge[data-semantic='info'] {
+  --_soft-bg: var(--semantic-color-bg-infoMuted);
+  --_border: var(--semantic-color-border-info);
+  --_ink: var(--semantic-color-text-info);
+  --_filled-bg: var(--semantic-color-bg-info);
+  --_filled-ink: var(--semantic-color-text-onInfo);
+}
+.badge[data-semantic='warning'] {
+  --_soft-bg: var(--semantic-color-bg-warningMuted);
+  --_border: var(--semantic-color-border-warning);
+  --_ink: var(--semantic-color-text-warning);
+  /* Figma no trae warning filled; el DS usa texto oscuro sobre ámbar (AA). */
+  --_filled-bg: var(--semantic-color-bg-warning);
+  --_filled-ink: var(--semantic-color-text-warning);
+}
+.badge[data-semantic='error'] {
+  --_soft-bg: var(--semantic-color-bg-dangerMuted);
+  --_border: var(--semantic-color-border-dangerSoft);
+  --_ink: var(--semantic-color-text-dangerStrong);
+  --_filled-bg: var(--semantic-color-bg-danger);
+  --_filled-ink: var(--semantic-color-text-onDanger);
+}
+.badge[data-semantic='neutral'] {
+  --_soft-bg: var(--semantic-color-bg-subtle);
+  --_border: var(--semantic-color-border-strong);
+  --_ink: var(--semantic-color-text-secondary);
+  /* Figma no trae neutral filled; el DS usa bg/neutral + text/onNeutral. */
+  --_filled-bg: var(--semantic-color-bg-neutral);
+  --_filled-ink: var(--semantic-color-text-onNeutral);
+}
+.badge[data-semantic='accentPrimary'] {
+  --_soft-bg: var(--semantic-color-bg-accentPrimaryMuted);
+  --_border: var(--semantic-color-border-accentPrimary);
+  --_ink: var(--semantic-color-text-accentPrimary);
+  --_filled-bg: var(--semantic-color-bg-accentPrimary);
+  --_filled-ink: var(--semantic-color-text-onAccentPrimary);
+}
+.badge[data-semantic='accentSecondary'] {
+  --_soft-bg: var(--semantic-color-bg-accentSecondaryMuted);
+  --_border: var(--semantic-color-border-accentSecondary);
+  --_ink: var(--semantic-color-text-accentSecondary);
+  --_filled-bg: var(--semantic-color-bg-accentSecondary);
+  --_filled-ink: var(--semantic-color-text-onAccentSecondary);
+}
+
+/* ── variant (combina la paleta) ──────────────────────────────────────── */
+.badge[data-variant='soft'] {
+  --_bg: var(--_soft-bg);
+  --_bc: var(--_border);
+  --_fg: var(--_ink);
+}
+.badge[data-variant='outline'] {
+  --_bg: var(--semantic-color-bg-surface);
+  --_bc: var(--_border);
+  --_fg: var(--_ink);
+}
+.badge[data-variant='filled'] {
+  --_bg: var(--_filled-bg);
+  --_bc: transparent;
+  --_fg: var(--_filled-ink);
+}
+
+/* ── contenido ────────────────────────────────────────────────────────── */
+.badge__leading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+.badge__leading > svg,
+.badge__leading > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.badge__label {
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── type=circle — solo punto de color, sin texto ni padding ───────────── */
+.badge[data-type='circle'] {
+  gap: 0;
+  padding: 0;
+  width: 6px;
+  height: 6px;
+  min-width: 0;
+  min-height: 0;
+}
+.badge[data-type='circle'] > * {
+  display: none;
+}

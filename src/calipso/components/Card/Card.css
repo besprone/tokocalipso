@@ -1,0 +1,114 @@
+/* ── Card ─────────────────────────────────────────────────────────────────
+   Contenedor estructural. Figma: `components_card`.
+
+   Estructura:
+     .card            position: relative · SIN clip (badge + focus ring salen)
+       .card__badge   absolute, montado sobre el borde superior (top:-10, centrado)
+       .card__surface bg + radius 16 + overflow:clip + elevación
+         {slot}       contenido a ras, recortado al radio
+         ::after      capa de estado (hover/pressed/focus) — se compone encima,
+                      nunca reemplaza el fondo base
+         .card__check checkmark de `selected` (arriba-derecha, icon/brand)
+
+   La Card no mete padding ni altera tokens del contenido. No hay motion propio.
+──────────────────────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  display: block;
+  border-radius: var(--containers-radius-200); /* 16px — para que el outline de foco siga la forma */
+}
+
+.card[data-interactive] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── superficie ──────────────────────────────────────────────────────────── */
+.card__surface {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  overflow: clip;
+  border-radius: inherit;
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--_elevation);
+}
+
+.card[data-elevation='flat'] {
+  --_elevation: var(--Elevation-elevation-0);
+}
+.card[data-elevation='raised'] {
+  --_elevation: var(--Elevation-elevation-2);
+}
+
+/* ── capa de estado (solo interactive) ──────────────────────────────────── */
+.card[data-interactive] .card__surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* hover — solo web/desktop con cursor (no en touch) */
+@media (hover: hover) {
+  .card[data-interactive]:hover .card__surface::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+
+/* pressed */
+.card[data-interactive]:active .card__surface::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* focus */
+.card[data-interactive]:focus-visible {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+.card[data-interactive]:focus-visible .card__surface::after {
+  background-color: var(--semantic-color-state-focus);
+}
+
+/* ── selected ───────────────────────────────────────────────────────────── */
+.card[data-selected] .card__surface {
+  background-color: var(--semantic-color-bg-brandSoft);
+  box-shadow: var(--_elevation), inset 0 0 0 2px var(--semantic-color-border-brand);
+}
+
+.card__check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  display: flex;
+  color: var(--semantic-color-icon-brand);
+  pointer-events: none;
+}
+.card__check > svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+/* ── badge (montado sobre el borde superior) ────────────────────────────── */
+.card__badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card[data-interactive] .card__surface::after {
+    transition: none;
+  }
+}

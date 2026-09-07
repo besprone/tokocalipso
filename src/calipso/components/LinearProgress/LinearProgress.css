@@ -1,0 +1,57 @@
+/* ── LinearProgress ───────────────────────────────────────────────────────
+   Indicador de progreso lineal. Figma: `components_linear_progress_indicator`.
+   No interactivo → sin capa de estado.
+
+   Capas (espeja Figma):
+     .linear-progress        track base — bg/subtle, radius controls/radius-100,
+                             ancho 100% del contenedor, alto 8px, overflow hidden
+     .linear-progress__bar   barra activa — bg/brand, ancho = value% (o animada
+                             si data-indeterminate). Esquinas izquierdas
+                             redondeadas; la derecha la recorta el track.
+──────────────────────────────────────────────────────────────────────────── */
+
+.linear-progress {
+  display: block;
+  inline-size: 100%;
+  block-size: 8px;
+  border-radius: var(--controls-radius-100); /* 8px → extremos semicirculares */
+  background-color: var(--semantic-color-bg-subtle);
+  overflow: hidden;
+}
+
+.linear-progress__bar {
+  block-size: 100%;
+  inline-size: 0;
+  border-start-start-radius: inherit;
+  border-end-start-radius: inherit;
+  background-color: var(--semantic-color-bg-brand);
+  transition: inline-size calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* ── indeterminate — barra que recorre el track en bucle ───────────────── */
+.linear-progress[data-indeterminate] .linear-progress__bar {
+  inline-size: 40%;
+  border-radius: inherit;
+  transition: none;
+  animation: linear-progress-slide calc(var(--linear-200-duration-ms) * 7.5)
+    var(--linear-200-easing) infinite;
+}
+
+@keyframes linear-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linear-progress__bar {
+    transition: none;
+  }
+  .linear-progress[data-indeterminate] .linear-progress__bar {
+    animation: none;
+    inline-size: 100%;
+  }
+}

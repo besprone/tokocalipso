@@ -1,0 +1,159 @@
+/* ── AvatarAction ────────────────────────────────────────────────────────────
+   Chip de identidad de la cuenta. Figma: `components_avatar_action`.
+
+     .avatar-action            wrapper (position: relative para el panel)
+       .avatar-action__chip      <button> pill · bg/brandSoft · overflow clip
+         .avatar-action__state     capa de estado — overlays hover/pressed/focus
+           <Avatar size="sm">
+           .avatar-action__content   label (Body/sm-semiemphasized) + supporting (Body/xs)
+           .avatar-action__chevron   <ItemTrailing icon> — rota 180° al abrir
+       .avatar-action__panel     panel de opciones (type="menu", state open)
+──────────────────────────────────────────────────────────────────────────── */
+
+.avatar-action {
+  position: relative;
+  display: inline-block;
+  inline-size: 200px;
+  max-inline-size: 100%;
+  font-family: var(--typography-font-family);
+}
+
+/* ── chip ────────────────────────────────────────────────────────────────── */
+.avatar-action__chip {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  display: block;
+  inline-size: 100%;
+  overflow: clip;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-brandSoft);
+}
+
+.avatar-action__state {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  min-block-size: 32px;
+  padding-block: var(--internalLayout-space-50); /* 4px */
+  padding-inline-start: var(--internalLayout-space-50); /* 4px */
+  padding-inline-end: var(--internalLayout-space-150); /* 12px */
+  border-radius: var(--circular-items-radius-round);
+}
+
+/* overlay de estado */
+.avatar-action__state::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .avatar-action__chip:hover .avatar-action__state::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.avatar-action__chip:active .avatar-action__state::after,
+.avatar-action[data-open] .avatar-action__state::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.avatar-action__chip:focus-visible {
+  outline: none;
+}
+.avatar-action__chip:focus-visible .avatar-action__state {
+  box-shadow: inset 0 0 0 1px var(--semantic-color-state-focusRing);
+}
+.avatar-action__chip:focus-visible .avatar-action__state::after {
+  background-color: var(--semantic-color-state-focus);
+}
+
+/* ── contenido ───────────────────────────────────────────────────────────── */
+.avatar-action__content {
+  display: flex;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: start;
+}
+.avatar-action__label {
+  inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--typography-body-sm-semiemphasized-size); /* 12 */
+  line-height: var(--typography-body-sm-semiemphasized-line-height); /* 17 */
+  font-weight: var(--typography-body-sm-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+}
+.avatar-action__supporting {
+  inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--typography-body-xs-size); /* 10 */
+  line-height: var(--typography-body-xs-line-height); /* 15 */
+  font-weight: var(--typography-body-xs-weight); /* 500 */
+  color: var(--semantic-color-text-secondary);
+}
+
+/* ── chevron ─────────────────────────────────────────────────────────────── */
+.avatar-action__chevron {
+  flex-shrink: 0;
+}
+.avatar-action__chevron svg {
+  transition: transform var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.avatar-action[data-open] .avatar-action__chevron svg {
+  transform: rotate(180deg);
+}
+
+/* ── panel ───────────────────────────────────────────────────────────────── */
+.avatar-action__panel {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + var(--internalLayout-space-100)); /* 8px */
+  z-index: 20;
+
+  padding: var(--internalLayout-space-50); /* 4px */
+  border: 1px solid var(--semantic-color-border-default);
+  border-radius: var(--containers-radius-300); /* 24px */
+  background-color: var(--semantic-color-bg-canvas);
+  box-shadow: var(--Elevation-elevation-3);
+
+  animation: avatar-action-panel var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.avatar-action__panel-scroll {
+  max-block-size: 400px;
+  overflow-y: auto;
+  overflow-x: clip;
+  border-radius: 20px; /* containers/radius-250 */
+}
+
+@keyframes avatar-action-panel {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-action__state::after,
+  .avatar-action__chevron svg {
+    transition: none;
+  }
+  .avatar-action__panel {
+    animation: none;
+  }
+}

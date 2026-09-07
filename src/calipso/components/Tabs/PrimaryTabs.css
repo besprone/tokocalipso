@@ -1,0 +1,68 @@
+/* ── PrimaryTabs ─────────────────────────────────────────────────────────────
+   Navegación horizontal entre secciones del mismo nivel. Figma:
+   `components_primary_tabs`.
+
+     .primary-tabs            contenedor — bg/surface + border-bottom border/default
+       [data-distribution=content]  overflow-x: auto (scroll horizontal)
+       .primary-tabs__track     fila de tabs (role="tablist"), position: relative
+         .primary-tab ·N
+         .primary-tabs__indicator  barra única 32×4 — se desliza vía JS (spring)
+
+   El indicador usa `transform: translateX()` en px, animado con un integrador
+   de muelle (`src/lib/spring.ts`). Solo eje X; ni alto ni grosor cambian.
+──────────────────────────────────────────────────────────────────────────── */
+
+.primary-tabs {
+  inline-size: 100%;
+  background-color: var(--semantic-color-bg-surface);
+  border-block-end: 1px solid var(--semantic-color-border-default);
+}
+
+.primary-tabs[data-distribution='content'] {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.primary-tabs[data-distribution='content']::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── track ───────────────────────────────────────────────────────────────── */
+.primary-tabs__track {
+  position: relative;
+  display: flex;
+  min-block-size: 48px;
+}
+
+.primary-tabs[data-distribution='equal'] .primary-tabs__track > .primary-tab {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+.primary-tabs[data-distribution='content'] .primary-tabs__track {
+  inline-size: max-content;
+}
+.primary-tabs[data-distribution='content'] .primary-tabs__track > .primary-tab {
+  flex: 0 0 auto;
+}
+
+/* padding lateral del contenedor por `size` (sobre todo en `content`) */
+.primary-tabs[data-distribution='content'][data-size='md'] .primary-tabs__track {
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+}
+.primary-tabs[data-distribution='content'][data-size='lg'] .primary-tabs__track {
+  padding-inline: var(--componentSpacing-space-300); /* 24px */
+}
+
+/* ── indicador único ─────────────────────────────────────────────────────── */
+.primary-tabs__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  inline-size: 32px;
+  block-size: var(--size-4); /* 4px */
+  background-color: var(--semantic-color-bg-brand);
+  border-start-start-radius: var(--containers-radius-200);
+  border-start-end-radius: var(--containers-radius-200);
+  transform: translateX(0);
+  will-change: transform;
+  pointer-events: none;
+}

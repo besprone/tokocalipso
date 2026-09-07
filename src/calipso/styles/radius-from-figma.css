@@ -1,0 +1,11 @@
+/* Generated from src/tokens/figma-radius-tokens.ts — npm run tokens:radius */
+:root {
+  --radius-0: 0;
+  --small-items-radius-50: 4px;
+  --controls-radius-100: 8px;
+  --controls-radius-125: 10px;
+  --controls-radius-150: 12px;
+  --containers-radius-200: 16px;
+  --containers-radius-300: 24px;
+  --circular-items-radius-round: 9999px;
+}

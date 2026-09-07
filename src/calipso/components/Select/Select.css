@@ -1,0 +1,70 @@
+/* ── Select ───────────────────────────────────────────────────────────────
+   Patrón de selección: `TextField` (trigger, no editable) + panel de
+   opciones. Figma: `pattern_select_bottom_sheet` + `pattern_select_web`.
+   No introduce tokens propios — hereda de `TextField`/`BottomSheet`/
+   `List`/`Dropdown`.
+──────────────────────────────────────────────────────────────────────────── */
+
+.select-bottom-sheet__check {
+  width: 20px;
+  height: 20px;
+  color: var(--semantic-color-icon-brand);
+}
+
+/* el trigger no es un input real editable (readOnly + click-to-open) —
+   cursor de puntero, no el "text" que trae `.text-field__container` para
+   un campo de texto de verdad */
+.select-bottom-sheet__trigger .text-field__container,
+.select-web__trigger .text-field__container {
+  cursor: pointer;
+}
+
+/* chevron: mismo token que el resto de chevrons del sistema (Accordion,
+   List, Menu) — icon/brand, no el gris genérico de `trailingIcon` */
+.select-bottom-sheet__chevron,
+.select-web__chevron {
+  color: var(--semantic-color-icon-brand);
+}
+/* disabled/error: el color propio del chevron (arriba) es una declaración
+   directa sobre el svg, así que ignora el color heredado del contenedor
+   — hacen falta estas reglas explícitas para que sí reaccionen.
+   `icon/danger` (no `icon/dangerStrong`, que es el tono más oscuro del
+   ícono de warning) — mismo tono que usan `text/danger`/`border/danger`
+   para el label y el borde del campo. */
+.text-field[data-disabled] .select-bottom-sheet__chevron,
+.text-field[data-disabled] .select-web__chevron {
+  color: var(--semantic-color-icon-disabled);
+}
+.text-field[data-error] .select-bottom-sheet__chevron,
+.text-field[data-error] .select-web__chevron {
+  color: var(--semantic-color-icon-danger);
+}
+
+/* ── SelectWeb — chevron rota al abrir, panel flotante ──────────────────── */
+.select-web__chevron {
+  transition: transform var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.select-web[data-open] .select-web__chevron {
+  transform: rotate(180deg);
+}
+
+.select-web__panel {
+  box-sizing: border-box;
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity var(--linear-200-duration-ms) var(--linear-200-easing),
+    transform var(--linear-200-duration-ms) var(--linear-200-easing);
+  transform-origin: top center;
+}
+.select-web__panel[data-state='open'] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select-web__chevron,
+  .select-web__panel {
+    transition: none;
+  }
+}

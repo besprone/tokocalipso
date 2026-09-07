@@ -1,0 +1,108 @@
+/* ── PrimaryTab ──────────────────────────────────────────────────────────────
+   Unidad de `PrimaryTabs`. Figma: `_building_blocks_primary_tab`.
+
+     .primary-tab           <button role="tab"> · 48px · bg/surface
+       .primary-tab__inner    icono + label centrados, gap 8, padding-inline 16
+         .primary-tab__icon     24px · icon/secondary → icon/brand si selected
+         .primary-tab__label    Body/md-semiemphasized · text/secondary → text/brand
+       .primary-tab__indicator  barra 32×4 (solo story del building block)
+
+   Overlays de estado en `.primary-tab::after`. El indicador real de la
+   navegación es único y lo posiciona `PrimaryTabs`.
+──────────────────────────────────────────────────────────────────────────── */
+
+.primary-tab {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 48px;
+  background-color: var(--semantic-color-bg-surface);
+  color: var(--semantic-color-icon-secondary);
+}
+.primary-tab:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.primary-tab[data-selected] {
+  color: var(--semantic-color-icon-brand);
+}
+
+.primary-tab__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+  white-space: nowrap;
+}
+.primary-tab__icon {
+  display: flex;
+}
+.primary-tab__icon > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+.primary-tab__label {
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-secondary);
+}
+.primary-tab[data-selected] .primary-tab__label {
+  color: var(--semantic-color-text-brand);
+}
+
+/* ── overlay de estado ───────────────────────────────────────────────────── */
+.primary-tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .primary-tab:not(:disabled):hover::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.primary-tab:not(:disabled):active::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.primary-tab:focus-visible {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: -2px;
+}
+.primary-tab:focus-visible::after {
+  background-color: var(--semantic-color-state-focus);
+}
+
+/* ── indicador por-tab (solo building block) ─────────────────────────────── */
+.primary-tab__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  inline-size: 32px;
+  block-size: var(--size-4); /* 4px */
+  background-color: var(--semantic-color-bg-brand);
+  border-start-start-radius: var(--containers-radius-200);
+  border-start-end-radius: var(--containers-radius-200);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-tab::after {
+    transition: none;
+  }
+}

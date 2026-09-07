@@ -1,0 +1,211 @@
+/* ── TextField ──────────────────────────────────────────────────────────────
+   Floating-label text input.
+
+   Layers:
+     .text-field              → wrapper (column layout + helper gap)
+     .text-field__container   → visual shell (bg + border + border-radius)
+     .text-field__state       → hover overlay + flex row (content + trailing)
+     .text-field__content     → relative area for floating label + input
+     .text-field__trailing    → optional icon slot (clear btn or warning)
+     .text-field__helper      → helper / error text below container
+
+   Container height: 56 px (label 12px @ top + 4px gap + input 16px/24lh @ bottom)
+   SVG math: viewBox label floats from center→ top=8px on :focus-within / :has(value)
+──────────────────────────────────────────────────────────────────────────── */
+
+/* ── wrapper ─────────────────────────────────────────────────────────────── */
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── container ───────────────────────────────────────────────────────────── */
+.text-field__container {
+  height: 56px;
+  display: flex;
+  border-radius: var(--containers-radius-200);
+  background-color: var(--semantic-color-bg-subtle);
+  border: 1.5px solid transparent;
+  overflow: hidden;
+  cursor: text;
+  transition: border-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* focus border */
+.text-field__container:focus-within {
+  border-color: var(--semantic-color-border-focus);
+}
+
+/* error border (overrides focus) */
+.text-field[data-error] .text-field__container {
+  border-color: var(--semantic-color-border-danger);
+}
+
+/* ── state layer ─────────────────────────────────────────────────────────── */
+.text-field__state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  /* Figma: pl=16px, pr=4px, py=4px */
+  padding: var(--internalLayout-space-50) var(--internalLayout-space-50)
+           var(--internalLayout-space-50) var(--componentSpacing-space-200);
+  gap: var(--internalLayout-space-25); /* 2px */
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* hover overlay — skip when disabled */
+.text-field:not([data-disabled]):hover .text-field__state {
+  background-color: var(--semantic-color-state-hover);
+}
+
+/* ── content (label + input) ─────────────────────────────────────────────── */
+/* Figma: flex-col, justify-center, gap-0, size-full                         */
+/* El input se colapsa a height:0 cuando no está flotado → el label queda   */
+/* solo y centrado por justify-center. Al focar, el input se expande a 24px  */
+.text-field__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── label ───────────────────────────────────────────────────────────────── */
+.text-field__label {
+  /* flujo normal (no absolute): ocupa su línea en el flex-col */
+  /* Typography/Body/lg — label en reposo (16px) */
+  font-family: var(--typography-font-family);
+  font-size:   var(--typography-body-lg-size);          /* 16px */
+  line-height: var(--typography-body-lg-line-height);   /* 24px */
+  font-weight: var(--typography-body-lg-weight);        /* 500  */
+  color: var(--semantic-color-text-secondary);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    font-size   calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    line-height calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    color       calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* ── input ───────────────────────────────────────────────────────────────── */
+.text-field__input {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  /* colapsado por defecto: sin height, el label queda centrado solo        */
+  height: 0;
+  overflow: hidden;
+  /* Typography/Body/lg */
+  font-family: var(--typography-font-family);
+  font-size:   var(--typography-body-lg-size);          /* 16px */
+  line-height: var(--typography-body-lg-line-height);   /* 24px */
+  font-weight: var(--typography-body-lg-weight);        /* 500  */
+  color: var(--semantic-color-text-primary);
+  caret-color: var(--semantic-color-border-focus);
+}
+
+/* ── flotado: focused OR has value ──────────────────────────────────────── */
+.text-field__container:focus-within .text-field__label,
+.text-field__container:has(.text-field__input:not(:placeholder-shown)) .text-field__label {
+  /* Typography/Body/sm — label flotado (12px) */
+  font-size:   var(--typography-body-sm-size);          /* 12px */
+  line-height: var(--typography-body-sm-line-height);   /* 17px */
+}
+
+/* expandir input cuando está flotado */
+.text-field__container:focus-within .text-field__input,
+.text-field__container:has(.text-field__input:not(:placeholder-shown)) .text-field__input {
+  height: var(--typography-body-lg-line-height);        /* 24px */
+  overflow: visible;
+}
+
+/* ── error colors ────────────────────────────────────────────────────────── */
+.text-field[data-error] .text-field__label {
+  color: var(--semantic-color-text-danger);
+}
+
+/* ── trailing slot ───────────────────────────────────────────────────────── */
+.text-field__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* static trailing icon (warning en error, o un ícono propio vía `trailingIcon`) */
+/* dimensiones = IconButton ghost lg: padding 12px, icono 24px, outer 0px   */
+.text-field__trailing-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--internalLayout-space-150); /* 12px, igual que lg state padding */
+  color: var(--semantic-color-icon-secondary);
+}
+
+/* el warning (error, sin `trailingIcon` propio) sí es siempre rojo */
+.text-field__trailing-icon--danger {
+  color: var(--semantic-color-icon-dangerStrong);
+}
+
+.text-field__trailing-icon > svg {
+  width: 24px;   /* lg icon size */
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* ── helper text ─────────────────────────────────────────────────────────── */
+.text-field__helper {
+  /* Figma: px-[16px] → alineado con el label */
+  padding: 0 var(--componentSpacing-space-200);
+  /* Typography/Body/sm */
+  font-family: var(--typography-font-family);
+  font-size:   var(--typography-body-sm-size);         /* 12px */
+  line-height: var(--typography-body-sm-line-height);  /* 17px */
+  font-weight: var(--typography-body-sm-weight);       /* 500  */
+  color: var(--semantic-color-text-secondary);
+  transition: color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+.text-field[data-error] .text-field__helper {
+  color: var(--semantic-color-text-danger);
+}
+
+/* ── disabled ────────────────────────────────────────────────────────────── */
+.text-field[data-disabled] .text-field__container {
+  cursor: not-allowed;
+  /* suppress focus border when disabled */
+  pointer-events: none;
+}
+
+.text-field[data-disabled] .text-field__input {
+  color: var(--semantic-color-text-disabled);
+  cursor: not-allowed;
+}
+
+.text-field[data-disabled] .text-field__label {
+  color: var(--semantic-color-text-disabled);
+}
+
+.text-field[data-disabled] .text-field__helper {
+  color: var(--semantic-color-text-disabled);
+}
+
+/* ── reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .text-field__label,
+  .text-field__container,
+  .text-field__state,
+  .text-field__helper {
+    transition: none;
+  }
+}

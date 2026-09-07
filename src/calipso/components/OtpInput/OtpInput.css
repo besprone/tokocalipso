@@ -1,0 +1,14 @@
+/* ── OtpInput ───────────────────────────────────────────────────────────────
+   Orquestador del patrón OTP (Figma: `components_otp_input` / `pattern_otp`).
+   Fila de N `OtpDigit` con navegación, borrado, paste y validación.
+──────────────────────────────────────────────────────────────────────────── */
+
+.otp-input {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px entre cuadros */
+}
+
+.otp-input[data-disabled] {
+  cursor: not-allowed;
+}

@@ -1,0 +1,13 @@
+/* ── SnackbarActions ──────────────────────────────────────────────────────
+   Building block interno de `Snackbar`. Fila: [Button ghost] + [IconButton X].
+   No define fondo propio — hereda del contenedor. Tokens: acción `text/brand`
+   (via Button ghost), ícono close `icon/brand` (via IconButton ghost).
+──────────────────────────────────────────────────────────────────────────── */
+
+.snackbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--internalLayout-space-100); /* 8px */
+  flex-shrink: 0;
+}

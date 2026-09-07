@@ -1,0 +1,21 @@
+/* ── SliderHandleIndicator ─────────────────────────────────────────────────
+   Building block interno de RangeSlider. Figma:
+   `_building_blocks_slider_handle_indicator`. Burbuja con el valor actual.
+──────────────────────────────────────────────────────────────────────────── */
+
+.slider-handle-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  padding: var(--internalLayout-space-100); /* 8px */
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--Elevation-elevation-1);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+  white-space: nowrap;
+}

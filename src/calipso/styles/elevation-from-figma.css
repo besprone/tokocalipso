@@ -1,0 +1,27 @@
+/* Generated from src/tokens/figma-elevation-tokens.ts — npm run tokens:elevation */
+:root {
+  --elevation-0-web-css-x: 0px;
+  --elevation-0-web-css-y: 0px;
+  --elevation-0-web-css-blur: 0px;
+  --elevation-0-web-css-propagation: 0px;
+  --elevation-0-web-css-color: transparent;
+  --elevation-1-web-css-x: 0px;
+  --elevation-1-web-css-y: 2px;
+  --elevation-1-web-css-blur: 4px;
+  --elevation-1-web-css-propagation: 0px;
+  --elevation-1-web-css-color: rgba(28, 27, 32, 0.1);
+  --elevation-2-web-css-x: 0px;
+  --elevation-2-web-css-y: 3px;
+  --elevation-2-web-css-blur: 8px;
+  --elevation-2-web-css-propagation: 0px;
+  --elevation-2-web-css-color: rgba(28, 27, 32, 0.12);
+  --elevation-3-web-css-x: 0px;
+  --elevation-3-web-css-y: 6px;
+  --elevation-3-web-css-blur: 12px;
+  --elevation-3-web-css-propagation: 0px;
+  --elevation-3-web-css-color: rgba(0, 0, 0, 0.16);
+  --Elevation-elevation-0: var(--elevation-0-web-css-x) var(--elevation-0-web-css-y) var(--elevation-0-web-css-blur) var(--elevation-0-web-css-propagation) var(--elevation-0-web-css-color);
+  --Elevation-elevation-1: var(--elevation-1-web-css-x) var(--elevation-1-web-css-y) var(--elevation-1-web-css-blur) var(--elevation-1-web-css-propagation) var(--elevation-1-web-css-color);
+  --Elevation-elevation-2: var(--elevation-2-web-css-x) var(--elevation-2-web-css-y) var(--elevation-2-web-css-blur) var(--elevation-2-web-css-propagation) var(--elevation-2-web-css-color);
+  --Elevation-elevation-3: var(--elevation-3-web-css-x) var(--elevation-3-web-css-y) var(--elevation-3-web-css-blur) var(--elevation-3-web-css-propagation) var(--elevation-3-web-css-color);
+}

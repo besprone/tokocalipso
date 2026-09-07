@@ -1,0 +1,38 @@
+/* ── ItemTrailing ────────────────────────────────────────────────────────────
+   Bloque del borde derecho de un row. Figma: `_building_blocks_trailing`.
+
+     [data-type="icon"]      IconButton ghost (chevron) o icono decorativo · 24px
+     [data-type="checkbox"]  <Checkbox> centrado
+     [data-type="radio"]     <Radio> centrado
+     [data-type="switch"]    <Switch> (52×32)
+     [data-type="badge"]     slot — un <Badge>
+     [data-type="text"]      texto derecha · Body/lg-semiemphasized · text/primary
+──────────────────────────────────────────────────────────────────────────── */
+
+.item-trailing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.item-trailing__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--semantic-color-icon-brand);
+}
+.item-trailing__icon > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+
+.item-trailing__text {
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-lg-semiemphasized-size); /* 16 */
+  line-height: var(--typography-body-lg-semiemphasized-line-height); /* 24 */
+  font-weight: var(--typography-body-lg-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+  text-align: end;
+  white-space: nowrap;
+}

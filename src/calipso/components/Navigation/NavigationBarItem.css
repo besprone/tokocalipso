@@ -1,0 +1,99 @@
+/* ── NavigationBarItem ───────────────────────────────────────────────────────
+   Building block interno de `NavigationBar`.
+   Figma: `_building_blocks_navigation_bar_navitem`.
+
+     .nav-bar-item            <button> columna — icono + label
+       .nav-bar-item__icon      contenedor del glifo (padding + radius)
+         .nav-bar-item__glyph   svg 24px (icon / emphasis)
+         .nav-bar-item__avatar  imagen de perfil circular (avatar)
+       .nav-bar-item__label     Body/sm-semiemphasized, 1 línea con ellipsis
+
+   El color de icono se hereda vía `currentColor`; `[data-selected]` conmuta
+   icono + label a `brand`.
+──────────────────────────────────────────────────────────────────────────── */
+
+.nav-bar-item {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--internalLayout-space-25); /* 2px */
+  padding-block: var(--internalLayout-space-75); /* 6px */
+  padding-inline: var(--internalLayout-space-100); /* 8px — respiro lateral en el tap target */
+
+  font-family: var(--typography-font-family);
+  color: var(--semantic-color-icon-secondary);
+}
+
+.nav-bar-item[data-selected] {
+  color: var(--semantic-color-icon-brand);
+}
+
+/* ── contenedor del glifo ─────────────────────────────────────────────────── */
+.nav-bar-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--internalLayout-space-50) var(--internalLayout-space-100); /* 4px 8px */
+  border-radius: var(--controls-radius-100); /* 8px */
+}
+
+.nav-bar-item__glyph {
+  display: flex;
+}
+.nav-bar-item__glyph > svg {
+  display: block;
+  inline-size: 24px;
+  block-size: 24px;
+  fill: currentColor;
+}
+
+.nav-bar-item__avatar {
+  display: flex;
+  align-items: center;
+  overflow: clip;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: var(--circular-items-radius-round);
+}
+.nav-bar-item__avatar > * {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* ── label ───────────────────────────────────────────────────────────────── */
+.nav-bar-item__label {
+  max-inline-size: 100%;
+  max-block-size: 17px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: var(--typography-body-sm-semiemphasized-size); /* 12px */
+  line-height: var(--typography-body-sm-semiemphasized-line-height); /* 17px */
+  font-weight: var(--typography-body-sm-semiemphasized-weight); /* 600 */
+  text-align: center;
+  color: var(--semantic-color-text-secondary);
+}
+.nav-bar-item[data-selected] .nav-bar-item__label {
+  color: var(--semantic-color-text-brand);
+}
+
+/* ── type="emphasis" — círculo FAB, sin label ─────────────────────────────── */
+.nav-bar-item[data-type='emphasis'] {
+  padding-block: var(--internalLayout-space-0, 0);
+}
+.nav-bar-item[data-type='emphasis'] .nav-bar-item__icon {
+  padding: var(--internalLayout-space-125); /* 10px */
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-brand);
+  color: var(--semantic-color-icon-onBrand);
+}

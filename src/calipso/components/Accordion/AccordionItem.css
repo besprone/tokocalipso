@@ -1,0 +1,165 @@
+/* ── AccordionItem ────────────────────────────────────────────────────────
+   Unidad expandible. Figma: `_building_blocks_accordion_item`.
+
+   .accordion-item                       bg/surface
+     .accordion-item__header               <button> — leading? + ItemContent (label+supporting) + chevron
+                                            (leading vive DENTRO del botón para que el overlay de
+                                            hover/pressed — ::after, inset:0 — cubra toda la fila,
+                                            igual que `ListItem`)
+       .accordion-item__leading              (opcional) self-stretch
+     .accordion-item__content              alto animado (spring) — description + slot + actions
+       .accordion-item__content-row          contentLeading? + content-block
+──────────────────────────────────────────────────────────────────────────── */
+
+.accordion-item {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  inline-size: 100%;
+  background-color: var(--semantic-color-bg-surface);
+  font-family: var(--typography-font-family);
+}
+
+.accordion-item__leading {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  margin-inline-start: var(--layout-stack-block); /* 16px — inset del leading respecto al borde del item */
+  /* el header usa align-items:center (para centrar label+chevron) — sin
+     este align-self propio, `leading` se encoge a su contenido (24px, el
+     ícono) y el `PaymentStatusIndicator` de adentro no tiene alto real para
+     estirarse, aunque él mismo ya declare su propio align-self:stretch */
+  align-self: stretch;
+}
+
+.accordion-item__header {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-150); /* 12px */
+  min-inline-size: 0;
+  min-block-size: 56px;
+  padding-inline: var(--layout-stack-block); /* 16px */
+  cursor: pointer;
+}
+/* si hay leading, este ya carga su propio inset de 16px (margin-inline-start)
+   y el `gap` del header ya aporta el espacio de 12px hasta el label — el
+   header no necesita su propio padding-inline-start en ese caso */
+.accordion-item__header:has(> .accordion-item__leading) {
+  padding-inline-start: 0;
+}
+.accordion-item__header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: transparent;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .accordion-item__header:hover::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.accordion-item__header:active::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.accordion-item__header:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: -2px;
+}
+
+/* reutiliza ItemContent (`_building_blocks_content`) — solo necesita crecer
+   para empujar el chevron al final del header */
+.accordion-item__content-text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* reservado 24×24 (mismo tamaño que el glifo) — el hit-target del header ya
+   es toda la fila, así que no necesita su propia caja de 48px */
+.accordion-item__chevron {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+}
+.accordion-item__chevron-icon {
+  inline-size: 24px;
+  block-size: 24px;
+  color: var(--semantic-color-icon-brand);
+  transition: transform var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.accordion-item[data-expanded] .accordion-item__chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* ── content (alto animado por JS — ver AccordionItem.tsx) ─────────────────── */
+.accordion-item__content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.accordion-item__content-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--internalLayout-space-150); /* 12px */
+  padding-inline-start: var(--layout-container-inline); /* 16px */
+  padding-inline-end: var(--layout-stack-block); /* 16px */
+}
+
+.accordion-item__content-leading {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+.accordion-item__content-block {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: stretch;
+  min-inline-size: 0;
+  gap: var(--componentSpacing-space-200); /* 16px */
+  /* deviación deliberada: Figma no define aire arriba (el contenido arranca
+     pegado al header), pero se ve muy apretado — un respiro chico mejora
+     la lectura. Va en `content-block`, NO en `content-row`: si estuviera en
+     el row empujaría también a `content-leading` (la línea puente), dejando
+     un hueco visible respecto a la línea del header — el respiro es del
+     texto/KeyValue, la línea debe seguir pegada al header. */
+  padding-block-start: var(--internalLayout-space-100); /* 8px */
+  padding-block-end: var(--componentSpacing-space-200); /* 16px */
+}
+
+.accordion-item__description {
+  margin: 0;
+  color: var(--semantic-color-text-secondary);
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+}
+
+.accordion-item__slot {
+  color: var(--semantic-color-text-primary);
+}
+
+.accordion-item__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--componentSpacing-space-200); /* 16px */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-item__header::after,
+  .accordion-item__chevron-icon {
+    transition: none;
+  }
+}

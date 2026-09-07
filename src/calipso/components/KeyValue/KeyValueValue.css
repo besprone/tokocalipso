@@ -1,0 +1,135 @@
+/* ── KeyValueValue ────────────────────────────────────────────────────────
+   Dato principal. Figma: `_building_blocks_value` (+ `_building_blocks_menu_button`).
+
+   .key-value-value                    flex-col items-end · flex:1
+     .key-value-value__content           text · promo? · trailing? (una fila)
+     .key-value-value__toggle            (expandable) "Ver completo/menos" + chevron
+──────────────────────────────────────────────────────────────────────────── */
+
+.key-value-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--internalLayout-space-25); /* 2px */
+  /* prioridad: mantiene su ancho natural (no se lo cede a la key) — ver nota
+     en KeyValueKey.css. */
+  flex: 0 0 auto;
+  min-inline-size: 0;
+}
+/* `expandable` invierte la prioridad: el value ES el contenido largo, así
+   que absorbe el espacio disponible y trunca (ellipsis) — la key (label
+   corta: "Sello digital", "Hash") mantiene su ancho natural. Ver el ajuste
+   simétrico sobre la key en KeyValueRow.css. */
+.key-value-value[data-expandable] {
+  flex: 0 1 auto;
+}
+
+.key-value-value__content {
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  inline-size: 100%;
+}
+
+.key-value-value__text {
+  margin: 0;
+  /* shrink-only, sin grow — mismo motivo que KeyValueKey.css: evita un hueco
+     invisible entre el texto y el `trailing` cuando el contenedor es más
+     ancho que el texto */
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+  color: var(--semantic-color-text-primary);
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+}
+/* expandido → revela el contenido completo, multilínea. `overflow-wrap`
+   porque los valores típicos acá (sellos digitales, hashes) no tienen
+   espacios donde partir la línea de forma natural. */
+.key-value-value[data-expanded] .key-value-value__text {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.key-value-value[data-color='accent'] .key-value-value__text {
+  color: var(--semantic-color-text-accentPrimary);
+}
+.key-value-value[data-emphasis] .key-value-value__text {
+  font-size: var(--typography-headline-xs-emphasized-size); /* 22 */
+  line-height: var(--typography-headline-xs-emphasized-line-height); /* 30 */
+  font-weight: var(--typography-headline-xs-emphasized-weight); /* 700 */
+}
+
+.key-value-value__promo {
+  flex-shrink: 0;
+  color: var(--semantic-color-text-accentPrimary);
+  font-size: var(--typography-body-md-emphasized-size); /* 14 */
+  line-height: var(--typography-body-md-emphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-emphasized-weight); /* 700 */
+}
+
+.key-value-value__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--semantic-color-icon-secondary);
+}
+.key-value-value__trailing svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+/* ── toggle "ver completo / ver menos" ──────────────────────────────────── */
+.key-value-value__toggle {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--internalLayout-space-25); /* 2px */
+  min-block-size: 44px; /* target táctil */
+  cursor: pointer;
+  color: var(--semantic-color-text-brand);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+}
+@media (hover: hover) {
+  .key-value-value__toggle:hover {
+    color: var(--semantic-color-text-linkHover);
+  }
+}
+.key-value-value__toggle:active {
+  color: var(--semantic-color-text-linkPressed);
+}
+.key-value-value__toggle:disabled {
+  color: var(--semantic-color-text-disabled);
+  cursor: not-allowed;
+}
+.key-value-value__toggle:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--circular-items-radius-round);
+}
+
+.key-value-value__chevron {
+  flex-shrink: 0;
+  inline-size: 16px;
+  block-size: 16px;
+  transition: transform var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.key-value-value[data-expanded] .key-value-value__chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key-value-value__chevron {
+    transition: none;
+  }
+}

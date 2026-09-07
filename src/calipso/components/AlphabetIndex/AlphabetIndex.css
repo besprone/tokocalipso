@@ -1,0 +1,127 @@
+/* ── AlphabetIndex ───────────────────────────────────────────────────────────
+   Índice alfabético vertical al borde derecho de una lista larga.
+   Figma: `components_alphabet_index`.
+
+     .alphabet-index          wrapper (posición la pone el contenedor)
+       .alphabet-index__list    columna role="toolbar" — superficie del gesto
+         .alphabet-index__letter  <button> por letra · Body/xs-emphasized · text/brand
+       .alphabet-index__overlay burbuja opcional con la letra actual (drag)
+
+   Único token: `semantic/color/text/brand`. El scroll de la lista lo hace el
+   consumidor vía `onLetterChange`.
+──────────────────────────────────────────────────────────────────────────── */
+
+.alphabet-index {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.alphabet-index__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 16px;
+  touch-action: none; /* el drag vertical es del índice, no del scroll */
+}
+.alphabet-index[data-size='compact'] .alphabet-index__list {
+  inline-size: 12px;
+}
+
+/* ── letra ───────────────────────────────────────────────────────────────── */
+.alphabet-index__letter {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 15px;
+
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-xs-emphasized-size); /* 10 */
+  line-height: var(--typography-body-xs-emphasized-line-height); /* 15 */
+  font-weight: var(--typography-body-xs-emphasized-weight); /* 700 */
+  color: var(--semantic-color-text-brand);
+  text-align: center;
+
+  border-radius: var(--circular-items-radius-round);
+  transition:
+    transform var(--linear-200-duration-ms) var(--linear-200-easing),
+    background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.alphabet-index[data-size='compact'] .alphabet-index__letter {
+  min-block-size: 13px;
+}
+
+.alphabet-index__letter[data-disabled] {
+  color: var(--semantic-color-text-disabled);
+  cursor: default;
+}
+
+.alphabet-index__letter[data-active] {
+  background-color: var(--semantic-color-bg-brandSoft);
+}
+
+.alphabet-index__letter[data-pressed] {
+  transform: scale(1.1);
+  background-color: var(--semantic-color-bg-brandSoft);
+}
+
+.alphabet-index__letter:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: 1px;
+}
+
+/* ── overlay (burbuja con la letra actual) ───────────────────────────────── */
+.alphabet-index__overlay {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: var(--internalLayout-space-100); /* 8px */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--Elevation-elevation-2);
+
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-headline-sm-emphasized-size); /* 24 */
+  line-height: var(--typography-headline-sm-emphasized-line-height); /* 32 */
+  font-weight: var(--typography-headline-sm-emphasized-weight); /* 700 */
+  color: var(--semantic-color-text-brand);
+
+  animation: alphabet-index-overlay-in 100ms var(--linear-200-easing);
+}
+
+@keyframes alphabet-index-overlay-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alphabet-index__letter {
+    transition: none;
+  }
+  .alphabet-index__letter[data-pressed] {
+    transform: none;
+  }
+  .alphabet-index__overlay {
+    animation: none;
+  }
+}

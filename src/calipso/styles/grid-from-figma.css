@@ -1,0 +1,12 @@
+/* Generated from src/tokens/figma-grid-tokens.ts — npm run tokens:grid */
+:root {
+  --mobile-columns: 4;
+  --mobile-margin: 16px;
+  --mobile-gutter: 16px;
+  --tablet-columns: 8;
+  --tablet-margin: 24px;
+  --tablet-gutter: 24px;
+  --desktop-columns: 12;
+  --desktop-margin: 40px;
+  --desktop-gutter: 24px;
+}

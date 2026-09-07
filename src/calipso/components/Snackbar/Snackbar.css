@@ -1,0 +1,81 @@
+/* ── Snackbar ─────────────────────────────────────────────────────────────
+   Card de feedback temporal no bloqueante. Figma: `components_snackbar`.
+
+   Las variantes solo cambian fondo + borde del card; el mensaje siempre
+   `text/primary` y la acción `text/brand` (sin ícono leading). elevation-3,
+   radius `controls/radius-100` (8px), borde 1px.
+
+   El gutter de safe-area (16px en Figma) y el posicionamiento fixed/portal
+   son responsabilidad de quien monta el Snackbar, no del card.
+──────────────────────────────────────────────────────────────────────────── */
+
+.snackbar {
+  box-sizing: border-box;
+  max-width: 360px;
+  width: 100%;
+  border: 1px solid var(--_border);
+  border-radius: var(--controls-radius-100); /* 8px */
+  background-color: var(--_bg);
+  box-shadow: var(--Elevation-elevation-3);
+}
+
+.snackbar[data-variant='neutral'] {
+  --_bg: var(--semantic-color-bg-surface);
+  --_border: var(--semantic-color-border-subtle);
+}
+.snackbar[data-variant='success'] {
+  --_bg: var(--semantic-color-bg-successMuted);
+  --_border: var(--semantic-color-border-success);
+}
+.snackbar[data-variant='warning'] {
+  --_bg: var(--semantic-color-bg-warningMuted);
+  --_border: var(--semantic-color-border-warning);
+}
+.snackbar[data-variant='error'] {
+  --_bg: var(--semantic-color-bg-dangerMuted);
+  --_border: var(--semantic-color-border-dangerSoft);
+}
+.snackbar[data-variant='info'] {
+  --_bg: var(--semantic-color-bg-infoMuted);
+  --_border: var(--semantic-color-border-info);
+}
+
+/* ── entrada / salida (modo animado: prop `open`) ─────────────────────────
+   Entra deslizando desde arriba (-16px) + fade in. Sale deslizando hacia
+   abajo (su alto + 16px) + fade out; `forwards` mantiene el estado final
+   hasta que el padre desmonta en `onExited`. Eje: bottom (Figma prototype).
+──────────────────────────────────────────────────────────────────────────── */
+.snackbar[data-state='entering'] {
+  animation: snackbar-in var(--linear-200-duration-ms) ease;
+}
+.snackbar[data-state='exiting'] {
+  animation: snackbar-out var(--linear-200-duration-ms) ease forwards;
+}
+
+@keyframes snackbar-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes snackbar-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(calc(100% + 16px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snackbar[data-state='entering'],
+  .snackbar[data-state='exiting'] {
+    animation-duration: 1ms; /* dispara onAnimationEnd sin movimiento visible */
+  }
+}

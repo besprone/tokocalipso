@@ -1,0 +1,21 @@
+/* ── QuickActionGroup ─────────────────────────────────────────────────────
+   Fila balanceada de `QuickAction`. Figma: `patterns_quick_actions_group`.
+
+   .quick-action-group          flex row · gap 16 · padding 16 · centrado
+     .quick-action ·N             flex:1 1 0 — mismo ancho cada una
+──────────────────────────────────────────────────────────────────────────── */
+
+.quick-action-group {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--componentSpacing-space-200); /* 16px */
+  padding: var(--componentSpacing-space-200); /* 16px */
+  inline-size: 100%;
+}
+
+.quick-action-group > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}

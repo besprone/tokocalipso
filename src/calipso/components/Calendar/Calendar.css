@@ -1,0 +1,81 @@
+/* ── Calendar ──────────────────────────────────────────────────────────────
+   Componente compuesto de selección de fecha. Figma: `components_calendar`.
+   6 variantes = surface (none · card) × size (xs · sm) × type (day · year).
+
+   Layout (espeja Figma):
+     .calendar            flex col · surface card = bg/surface + padding + radius + elevation-2
+     .calendar__header    fila: CalendarMenuButton  ·  nav (2 IconButton ghost sm)
+     .calendar__weekdays  fila de 7 celdas con la inicial del día (Body/lg)
+     .calendar__grid      6 filas de CalendarDayCell
+     .calendar__years     grid 3 columnas de CalendarYearCell
+
+   El tamaño de celda (48/40) sale de `data-size`; el resto es layout tokens.
+──────────────────────────────────────────────────────────────────────────── */
+
+.calendar {
+  display: inline-flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.calendar[data-size='sm'] {
+  --_cell: 48px;
+}
+.calendar[data-size='xs'] {
+  --_cell: 40px;
+}
+
+.calendar[data-surface='card'] {
+  background-color: var(--semantic-color-bg-surface);
+  padding: var(--componentSpacing-space-200); /* 16px */
+  border-radius: var(--containers-radius-200); /* 16px */
+  box-shadow: var(--Elevation-elevation-2);
+}
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+.calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(var(--_cell) * 7);
+}
+
+.calendar__nav {
+  display: flex;
+  align-items: center;
+}
+
+/* ── weekday header row ─────────────────────────────────────────────────── */
+.calendar__weekdays {
+  display: flex;
+}
+.calendar__weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--_cell);
+  height: var(--_cell);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-lg-size);
+  line-height: var(--typography-body-lg-line-height);
+  font-weight: var(--typography-body-lg-weight);
+  color: var(--semantic-color-text-primary);
+}
+
+/* ── day grid ──────────────────────────────────────────────────────────── */
+.calendar__grid {
+  display: flex;
+  flex-direction: column;
+}
+.calendar__week {
+  display: flex;
+}
+
+/* ── year grid ─────────────────────────────────────────────────────────── */
+.calendar__years {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: var(--internalLayout-space-100); /* 8px */
+  row-gap: var(--internalLayout-space-150); /* 12px */
+  width: calc(var(--_cell) * 7);
+  padding-top: var(--internalLayout-space-100);
+}

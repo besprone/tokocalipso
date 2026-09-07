@@ -1,0 +1,248 @@
+/* ── AppBar ────────────────────────────────────────────────────────────────
+   Barra de navegación superior. Figma: `patterns_app_bar`.
+
+   <header.app-bar data-size data-layout data-elevation>
+     <div.app-bar__row>            fila de acciones (min-block-size 48 = IconButton)
+       .app-bar__leading    slot (IconButton / Brand)
+       .app-bar__text       headline + supporting   (solo layout=inline)
+       .app-bar__trailing   slot · flex:1 · justify-end
+     .app-bar__text                (solo layout=stacked, a lo ancho, bajo la fila)
+
+   Alturas Figma (frame): inline sm 64 · md/lg 84 · stacked sm 132 · stacked lg 144.
+   layout=inline  → una fila (leading · texto · trailing); el texto se corta (ellipsis).
+   layout=stacked → fila de acciones + texto debajo; el supporting hace wrap.
+   elevation=raised → sombra elevation-2 (estado on-scroll).
+
+   Ramp de tipografía por (layout × size):
+     inline  sm → Headline/xs (22/30) · Body/sm (12/17)  · gap texto 0
+     inline  md/lg → Display/sm (28/36) · Body/lg (16/24) · gap texto 8
+     stacked sm → Headline/sm (24/32) · Body/md (14/20)   · gap texto 4
+     stacked md/lg → Display/sm (28/36) · Body/lg (16/24)  · gap texto 8
+──────────────────────────────────────────────────────────────────────────── */
+
+.app-bar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  padding-block: var(--internalLayout-space-100); /* 8px */
+  /* padding-inline chico: la caja del IconButton (48) sobresale sobre su glifo
+     (12px interno), así el ícono queda a 16 (sm) / 24 (md·lg) del borde — como
+     en Figma. El texto sin ícono leading recupera esos 12px (ver __text). */
+  padding-inline: var(--internalLayout-space-50); /* 4px */
+  font-family: var(--typography-font-family);
+  /* solo la sombra hace fade; el fondo se vuelve opaco al instante al scrollear */
+  transition: box-shadow var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.app-bar[data-size='md'],
+.app-bar[data-size='lg'] {
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+}
+
+/* elevation=flat → SIN fondo (la barra está en el top, nada se scrollea debajo).
+   elevation=raised (on-scroll) → fondo `bg/surface` opaco + sombra. */
+.app-bar[data-elevation='flat'] {
+  background-color: transparent;
+}
+.app-bar[data-elevation='raised'] {
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--Elevation-elevation-2);
+}
+
+/* ── layout: inline ──────────────────────────────────────────────────────── */
+/* la fila desaparece y sus hijos son items flex del header */
+.app-bar[data-layout='inline'] {
+  min-block-size: 64px; /* piso: 48 (IconButton) + 16 (padding-block) */
+}
+.app-bar[data-layout='inline'][data-size='md'],
+.app-bar[data-layout='inline'][data-size='lg'] {
+  min-block-size: 84px;
+}
+.app-bar[data-layout='inline'] .app-bar__row {
+  display: contents;
+}
+.app-bar[data-layout='inline'][data-size='sm'] {
+  gap: var(--internalLayout-space-50); /* 4px */
+}
+.app-bar[data-layout='inline'][data-size='md'],
+.app-bar[data-layout='inline'][data-size='lg'] {
+  gap: var(--componentSpacing-space-200); /* 16px */
+}
+
+/* ── layout: stacked ─────────────────────────────────────────────────────── */
+.app-bar[data-layout='stacked'] {
+  flex-direction: column;
+  align-items: stretch;
+}
+.app-bar[data-layout='stacked'][data-size='sm'] {
+  gap: var(--internalLayout-space-100); /* 8px fila↔texto */
+  padding-block-end: var(--internalLayout-space-150); /* 12px */
+}
+.app-bar[data-layout='stacked'][data-size='md'],
+.app-bar[data-layout='stacked'][data-size='lg'] {
+  gap: var(--internalLayout-space-150); /* 12px fila↔texto */
+}
+.app-bar[data-layout='stacked'] .app-bar__row {
+  display: flex;
+  align-items: center;
+  min-block-size: 48px;
+  gap: var(--componentSpacing-space-200); /* 16px */
+}
+
+/* ── slots ───────────────────────────────────────────────────────────────── */
+.app-bar__leading {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+/* Elementos sin "overhang" (no aportan padding interno como el IconButton):
+   los separo 12px del borde para que su arista quede en el mismo grid óptico
+   (16 sm / 24 md·lg) que el glifo de un IconButton leading. */
+.app-bar__leading > .brand {
+  margin-inline-start: var(--internalLayout-space-150); /* 12px */
+}
+
+.app-bar__trailing {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* Figma: gap 0 — las cajas de 48 de los IconButton se tocan y su padding
+     interno (12) da los 24px entre glifos. */
+  gap: 0;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+/* mismo criterio que el leading: un Avatar / AvatarAction al final no tiene
+   overhang → 12px del borde para alinear con el glifo del IconButton leading. */
+.app-bar__trailing > .avatar:last-child,
+.app-bar__trailing > .avatar-action:last-child {
+  margin-inline-end: var(--internalLayout-space-150); /* 12px */
+}
+
+/* ── texto ───────────────────────────────────────────────────────────────── */
+.app-bar__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.app-bar[data-layout='inline'] .app-bar__text {
+  flex: 1 1 0;
+}
+/* Alinear el texto al mismo grid óptico que los glifos (16 sm / 24 md·lg):
+   el texto stacked va a lo ancho, y el inline sin ícono leading recupera los
+   12px que el ícono aporta con su padding interno. */
+.app-bar[data-layout='stacked'] .app-bar__text {
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+}
+.app-bar[data-layout='inline'] .app-bar__row > .app-bar__text:first-child {
+  padding-inline-start: var(--internalLayout-space-150); /* 12px */
+}
+.app-bar[data-size='sm'][data-layout='inline'] .app-bar__text {
+  gap: 0;
+}
+.app-bar[data-size='sm'][data-layout='stacked'] .app-bar__text {
+  gap: var(--internalLayout-space-50); /* 4px */
+}
+.app-bar[data-size='md'] .app-bar__text,
+.app-bar[data-size='lg'] .app-bar__text {
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+
+.app-bar__headline {
+  margin: 0;
+  color: var(--semantic-color-text-primary);
+  /* Display/sm-se · Headline/sm-se · Headline/xs-se — todos weight 600. El
+     pipeline no exporta `display-sm-semiemphasized`, se usa el de headline. */
+  font-weight: var(--typography-headline-xs-semiemphasized-weight); /* 600 */
+}
+/* inline → una línea con ellipsis (colapsado, junto al back) ·
+   stacked → hace wrap, igual que el supporting (expandido). Figma: en `stacked`
+   el headline es `w-full` sin nowrap. */
+.app-bar[data-layout='inline'] .app-bar__headline {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-bar[data-layout='stacked'] .app-bar__headline {
+  white-space: normal;
+}
+.app-bar[data-size='sm'][data-layout='inline'] .app-bar__headline {
+  font-size: var(--typography-headline-xs-size); /* 22 */
+  line-height: var(--typography-headline-xs-line-height); /* 30 */
+}
+.app-bar[data-size='sm'][data-layout='stacked'] .app-bar__headline {
+  font-size: var(--typography-headline-sm-size); /* 24 */
+  line-height: var(--typography-headline-sm-line-height); /* 32 */
+}
+.app-bar[data-size='md'] .app-bar__headline,
+.app-bar[data-size='lg'] .app-bar__headline {
+  font-size: var(--typography-display-sm-size); /* 28 */
+  line-height: var(--typography-display-sm-line-height); /* 36 */
+}
+
+.app-bar__supporting {
+  margin: 0;
+  color: var(--semantic-color-text-secondary);
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+}
+/* inline → una línea con ellipsis · stacked → wrap */
+.app-bar[data-layout='inline'] .app-bar__supporting {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-bar[data-layout='stacked'] .app-bar__supporting {
+  white-space: normal;
+}
+.app-bar[data-size='sm'][data-layout='inline'] .app-bar__supporting {
+  font-size: var(--typography-body-sm-size); /* 12 */
+  line-height: var(--typography-body-sm-line-height); /* 17 */
+}
+.app-bar[data-size='sm'][data-layout='stacked'] .app-bar__supporting {
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+}
+.app-bar[data-size='md'] .app-bar__supporting,
+.app-bar[data-size='lg'] .app-bar__supporting {
+  font-size: var(--typography-body-lg-size); /* 16 */
+  line-height: var(--typography-body-lg-line-height); /* 24 */
+}
+
+/* ── configuration (capa opcional · presets de Figma) ────────────────────────
+   `home` · `home-settings` · `resumen-de-saldos` → shell plano, sin overrides.
+   El resto solo ajusta padding / ancho del contenido. */
+
+/* dialog → más aire vertical (Figma: pt 12 / pb 16 · frame 156) */
+.app-bar[data-configuration='dialog'] {
+  padding-block-start: var(--internalLayout-space-150); /* 12px */
+  padding-block-end: var(--componentSpacing-space-200); /* 16px */
+}
+
+/* dialog + navigation(stacked) → contenido en columna centrada.
+   El pipeline aún no trae token de ancho de pantalla → literal 480. */
+.app-bar[data-configuration='dialog'][data-layout='stacked'],
+.app-bar[data-configuration='navigation'][data-layout='stacked'] {
+  align-items: center;
+}
+.app-bar[data-configuration='dialog'][data-layout='stacked'] > *,
+.app-bar[data-configuration='navigation'][data-layout='stacked'] > * {
+  inline-size: 100%;
+  max-inline-size: 480px;
+}
+
+/* section → inset ancho (Figma: block px 40) */
+.app-bar[data-configuration='section'] {
+  padding-inline: var(--sectionSpacing-space-500); /* 40px */
+}
+
+/* dos columnas → contenido centrado ancho (Figma: px 130 en frame de 1011).
+   `max()` degrada al padding normal en pantallas angostas. */
+.app-bar[data-configuration='dos-columnas'] {
+  padding-inline: max(var(--internalLayout-space-150), calc((100% - 752px) / 2));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-bar {
+    transition: none;
+  }
+}

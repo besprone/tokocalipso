@@ -1,0 +1,151 @@
+/* ── SearchField ────────────────────────────────────────────────────────────
+   Campo de búsqueda compacto para app bars y superficies densas.
+   Sin label persistente ni helper text — se apoya en placeholder + aria-label.
+
+   Ejes Figma:
+     variant=appbar       → sin ícono leading
+     variant=inContainer  → lupa leading (semantic/icon/secondary · 20px)
+   Estados (columnas Figma): enabled · hovered · pressed · focused · disabled
+     — overlays vía tokens globales semantic/color/state/* (sin valores propios)
+
+   Capas:
+     .search-field             → wrapper
+     .search-field__container   → shell visual (bg-subtle + radius-200 + borde focus)
+     .search-field__state       → overlay de estado + fila flex (icono · input · clear)
+     .search-field__icon        → lupa leading (solo inContainer)
+     .search-field__input       → input transparente (Typography/Body/lg)
+     .search-field__clear       → IconButton ghost (×), oculto si el input está vacío
+
+   Alto: 48px (min-height del state layer). Padding-x: 12px (space-150).
+──────────────────────────────────────────────────────────────────────────── */
+
+.search-field {
+  display: flex;
+}
+
+/* ── container ───────────────────────────────────────────────────────────── */
+.search-field__container {
+  flex: 1;
+  display: flex;
+  border-radius: var(--containers-radius-200);          /* 16px */
+  background-color: var(--semantic-color-bg-subtle);
+  border: 1px solid transparent;
+  overflow: hidden;
+  cursor: text;
+  transition: border-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* focus → borde semantic/border/focus */
+.search-field__container:focus-within {
+  border-color: var(--semantic-color-border-focus);
+}
+
+/* ── state layer ─────────────────────────────────────────────────────────── */
+.search-field__state {
+  flex: 1;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100);                 /* 8px  */
+  padding: 0 var(--internalLayout-space-150);           /* 12px */
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* overlays de estado — tokens globales de state layer, no valores arbitrarios */
+.search-field:not([data-disabled]):hover .search-field__state {
+  background-color: var(--semantic-color-state-hover);
+}
+.search-field:not([data-disabled]) .search-field__container:active .search-field__state {
+  background-color: var(--semantic-color-state-pressed);
+}
+.search-field__container:focus-within .search-field__state {
+  background-color: var(--semantic-color-state-focus);
+}
+
+/* ── leading icon (lupa) ─────────────────────────────────────────────────── */
+.search-field__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--semantic-color-icon-secondary);
+}
+.search-field__icon > svg {
+  width: 20px;                                          /* size/20 */
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ── input ───────────────────────────────────────────────────────────────── */
+.search-field__input {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  /* Typography/Body/lg */
+  font-family: var(--typography-font-family);
+  font-size:   var(--typography-body-lg-size);          /* 16px */
+  line-height: var(--typography-body-lg-line-height);   /* 24px */
+  font-weight: var(--typography-body-lg-weight);        /* 500  */
+  color: var(--semantic-color-text-primary);
+  caret-color: var(--semantic-color-border-focus);
+}
+
+.search-field__input::placeholder {
+  color: var(--semantic-color-text-secondary);
+  opacity: 1;
+}
+
+/* quitar la X nativa de WebKit — usamos nuestro propio clear */
+.search-field__input::-webkit-search-cancel-button,
+.search-field__input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── clear button ────────────────────────────────────────────────────────── */
+.search-field__clear {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* compensa el padding interno del IconButton ghost para alinear al borde */
+  margin-right: calc(-1 * var(--internalLayout-space-125));
+}
+
+/* oculto mientras el input muestra placeholder (campo vacío) */
+.search-field__input:placeholder-shown ~ .search-field__clear {
+  visibility: hidden;
+}
+
+/* ── disabled ────────────────────────────────────────────────────────────── */
+.search-field[data-disabled] .search-field__container {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.search-field[data-disabled] .search-field__state {
+  background-color: var(--semantic-color-state-disabled);
+}
+.search-field[data-disabled] .search-field__input {
+  color: var(--semantic-color-text-disabled);
+  cursor: not-allowed;
+}
+.search-field[data-disabled] .search-field__input::placeholder {
+  color: var(--semantic-color-text-disabled);
+}
+.search-field[data-disabled] .search-field__icon {
+  color: var(--semantic-color-icon-disabled);
+}
+
+/* ── reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .search-field__container,
+  .search-field__state {
+    transition: none;
+  }
+}

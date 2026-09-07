@@ -1,0 +1,6 @@
+/* Generated from src/tokens/figma-gradient-tokens.ts — npm run tokens:gradients */
+:root {
+  --semantic-gradient-bg-inverse: linear-gradient(180deg, var(--ref-neutral-900) 20%, var(--ref-neutral-700) 100%);
+  --semantic-gradient-bg-primary: linear-gradient(180deg, var(--ref-green-700) 20%, var(--ref-green-500) 100%);
+  --semantic-gradient-bg-accent: linear-gradient(180deg, var(--ref-accent-mint-700) 20%, var(--ref-accent-mint-500) 100%);
+}

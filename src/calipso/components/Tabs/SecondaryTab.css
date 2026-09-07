@@ -1,0 +1,105 @@
+/* ── SecondaryTab ────────────────────────────────────────────────────────────
+   Unidad de `SecondaryTabs`. Figma: `_building_blocks_secondary_tab`.
+   Más ligera que `PrimaryTab`: el indicador es una línea fina full-width.
+
+     .secondary-tab           <button role="tab"> · 48px · bg/surface
+       .secondary-tab__inner    icono + label centrados, gap 8
+         .secondary-tab__icon     24px · icon/secondary → icon/brand si selected
+         .secondary-tab__label    Body/md-semiemphasized · text/secondary → text/brand
+       .secondary-tab__indicator  línea 2px full-width (solo story del building block)
+
+   Overlays de estado en `.secondary-tab::after` (hover/pressed). El indicador
+   real de la navegación es único y lo posiciona `SecondaryTabs`.
+──────────────────────────────────────────────────────────────────────────── */
+
+.secondary-tab {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 48px;
+  background-color: var(--semantic-color-bg-surface);
+  color: var(--semantic-color-icon-secondary);
+}
+.secondary-tab:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.secondary-tab[data-selected] {
+  color: var(--semantic-color-icon-brand);
+}
+
+.secondary-tab__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+  white-space: nowrap;
+}
+.secondary-tab__icon {
+  display: flex;
+}
+.secondary-tab__icon > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+.secondary-tab__label {
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-secondary);
+}
+.secondary-tab[data-selected] .secondary-tab__label {
+  color: var(--semantic-color-text-brand);
+}
+
+/* ── overlay de estado ───────────────────────────────────────────────────── */
+.secondary-tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .secondary-tab:not(:disabled):hover::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.secondary-tab:not(:disabled):active::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.secondary-tab:focus-visible {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: -2px;
+}
+.secondary-tab:focus-visible::after {
+  background-color: var(--semantic-color-state-focus);
+}
+
+/* ── indicador por-tab (solo building block) ─────────────────────────────── */
+.secondary-tab__indicator {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  block-size: 2px;
+  background-color: var(--semantic-color-bg-brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .secondary-tab::after {
+    transition: none;
+  }
+}

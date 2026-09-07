@@ -1,0 +1,77 @@
+/* ── Avatar ──────────────────────────────────────────────────────────────────
+   Foto o iniciales en un círculo. Figma: `components_avatar`.
+
+     [data-mode="img"]        <img object-cover> sobre bg/successSoft
+     [data-mode="initials"]   iniciales text/primary sobre accent{Primary,Secondary}Soft
+     [data-mode="empty"]      círculo bg/successSoft vacío
+──────────────────────────────────────────────────────────────────────────── */
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: clip;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-successSoft);
+  font-family: var(--typography-font-family);
+}
+
+.avatar[data-mode='initials'][data-accent='primary'] {
+  background-color: var(--semantic-color-bg-accentPrimarySoft);
+}
+.avatar[data-mode='initials'][data-accent='secondary'] {
+  background-color: var(--semantic-color-bg-accentSecondarySoft);
+}
+
+/* ── tamaños ─────────────────────────────────────────────────────────────── */
+.avatar[data-size='xs'] {
+  inline-size: 24px;
+  block-size: 24px;
+}
+.avatar[data-size='sm'] {
+  inline-size: 32px;
+  block-size: 32px;
+}
+.avatar[data-size='md'] {
+  inline-size: 40px;
+  block-size: 40px;
+}
+.avatar[data-size='lg'] {
+  inline-size: 48px;
+  block-size: 48px;
+}
+.avatar[data-size='xl'] {
+  inline-size: 56px;
+  block-size: 56px;
+}
+
+/* ── imagen ──────────────────────────────────────────────────────────────── */
+.avatar__img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── iniciales ───────────────────────────────────────────────────────────── */
+.avatar__initials {
+  color: var(--semantic-color-text-primary);
+  font-weight: var(--typography-body-lg-semiemphasized-weight); /* 600 */
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+.avatar[data-size='xs'] .avatar__initials {
+  font-size: var(--typography-body-sm-semiemphasized-size); /* 12 */
+}
+.avatar[data-size='sm'] .avatar__initials {
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+}
+.avatar[data-size='md'] .avatar__initials,
+.avatar[data-size='lg'] .avatar__initials {
+  font-size: var(--typography-body-lg-semiemphasized-size); /* 16 */
+}
+.avatar[data-size='xl'] .avatar__initials {
+  font-size: var(--typography-headline-xs-semiemphasized-size); /* 22 */
+}

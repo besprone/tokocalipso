@@ -1,0 +1,41 @@
+/* ── SecondaryTabs ───────────────────────────────────────────────────────────
+   Navegación secundaria dentro de una sección ya definida por `PrimaryTabs`.
+   Figma: `components_secondary_tabs`.
+
+     .secondary-tabs           contenedor — bg/surface + border-bottom border/default
+       .secondary-tabs__track    fila de tabs (role="tablist"), position: relative
+         .secondary-tab ·N       cada una flex: 1 1 0 (ancho equitativo)
+         .secondary-tabs__indicator  línea 2px única — full-width de la tab activa
+
+   El indicador usa `transform: translateX()` (animado, integrador de muelle en
+   `src/lib/spring.ts`) y su `width` = ancho de la tab activa. Solo eje X.
+   Más delgado (2px) y full-width vs el de `PrimaryTabs` (4px, 32px, redondeado).
+──────────────────────────────────────────────────────────────────────────── */
+
+.secondary-tabs {
+  inline-size: 100%;
+  background-color: var(--semantic-color-bg-surface);
+  border-block-end: 1px solid var(--semantic-color-border-default);
+}
+
+.secondary-tabs__track {
+  position: relative;
+  display: flex;
+  min-block-size: 48px;
+}
+.secondary-tabs__track > .secondary-tab {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+.secondary-tabs__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  inline-size: 0;
+  block-size: 2px;
+  background-color: var(--semantic-color-bg-brand);
+  transform: translateX(0);
+  will-change: transform;
+  pointer-events: none;
+}

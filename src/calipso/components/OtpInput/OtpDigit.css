@@ -1,0 +1,134 @@
+/* ── OtpDigit ───────────────────────────────────────────────────────────────
+   Building block: un cuadro = un dígito. Figma: `_buildingblocks_otp_input`.
+   24 variantes = 6 state × 2 text configuration (empty/input) × 2 size (sm/md).
+
+   Capas (espeja Figma):
+     .otp-digit          → shell: bg + borde + radius (dimensiones por size)
+     .otp-digit__state   → overlay de estado + padding + centrado
+     .otp-digit__input   → input transparente, dígito centrado (Headline)
+
+   Estados — overlays de tokens globales, sin valores arbitrarios:
+     enabled  → bg subtle, borde transparente
+     hovered  → + overlay state/hover                    (:hover)
+     focused  → + overlay state/focus + borde state/focusRing   (:focus-within)
+     pressed  → + overlay state/pressed                  (:active)
+     disabled → + overlay state/disabled, texto disabled ([data-disabled])
+     error    → borde border/danger, texto text/danger   ([data-error])
+   El prop `state` fuerza el estado (solo stories) vía [data-state].
+──────────────────────────────────────────────────────────────────────────── */
+
+.otp-digit {
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  width: var(--_w);
+  height: var(--_h);
+  border-radius: var(--_radius);
+  background-color: var(--semantic-color-bg-subtle);
+  border: 2px solid transparent;
+  overflow: hidden;
+  transition: border-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* ── size md ─────────────────────────────────────────────────────────────── */
+.otp-digit[data-size='md'] {
+  --_w: 48px;
+  --_h: 56px;
+  --_px: var(--internalLayout-space-150);                    /* 12px */
+  --_radius: var(--containers-radius-200);                   /* 16px */
+  --_font-size:   var(--typography-headline-sm-size);        /* 24px */
+  --_line-height: var(--typography-headline-sm-line-height); /* 32px */
+}
+
+/* ── size sm ─────────────────────────────────────────────────────────────── */
+.otp-digit[data-size='sm'] {
+  --_w: 36px;
+  --_h: 48px;
+  --_px: var(--internalLayout-space-125);                    /* 10px */
+  --_radius: var(--controls-radius-150);                     /* 12px */
+  --_font-size:   var(--typography-headline-xs-size);        /* 22px */
+  --_line-height: var(--typography-headline-xs-line-height); /* 30px */
+}
+
+/* ── state layer ─────────────────────────────────────────────────────────── */
+.otp-digit__state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--internalLayout-space-50) var(--_px);        /* py 4px */
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* ── input ───────────────────────────────────────────────────────────────── */
+.otp-digit__input {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--typography-font-family);
+  font-size:   var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--typography-headline-sm-weight);         /* 500 */
+  color: var(--semantic-color-text-primary);
+  caret-color: var(--semantic-color-state-focusRing);
+}
+
+/* ── hovered ─────────────────────────────────────────────────────────────── */
+.otp-digit:not([data-disabled]):not([data-error]):hover .otp-digit__state,
+.otp-digit[data-state='hovered'] .otp-digit__state {
+  background-color: var(--semantic-color-state-hover);
+}
+
+/* ── pressed ─────────────────────────────────────────────────────────────── */
+.otp-digit:not([data-disabled]):not([data-error]):active .otp-digit__state,
+.otp-digit[data-state='pressed'] .otp-digit__state {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* ── focused (gana sobre hover/pressed) ──────────────────────────────────── */
+.otp-digit:not([data-error]):focus-within,
+.otp-digit[data-state='focused'] {
+  border-color: var(--semantic-color-state-focusRing);
+}
+.otp-digit:not([data-disabled]):not([data-error]):focus-within .otp-digit__state,
+.otp-digit[data-state='focused'] .otp-digit__state {
+  background-color: var(--semantic-color-state-focus);
+}
+
+/* ── error (aplica a todos los cuadros del patrón, no a uno) ──────────────── */
+.otp-digit[data-error],
+.otp-digit[data-state='error'] {
+  border-color: var(--semantic-color-border-danger);
+}
+.otp-digit[data-error] .otp-digit__input,
+.otp-digit[data-state='error'] .otp-digit__input {
+  color: var(--semantic-color-text-danger);
+  caret-color: var(--semantic-color-text-danger);
+}
+
+/* ── disabled ────────────────────────────────────────────────────────────── */
+.otp-digit[data-disabled] .otp-digit__state,
+.otp-digit[data-state='disabled'] .otp-digit__state {
+  background-color: var(--semantic-color-state-disabled);
+}
+.otp-digit[data-disabled] .otp-digit__input,
+.otp-digit[data-state='disabled'] .otp-digit__input {
+  color: var(--semantic-color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ── reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .otp-digit,
+  .otp-digit__state {
+    transition: none;
+  }
+}

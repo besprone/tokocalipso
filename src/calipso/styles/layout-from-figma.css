@@ -1,0 +1,8 @@
+/* Generated from src/tokens/figma-layout-tokens.ts — npm run tokens:layout */
+:root {
+  --layout-container-inline: 16px;
+  --layout-stack-inlineSm: 8px;
+  --layout-stack-block: 16px;
+  --layout-stack-section: 32px;
+  --layout-content-bottomClearance: 24px;
+}

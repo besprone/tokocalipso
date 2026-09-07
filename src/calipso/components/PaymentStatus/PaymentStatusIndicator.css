@@ -1,0 +1,82 @@
+/* ── PaymentStatusIndicator ──────────────────────────────────────────────────
+   Unidad vertical de un timeline de pagos. Figma: `_building_block_paymentstatus`
+   (+ `_building_block_paymentstatus_line`).
+
+   .payment-status-indicator          flex-col items-center · w 24 · flex:1 (self-stretch)
+     .payment-status-indicator__line    1.2px · flex:1 · color por status (o transparent)
+     .payment-status-indicator__icon    24×24 · círculo (o número si `number`, en future/offer)
+       .payment-status-indicator__check   check blanco (status=paid)
+       .payment-status-indicator__number  texto (future/offer + `number`)
+     .payment-status-indicator__line    (después)
+
+   Puramente decorativo (`aria-hidden`) — el estado real debe comunicarse
+   también por texto en el componente que lo usa (label del AccordionItem).
+──────────────────────────────────────────────────────────────────────────── */
+
+.payment-status-indicator {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  inline-size: 24px;
+  /* el contenedor `leading` centra íconos sueltos por default (align-items:
+     center) — este override individual lo hace ocupar el alto completo
+     igual, sin depender de que el padre use `stretch` */
+  align-self: stretch;
+}
+
+.payment-status-indicator__line {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  inline-size: 1.2px;
+}
+.payment-status-indicator__line[data-status='future'],
+.payment-status-indicator__line[data-status='offer'] {
+  background-color: var(--semantic-color-bg-disabled);
+}
+.payment-status-indicator__line[data-status='next'],
+.payment-status-indicator__line[data-status='paid'] {
+  background-color: var(--semantic-color-icon-success);
+}
+.payment-status-indicator__line[data-status='transparent'] {
+  background-color: transparent;
+}
+
+.payment-status-indicator__icon {
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: var(--circular-items-radius-round);
+}
+.payment-status-indicator__icon[data-status='future'],
+.payment-status-indicator__icon[data-status='offer'] {
+  background-color: var(--semantic-color-bg-surface);
+  border: 1.2px solid var(--semantic-color-bg-disabled);
+}
+.payment-status-indicator__icon[data-status='next'] {
+  background-color: var(--semantic-color-bg-surface);
+  border: 1.2px solid var(--semantic-color-icon-success);
+}
+.payment-status-indicator__icon[data-status='paid'] {
+  background-color: var(--semantic-color-icon-success);
+}
+
+.payment-status-indicator__check {
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--semantic-color-icon-onSuccess);
+}
+
+.payment-status-indicator__number {
+  color: var(--semantic-color-text-secondary);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-sm-semiemphasized-size); /* 12 */
+  line-height: var(--typography-body-sm-semiemphasized-line-height); /* 17 */
+  font-weight: var(--typography-body-sm-semiemphasized-weight); /* 600 */
+}

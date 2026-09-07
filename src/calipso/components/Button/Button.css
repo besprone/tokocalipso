@@ -1,0 +1,209 @@
+/* ── Button ─────────────────────────────────────────────────────────────────
+   Botón principal del sistema. 4 emphasis × 3 sizes × 4 states.
+
+   Estructura (espeja Figma):
+     .button          → outer hit area  (py: 4px en xs/sm, 0 en md, sin px)
+     .button__btn     → visual shell    (bg + border-radius + overflow clip)
+     .button__state   → state overlay   (flex row, content padding, gap)
+     .button__icon    → slot leading    (opcional)
+     .button__label   → texto de acción
+
+   Tamaños (state layer):
+     xs  →  px 12px / py  6px / gap 4px  / Button/md (14px/20lh) / radius-125
+     sm  →  px 16px / py 10px / gap 8px  / Button/md (14px/20lh) / radius-125
+     md  →  px 24px / py 16px / gap 8px  / Button/lg (16px/24lh) / radius-200
+
+   Hit area (outer padding):
+     xs  →  py 8px  (internallayout/space-100)
+     sm  →  py 4px  (internallayout/space-50)
+     md  →  py 0px
+──────────────────────────────────────────────────────────────────────────── */
+
+/* ── reset & base ────────────────────────────────────────────────────────── */
+.button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── tamaños ─────────────────────────────────────────────────────────────── */
+.button[data-size="xs"] {
+  --_state-px:    var(--internalLayout-space-150);         /* 12px */
+  --_state-py:    var(--internalLayout-space-75);          /* 6px  */
+  --_gap:         var(--internalLayout-space-50);           /* 4px  */
+  --_font-size:   var(--typography-button-md-size);        /* 14px */
+  --_line-height: var(--typography-button-md-line-height); /* 20px */
+  --_font-weight: var(--typography-button-md-weight);      /* 600  */
+  --_icon-size:   20px;
+  --_radius:      var(--controls-radius-125);              /* 10px */
+  padding: var(--internalLayout-space-100) 0;              /* 8px  */
+}
+.button[data-size="sm"] {
+  --_state-px:    var(--componentSpacing-space-200);       /* 16px */
+  --_state-py:    var(--internalLayout-space-125);         /* 10px */
+  --_gap:         var(--internalLayout-space-100);          /* 8px  */
+  --_font-size:   var(--typography-button-md-size);        /* 14px */
+  --_line-height: var(--typography-button-md-line-height); /* 20px */
+  --_font-weight: var(--typography-button-md-weight);      /* 600  */
+  --_icon-size:   20px;
+  --_radius:      var(--controls-radius-125);              /* 10px */
+  padding: var(--internalLayout-space-50) 0;               /* 4px  */
+}
+.button[data-size="md"] {
+  --_state-px:    var(--componentSpacing-space-300);       /* 24px */
+  --_state-py:    var(--componentSpacing-space-200);       /* 16px */
+  --_gap:         var(--internalLayout-space-100);          /* 8px  */
+  --_font-size:   var(--typography-button-lg-size);        /* 16px */
+  --_line-height: var(--typography-button-lg-line-height); /* 24px */
+  --_font-weight: var(--typography-button-lg-weight);      /* 600  */
+  --_icon-size:   24px;
+  --_radius:      var(--containers-radius-200);             /* 16px */
+  padding: 0;
+}
+
+/* ── emphasis ────────────────────────────────────────────────────────────── */
+.button[data-emphasis="primary"] {
+  --_btn-bg:    var(--semantic-color-bg-brand);
+  --_text-color:var(--semantic-color-text-onBrand);
+  --_icon-color:var(--semantic-color-icon-onBrand);
+}
+.button[data-emphasis="secondary"] {
+  --_btn-bg:    var(--semantic-color-bg-brandSoft);
+  --_text-color:var(--semantic-color-text-brand);
+  --_icon-color:var(--semantic-color-icon-brand);
+}
+.button[data-emphasis="ghost"] {
+  --_btn-bg:    transparent;
+  --_text-color:var(--semantic-color-text-brand);
+  --_icon-color:var(--semantic-color-icon-brand);
+}
+.button[data-emphasis="destructive"] {
+  --_btn-bg:    var(--semantic-color-bg-danger);
+  --_text-color:var(--semantic-color-text-onDanger);
+  --_icon-color:var(--semantic-color-icon-onDanger);
+}
+
+/* ── btn (capa visual: bg + border-radius + clip) ────────────────────────── */
+.button__btn {
+  background-color: var(--_btn-bg);
+  border-radius: var(--_radius);
+  overflow: hidden;
+}
+
+/* ── state (overlay + contenido) ─────────────────────────────────────────── */
+.button__state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+  padding: var(--_state-py) var(--_state-px);
+  border-radius: var(--_radius);
+  color: var(--_text-color);
+}
+
+/* ── icon slot ───────────────────────────────────────────────────────────── */
+.button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--_icon-color);
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+}
+
+.button__icon > * {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ── label ───────────────────────────────────────────────────────────────── */
+.button__label {
+  font-family: var(--typography-font-family);
+  font-size:   var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  white-space: nowrap;
+}
+
+/* ── spinner: heredar tamaño del slot de ícono ───────────────────────────── */
+.button__state > .circular-progress {
+  flex-shrink: 0;
+}
+
+/* ── estados interactivos ────────────────────────────────────────────────── */
+.button:hover:not(:disabled) .button__state {
+  background-color: var(--semantic-color-state-hover);
+}
+
+.button:active:not(:disabled) .button__state {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+.button:focus-visible .button__btn {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+/* ── disabled ────────────────────────────────────────────────────────────── */
+.button:disabled {
+  cursor: not-allowed;
+}
+
+/* disabled real (sin loading): btn bg → surface en filled emphasis         */
+/* ghost stays transparent — solo cambia el color de texto                  */
+.button[data-emphasis="primary"]:disabled:not([data-loading]) .button__btn,
+.button[data-emphasis="secondary"]:disabled:not([data-loading]) .button__btn,
+.button[data-emphasis="destructive"]:disabled:not([data-loading]) .button__btn {
+  background-color: var(--semantic-color-bg-surface);
+}
+
+/* disabled real (filled): overlay state/disabled en el state layer         */
+.button[data-emphasis="primary"]:disabled:not([data-loading]) .button__state,
+.button[data-emphasis="secondary"]:disabled:not([data-loading]) .button__state,
+.button[data-emphasis="destructive"]:disabled:not([data-loading]) .button__state {
+  background-color: var(--semantic-color-state-disabled);
+}
+
+/* disabled real (todos): texto e ícono desaturados                          */
+.button:disabled:not([data-loading]) {
+  --_text-color: var(--semantic-color-text-disabled);
+  --_icon-color: var(--semantic-color-icon-disabled);
+}
+
+/* ── loading ─────────────────────────────────────────────────────────────── */
+/* Todos los énfasis: btn → surface, state → disabled overlay, texto secondary */
+.button[data-loading] .button__btn {
+  background-color: var(--semantic-color-bg-surface);
+}
+
+.button[data-loading] .button__state {
+  background-color: var(--semantic-color-state-disabled);
+}
+
+/* Ghost loading: no tiene state layer en disabled real, pero sí en loading  */
+/* (el resto de emphasis ya cubre el state layer via [data-loading] arriba)  */
+
+/* texto secundario en loading para todos los énfasis */
+.button[data-loading] {
+  --_text-color: var(--semantic-color-text-secondary);
+}
+
+/* ── spinner: override de arco en destructive ────────────────────────────── */
+/* El indicador de carga en emphasis:destructive usa bg/danger como arc      */
+/* en lugar del brand verde (nota de diseño Figma)                           */
+.button[data-emphasis="destructive"][data-loading] .circular-progress__arc {
+  stroke: var(--semantic-color-bg-danger);
+}
+
+/* ── ancho completo (utilitario opcional) ────────────────────────────────── */
+.button[data-full-width] {
+  width: 100%;
+}

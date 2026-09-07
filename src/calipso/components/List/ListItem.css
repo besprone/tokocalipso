@@ -1,0 +1,141 @@
+/* ── ListItem ────────────────────────────────────────────────────────────────
+   Fila base de `List`. Figma: `_building_blocks_list_item`.
+
+     .list-item              fila — min-h 56, bg surface (brandSoft si selected)
+       .list-item__state       capa de overlay de estado (::after) — hover/pressed/disabled
+         .list-item__container   padding 16/12, gap 12, flex row
+           .list-item__leading     icono ~20px · icon/secondary
+           .list-item__content     <ItemContent size="lg"> — label + supporting
+           .list-item__trailing    icono/acción ~24px · icon/brand
+
+   SIN border-radius: la esquina redondeada la aporta el `List` (overflow: clip
+   + radio). El item solo recorta su propio contenido (`overflow: clip`).
+──────────────────────────────────────────────────────────────────────────── */
+
+.list-item {
+  /* reset para el caso <button> */
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: start;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+
+  display: flex;
+  inline-size: 100%;
+  min-block-size: 56px;
+  overflow: clip;
+  background-color: var(--semantic-color-bg-surface);
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+
+button.list-item {
+  cursor: pointer;
+}
+button.list-item:disabled {
+  cursor: default;
+}
+
+.list-item[data-selected]:not([data-disabled]) {
+  background-color: var(--semantic-color-bg-brandSoft);
+}
+
+/* ── capa de estado / overlay ────────────────────────────────────────────── */
+.list-item__state {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-block-size: 56px;
+}
+
+.list-item__state::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+
+@media (hover: hover) {
+  .list-item:not([data-disabled]):hover .list-item__state::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.list-item:not([data-disabled]):active .list-item__state::after,
+.list-item__state[data-state='pressed']::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.list-item__state[data-state='hovered']::after {
+  background-color: var(--semantic-color-state-hover);
+}
+.list-item[data-disabled] .list-item__state::after {
+  background-color: var(--semantic-color-state-disabled);
+}
+
+/* ── layout interno ─────────────────────────────────────────────────────── */
+.list-item__container {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--internalLayout-space-150); /* 12px */
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+  padding-block: var(--internalLayout-space-150); /* 12px */
+  min-inline-size: 0;
+}
+
+.list-item__leading,
+.list-item__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.list-item__leading {
+  color: var(--semantic-color-icon-secondary);
+}
+.list-item__trailing {
+  color: var(--semantic-color-icon-brand);
+}
+.list-item__leading > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+.list-item__trailing > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+
+/* el bloque de texto lo aporta <ItemContent>; aquí solo se le da el ancho */
+.list-item__content {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+/* ── disabled ───────────────────────────────────────────────────────────── */
+.list-item[data-disabled] .item-content__label,
+.list-item[data-disabled] .item-content__supporting,
+.list-item[data-disabled] .item-content__supporting2,
+.list-item[data-disabled] .item-content__overline {
+  color: var(--semantic-color-text-disabled);
+}
+.list-item[data-disabled] .list-item__leading,
+.list-item[data-disabled] .list-item__trailing {
+  color: var(--semantic-color-icon-disabled);
+}
+
+/* ── foco de teclado ────────────────────────────────────────────────────── */
+.list-item:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list-item,
+  .list-item__state::after {
+    transition: none;
+  }
+}

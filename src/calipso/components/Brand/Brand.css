@@ -1,0 +1,90 @@
+/* ── Brand ─────────────────────────────────────────────────────────────────
+   Logos de marca. Figma: `brand_assets_kugo_logo`.
+
+   `size`   → alto (sm 16 · md 24 · lg 32); el ancho lo da el viewBox.
+   `kubo`   → 3 slots recoloreables por `data-variant`:
+              --_mark   fondo/isotipo (cuadro verde)
+              --_word   letras (kubo.financiero · k.)
+              --_accent punto/cuadro lima
+   `maestro`→ ilustración multicolor fija (solo `original`).
+──────────────────────────────────────────────────────────────────────────── */
+
+.brand {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.brand__svg {
+  display: block;
+  block-size: 100%;
+  inline-size: auto;
+}
+
+.brand[data-size='sm'] {
+  block-size: 16px;
+}
+.brand[data-size='md'] {
+  block-size: 24px;
+}
+.brand[data-size='lg'] {
+  block-size: 32px;
+}
+
+/* ── kubo · recolor por slot ─────────────────────────────────────────────── */
+.brand[data-brand='kubo'] {
+  --_mark: #2e9f30; /* ref/green — sin token semántico de marca aún */
+  --_accent: #d0dd28; /* accentSecondary key */
+}
+.brand[data-brand='kubo'][data-type='primary'] {
+  --_word: #323138;
+}
+.brand[data-brand='kubo'][data-type='secondary'],
+.brand[data-brand='kubo'][data-type='imagotype'] {
+  --_word: #ffffff;
+}
+
+/* variant=one — texto sobre fondo tenue/oscuro (primary) o lockup invertido
+   (secondary/imagotype: badge blanco, palabra verde) */
+.brand[data-brand='kubo'][data-variant='one'][data-type='primary'] {
+  --_word: #ffffff;
+}
+.brand[data-brand='kubo'][data-variant='one'][data-type='secondary'],
+.brand[data-brand='kubo'][data-variant='one'][data-type='imagotype'] {
+  --_mark: #ffffff;
+  --_word: #2e9f30;
+}
+
+/* variant=two — monocromo verde */
+.brand[data-brand='kubo'][data-variant='two'] {
+  --_word: #2e9f30;
+}
+.brand[data-brand='kubo'][data-variant='two'][data-type='secondary'],
+.brand[data-brand='kubo'][data-variant='two'][data-type='imagotype'] {
+  --_mark: transparent;
+  --_accent: #2e9f30;
+}
+
+/* variant=white — todo blanco (fondos oscuros) */
+.brand[data-brand='kubo'][data-variant='white'] {
+  --_mark: #ffffff;
+  --_word: #ffffff;
+  --_accent: #ffffff;
+}
+
+/* variant=gray — monocromo gris */
+.brand[data-brand='kubo'][data-variant='gray'] {
+  --_mark: #656566;
+  --_word: #656566;
+  --_accent: #656566;
+}
+
+.brand[data-brand='kubo'] .brand__mark {
+  fill: var(--_mark);
+}
+.brand[data-brand='kubo'] .brand__word {
+  fill: var(--_word);
+}
+.brand[data-brand='kubo'] .brand__accent {
+  fill: var(--_accent);
+}

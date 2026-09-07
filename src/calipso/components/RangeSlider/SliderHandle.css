@@ -1,0 +1,67 @@
+/* ── SliderHandle ──────────────────────────────────────────────────────────
+   Building block interno de RangeSlider. Figma: `_building_blocks_slider_handle`.
+   states = default · pressed.
+
+   Capas (espeja Figma):
+     .slider-handle          area — hit target 48×48 (sectionSpacing/space-600)
+       ::after               state layer — halo `state/pressed` al presionar
+     .slider-handle__area    contenedor 24px con sombra
+     .slider-handle__knob    círculo visual 20px — bg/brand + borde border/inverse
+──────────────────────────────────────────────────────────────────────────── */
+
+.slider-handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sectionSpacing-space-600); /* 48px hit target */
+  height: var(--sectionSpacing-space-600);
+  touch-action: none;
+}
+
+/* capa de estado — halo detrás del knob, solo en pressed */
+.slider-handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-state-pressed);
+  transform: translate(-50%, -50%) scale(0.6);
+  opacity: 0;
+  transition:
+    transform calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    opacity calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+  pointer-events: none;
+}
+.slider-handle[data-pressed]::after {
+  transform: translate(-50%, -50%) scale(1.9);
+  opacity: 1;
+}
+
+.slider-handle__area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.slider-handle__knob {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-brand);
+  border: 2px solid var(--semantic-color-border-inverse);
+  box-shadow: var(--Elevation-elevation-1);
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slider-handle::after {
+    transition: none;
+  }
+}

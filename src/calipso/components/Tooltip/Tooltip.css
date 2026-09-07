@@ -1,0 +1,93 @@
+/* ── Tooltip ──────────────────────────────────────────────────────────────
+   Panel flotante no interactivo. Figma: `components_tooltip`.
+   Se renderiza en un portal sobre `document.body`; el posicionamiento
+   (`position: fixed`, flip, clamp al viewport) lo calcula el componente.
+
+     .tooltip           superficie — bg/surface · border/default · elevation-3 · radius 12
+       .tooltip__heading  Body/md-semiemphasized (14/20/600) · text/primary
+       .tooltip__content  Body/sm (12/17/500) · text/secondary
+       .tooltip__slot     ícono / imagen opcional
+──────────────────────────────────────────────────────────────────────────── */
+
+.tooltip {
+  box-sizing: border-box;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--internalLayout-space-100); /* 8px */
+  width: 200px;
+  max-width: 200px;
+  max-height: 280px;
+  padding: var(--internalLayout-space-150); /* 12px */
+  border: 1px solid var(--semantic-color-border-default);
+  border-radius: var(--controls-radius-150); /* 12px */
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--Elevation-elevation-3);
+  overflow: clip;
+  pointer-events: none; /* no bloquea el contenido de abajo */
+
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    transform calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+.tooltip[data-state='open'] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* la escala nace desde el borde que mira al ancla */
+.tooltip[data-side='top'] {
+  transform-origin: bottom center;
+}
+.tooltip[data-side='bottom'] {
+  transform-origin: top center;
+}
+.tooltip[data-side='left'] {
+  transform-origin: right center;
+}
+.tooltip[data-side='right'] {
+  transform-origin: left center;
+}
+
+.tooltip__heading {
+  margin: 0;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.tooltip__content {
+  margin: 0;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-sm-size); /* 12 */
+  line-height: var(--typography-body-sm-line-height); /* 17 */
+  font-weight: var(--typography-body-sm-weight); /* 500 */
+  color: var(--semantic-color-text-secondary);
+  overflow-wrap: break-word;
+}
+
+.tooltip__slot {
+  display: flex;
+  max-width: 100%;
+}
+.tooltip__slot > svg,
+.tooltip__slot > img {
+  display: block;
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    transition: none;
+    transform: none;
+  }
+  .tooltip[data-state='open'] {
+    transform: none;
+  }
+}

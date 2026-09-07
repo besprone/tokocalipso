@@ -1,0 +1,19 @@
+/* ── ChipGroup ─────────────────────────────────────────────────────────────
+   Figma: `components_chip_group`. Fila horizontal de FilterChip, single-select,
+   sin wrap. No agrega tokens propios.
+──────────────────────────────────────────────────────────────────────────── */
+
+.chip-group {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chip-group::-webkit-scrollbar {
+  display: none;
+}
+.chip-group > * {
+  flex-shrink: 0;
+}

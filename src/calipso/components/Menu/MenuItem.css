@@ -1,0 +1,136 @@
+/* ── MenuItem ────────────────────────────────────────────────────────────────
+   Item de `Menu`. Figma: `_building_blocks_menu_item`. Más compacto que
+   `ListItem` (padding 12/4). CONSERVA `border-radius: 16` (el `Menu` lo recorta
+   igual, pero el item redondeado se ve cuando está `selected`).
+
+     .menu-item              <button role="menuitem"> — min-h 48, radius 16,
+                             bg/surface (brandSoft si selected), overflow: clip
+       .menu-item__state       capa de overlay (::after) — hover/pressed/disabled
+         .menu-item__container   padding 12/4, gap 8, flex row, items-center
+           .menu-item__leading     icono ~20px · icon/secondary → icon/brand si selected
+           .menu-item__content     <ItemContent size="md"> — label + supporting
+           .menu-item__trailing    icono ~24px · icon/secondary → icon/brand · rota si expanded
+──────────────────────────────────────────────────────────────────────────── */
+
+.menu-item {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  display: flex;
+  inline-size: 100%;
+  min-block-size: 48px;
+  overflow: clip;
+  border-radius: var(--containers-radius-200); /* 16px */
+  background-color: var(--semantic-color-bg-surface);
+  color: var(--semantic-color-icon-secondary);
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.menu-item:disabled {
+  cursor: default;
+}
+.menu-item[data-selected] {
+  background-color: var(--semantic-color-bg-brandSoft);
+  color: var(--semantic-color-icon-brand);
+}
+
+/* ── capa de estado / overlay ────────────────────────────────────────────── */
+.menu-item__state {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-block-size: 48px;
+}
+.menu-item__state::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .menu-item:not(:disabled):hover .menu-item__state::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.menu-item:not(:disabled):active .menu-item__state::after,
+.menu-item__state[data-state='pressed']::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.menu-item__state[data-state='hovered']::after {
+  background-color: var(--semantic-color-state-hover);
+}
+.menu-item[data-disabled] .menu-item__state::after {
+  background-color: var(--semantic-color-state-disabled);
+}
+.menu-item:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: -2px;
+}
+
+/* ── layout interno ─────────────────────────────────────────────────────── */
+.menu-item__container {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+  padding-block: var(--internalLayout-space-50); /* 4px */
+  min-inline-size: 0;
+}
+
+.menu-item__leading,
+.menu-item__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.menu-item__leading > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+.menu-item__trailing > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+.menu-item__content {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+/* menu_item usa label semibold (override de instancia sobre ItemContent md) */
+.menu-item .item-content__label {
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+}
+
+/* chevron de expansión */
+.menu-item__trailing svg {
+  transition: transform var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.menu-item[data-expanded] .menu-item__trailing svg {
+  transform: rotate(180deg);
+}
+
+/* ── disabled ───────────────────────────────────────────────────────────── */
+.menu-item[data-disabled] .item-content__label,
+.menu-item[data-disabled] .item-content__supporting {
+  color: var(--semantic-color-text-disabled);
+}
+.menu-item[data-disabled] {
+  color: var(--semantic-color-icon-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-item,
+  .menu-item__state::after,
+  .menu-item__trailing svg {
+    transition: none;
+  }
+}

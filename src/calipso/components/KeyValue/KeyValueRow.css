@@ -1,0 +1,57 @@
+/* ── KeyValueRow ──────────────────────────────────────────────────────────
+   Fila key + value. Figma: `_building_blocks_key_value_row`.
+
+   .key-value-row                     bg surface|canvas · padding
+     .key-value-row__content            KeyValueKey + KeyValueValue (flex:1 c/u)
+     .key-value-row__trailing           (opcional) icono / Badge al final
+
+   `items-start` siempre (no solo cuando es "interactive"): con contenido de
+   una línea es visualmente idéntico a `center`, y evita reflow al expandir
+   un `KeyValueValue` multilínea. Simplificación deliberada — Figma separa
+   static/interactive con layouts distintos, acá se unificaron sin cambiar
+   el resultado visual.
+──────────────────────────────────────────────────────────────────────────── */
+
+.key-value-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-150); /* 12px */
+  inline-size: 100%;
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+  padding-block: var(--internalLayout-space-150); /* 12px */
+  font-family: var(--typography-font-family);
+}
+.key-value-row[data-background='surface'] {
+  background-color: var(--semantic-color-bg-surface);
+}
+.key-value-row[data-background='canvas'] {
+  background-color: var(--semantic-color-bg-canvas);
+}
+
+.key-value-row__content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--internalLayout-space-150); /* 12px */
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+/* value `expandable` invierte quién absorbe el espacio — ver nota en
+   KeyValueValue.css */
+.key-value-row__content:has(.key-value-value[data-expandable]) .key-value-key {
+  flex: 0 0 auto;
+}
+
+.key-value-row__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* solo afecta íconos bare (fill=currentColor); un Badge define sus propios
+     colores por token y no lo hereda */
+  color: var(--semantic-color-icon-secondary);
+}
+.key-value-row__trailing svg {
+  inline-size: 20px;
+  block-size: 20px;
+}

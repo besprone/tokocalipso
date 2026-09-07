@@ -1,0 +1,20 @@
+/* ── Menu ────────────────────────────────────────────────────────────────────
+   Contenedor de `MenuItem`s. Figma: `components_menu`.
+
+     .menu   flex-col · gap 2px · bg/surface · radius 16 · overflow: clip
+       .menu-item ·N
+
+   Sin sombra (`elevation: flat`): montar sobre una superficie con elevación.
+   Los 2px de gap son solo aire (fondo surface) — no un divisor visible.
+──────────────────────────────────────────────────────────────────────────── */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--internalLayout-space-25); /* 2px */
+  inline-size: 100%;
+  padding: 0;
+  overflow: clip;
+  border-radius: var(--containers-radius-200); /* 16px */
+  background-color: var(--semantic-color-bg-surface);
+}

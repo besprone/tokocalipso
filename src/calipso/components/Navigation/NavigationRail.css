@@ -1,0 +1,211 @@
+/* ── NavigationRail ──────────────────────────────────────────────────────────
+   Navegación lateral vertical para tablet/desktop. Figma:
+   `components_navigation_rail`.
+
+     .navigation-rail          panel · bg/surface · border-inline-end 1px border/default
+       [data-expanded]           260px con labels ↔ 96px solo iconos
+       .navigation-rail__header    logo (expanded) + IconButton (toggle / X)
+       .navigation-rail__segments  <nav> scrollable — secciones
+         .navigation-rail__section
+           .navigation-rail__section-label   text/secondary (expanded)
+           .navigation-rail__items           RailNavItem ·N
+       .navigation-rail__avatar-section
+       .navigation-rail__footer    Button ghost (expanded) / IconButton (colapsado)
+
+   `mode="overlay"` → `.navigation-rail-overlay` fixed + backdrop.
+──────────────────────────────────────────────────────────────────────────── */
+
+.navigation-rail {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--componentSpacing-space-200); /* 16px */
+  block-size: 100%;
+  inline-size: 96px;
+  overflow: clip;
+  padding-block-start: var(--internalLayout-space-150); /* 12px */
+  padding-block-end: var(--componentSpacing-space-300); /* 24px */
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+  background-color: var(--semantic-color-bg-surface);
+  border-inline-end: 1px solid var(--semantic-color-border-default);
+  font-family: var(--typography-font-family);
+  /* colapsar ↔ expandir: anima el ancho con el mismo timing que el overlay */
+  transition:
+    inline-size var(--linear-200-duration-ms) var(--linear-200-easing),
+    padding-inline var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.navigation-rail[data-expanded] {
+  inline-size: 260px;
+  max-inline-size: 260px;
+  padding-inline: 0;
+}
+
+/* ── header ──────────────────────────────────────────────────────────────── */
+.navigation-rail__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.navigation-rail[data-expanded] .navigation-rail__header {
+  justify-content: space-between;
+  padding-inline-start: var(--componentSpacing-space-300); /* 24px */
+  padding-inline-end: var(--internalLayout-space-150); /* 12px */
+}
+.navigation-rail__logo {
+  display: flex;
+  align-items: center;
+  color: var(--semantic-color-text-primary);
+}
+.navigation-rail__logo > svg,
+.navigation-rail__logo > img {
+  block-size: 16px;
+  inline-size: auto;
+}
+
+/* ── segments ────────────────────────────────────────────────────────────── */
+.navigation-rail__segments {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-block-size: 0;
+  overflow-y: auto;
+  overflow-x: clip;
+}
+.navigation-rail[data-expanded] .navigation-rail__segments {
+  gap: var(--componentSpacing-space-200); /* 16px */
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+}
+
+/* Estructura interna en border-box: `.navigation-rail__avatar-section` lleva
+   `inline-size: 100%` + su propio `padding-inline`; sin border-box el padding se
+   suma al 100% y la sección desborda el rail (283 vs 260). */
+.navigation-rail__segments,
+.navigation-rail__section,
+.navigation-rail__section-label,
+.navigation-rail__items,
+.navigation-rail__footer {
+  box-sizing: border-box;
+}
+
+.navigation-rail__section {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  inline-size: 100%;
+}
+.navigation-rail[data-expanded] .navigation-rail__section {
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+.navigation-rail:not([data-expanded]) .navigation-rail__section {
+  align-items: center;
+}
+
+.navigation-rail__section-label {
+  margin: 0;
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+  color: var(--semantic-color-text-secondary);
+}
+.navigation-rail__section-label[data-avatar] {
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+}
+
+.navigation-rail__items {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+}
+.navigation-rail:not([data-expanded]) .navigation-rail__items {
+  align-items: center;
+}
+
+/* ── avatar + footer ─────────────────────────────────────────────────────── */
+.navigation-rail__avatar-section {
+  flex-shrink: 0;
+}
+.navigation-rail[data-expanded] .navigation-rail__avatar-section {
+  gap: var(--internalLayout-space-100); /* 8px */
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+}
+
+.navigation-rail__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.navigation-rail[data-expanded] .navigation-rail__footer {
+  align-items: stretch;
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+}
+.navigation-rail__logout {
+  inline-size: 100%;
+}
+
+/* ── overlay mode ────────────────────────────────────────────────────────── */
+.navigation-rail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+}
+.navigation-rail-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(28, 27, 32, 0.4);
+}
+.navigation-rail-overlay .navigation-rail {
+  position: relative;
+  z-index: 1;
+  block-size: 100%;
+  box-shadow: var(--Elevation-elevation-3);
+}
+
+/* entrada */
+.navigation-rail-overlay[data-state='entering'] .navigation-rail-overlay__backdrop {
+  animation: navigation-rail-backdrop-in var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.navigation-rail-overlay[data-state='entering'] .navigation-rail {
+  animation: navigation-rail-slide-in var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+/* salida — misma animación en reversa; `forwards` mantiene el estado final
+   hasta que el consumidor desmonta (onExited). */
+.navigation-rail-overlay[data-state='exiting'] .navigation-rail-overlay__backdrop {
+  animation: navigation-rail-backdrop-out var(--linear-200-duration-ms) var(--linear-200-easing) forwards;
+}
+.navigation-rail-overlay[data-state='exiting'] .navigation-rail {
+  animation: navigation-rail-slide-out var(--linear-200-duration-ms) var(--linear-200-easing) forwards;
+}
+
+@keyframes navigation-rail-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes navigation-rail-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes navigation-rail-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes navigation-rail-slide-out {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navigation-rail,
+  .navigation-rail-overlay__backdrop,
+  .navigation-rail-overlay .navigation-rail {
+    animation: none;
+    transition: none;
+  }
+}

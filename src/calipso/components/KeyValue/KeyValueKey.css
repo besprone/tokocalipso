@@ -1,0 +1,52 @@
+/* ── KeyValueKey ──────────────────────────────────────────────────────────
+   Etiqueta descriptiva. Figma: `_building_blocks_key`.
+──────────────────────────────────────────────────────────────────────────── */
+
+.key-value-key {
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  /* shrink-only (sin grow): así una key larga envuelve/trunca cuando hace
+     falta, en vez de robarle ancho a un value que sí cabe entero — pero sin
+     inflar la caja cuando la key es corta (`flex-grow` dejaba un hueco
+     invisible entre el texto y el `icon`, ver commit) */
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.key-value-key__text {
+  margin: 0;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--semantic-color-text-secondary);
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+}
+.key-value-key[data-multiline] .key-value-key__text {
+  white-space: normal;
+}
+.key-value-key[data-color='accent'] .key-value-key__text {
+  color: var(--semantic-color-text-accentPrimary);
+}
+/* emphasis solo cambia tipografía (Headline/xs bold) — el color se mantiene
+   (default→secondary, accent→accentPrimary), verificado contra Figma */
+.key-value-key[data-emphasis] .key-value-key__text {
+  font-size: var(--typography-headline-xs-emphasized-size); /* 22 */
+  line-height: var(--typography-headline-xs-emphasized-line-height); /* 30 */
+  font-weight: var(--typography-headline-xs-emphasized-weight); /* 700 */
+}
+
+.key-value-key__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--semantic-color-icon-secondary);
+}
+.key-value-key__icon svg {
+  inline-size: 20px;
+  block-size: 20px;
+}

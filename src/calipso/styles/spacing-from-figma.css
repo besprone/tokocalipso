@@ -1,0 +1,15 @@
+/* Generated from src/tokens/figma-spacing-tokens.ts — npm run tokens:spacing */
+:root {
+  --internalLayout-space-0: 0;
+  --internalLayout-space-25: 2px;
+  --internalLayout-space-50: 4px;
+  --internalLayout-space-75: 6px;
+  --internalLayout-space-100: 8px;
+  --internalLayout-space-125: 10px;
+  --internalLayout-space-150: 12px;
+  --componentSpacing-space-200: 16px;
+  --componentSpacing-space-300: 24px;
+  --sectionSpacing-space-400: 32px;
+  --sectionSpacing-space-500: 40px;
+  --sectionSpacing-space-600: 48px;
+}

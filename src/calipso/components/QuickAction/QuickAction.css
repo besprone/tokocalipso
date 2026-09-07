@@ -1,0 +1,135 @@
+/* ── QuickAction ──────────────────────────────────────────────────────────
+   Ícono + label debajo, TODO un solo <button>. Figma: `patterns_quick_actions_single`.
+
+   .quick-action                    <button> real — flex-col · gap 6 (sm) / 8 (lg)
+     .quick-action__icon-box          fondo + radio + clip (como IconButton__btn)
+       .quick-action__icon-state        overlay + padding del ícono (siempre "lg": 12px/24px)
+     .quick-action__label             Body/sm (sm) / Body/md (lg) · máx 2 líneas
+
+   No anida un `IconButton` (un <button> dentro de otro es HTML inválido) —
+   reproduce su estructura visual directamente, mismo patrón que el chevron
+   de `AccordionItem`. Así el hover/pressed/clic cubren TODO el bloque
+   (ícono + label), sin clics muertos sobre el texto.
+──────────────────────────────────────────────────────────────────────────── */
+
+.quick-action {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--controls-radius-150);
+  gap: var(--internalLayout-space-75); /* 6px */
+  -webkit-tap-highlight-color: transparent;
+}
+.quick-action[data-size='lg'] {
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+
+/* ── emphasis × scheme (brand def.) — igual mapeo que IconButton ────────── */
+.quick-action[data-emphasis='primary'] {
+  --_btn-bg:     var(--semantic-color-bg-brand);
+  --_icon-color: var(--semantic-color-icon-onBrand);
+}
+.quick-action[data-emphasis='secondary'] {
+  --_btn-bg:     var(--semantic-color-bg-brandSoft);
+  --_icon-color: var(--semantic-color-icon-brand);
+}
+.quick-action[data-emphasis='ghost'] {
+  --_btn-bg:     transparent;
+  --_icon-color: var(--semantic-color-icon-brand);
+}
+.quick-action[data-scheme='neutral'][data-emphasis='primary'] {
+  --_btn-bg:     var(--semantic-color-bg-neutral);
+  --_icon-color: var(--semantic-color-icon-onNeutral);
+}
+.quick-action[data-scheme='neutral'][data-emphasis='secondary'] {
+  --_btn-bg:     var(--semantic-color-bg-neutralSoft);
+  --_icon-color: var(--semantic-color-icon-neutral);
+}
+.quick-action[data-scheme='neutral'][data-emphasis='ghost'] {
+  --_btn-bg:     transparent;
+  --_icon-color: var(--semantic-color-icon-neutral);
+}
+
+/* ── caja del ícono (bg + radio + clip) ──────────────────────────────────── */
+.quick-action__icon-box {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: var(--controls-radius-150);
+  background-color: var(--_btn-bg);
+}
+
+/* ── state layer (overlay + padding del ícono) — siempre "lg" ───────────── */
+.quick-action__icon-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--internalLayout-space-150); /* 12px */
+  color: var(--_icon-color);
+}
+.quick-action__icon-state > * {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ── estados interactivos (cubren TODO el botón, ícono + label) ─────────── */
+.quick-action:hover:not(:disabled) .quick-action__icon-state {
+  background-color: var(--semantic-color-state-hover);
+}
+.quick-action:active:not(:disabled) .quick-action__icon-state {
+  background-color: var(--semantic-color-state-pressed);
+}
+.quick-action:focus-visible .quick-action__icon-box {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+/* ── disabled ─────────────────────────────────────────────────────────── */
+.quick-action:disabled {
+  cursor: not-allowed;
+}
+.quick-action[data-emphasis='primary']:disabled .quick-action__icon-box,
+.quick-action[data-emphasis='secondary']:disabled .quick-action__icon-box {
+  background-color: var(--semantic-color-bg-surface);
+}
+.quick-action[data-emphasis='primary']:disabled .quick-action__icon-state,
+.quick-action[data-emphasis='secondary']:disabled .quick-action__icon-state {
+  background-color: var(--semantic-color-state-disabled);
+}
+.quick-action:disabled .quick-action__icon-state {
+  color: var(--semantic-color-icon-disabled);
+}
+.quick-action:disabled .quick-action__label {
+  color: var(--semantic-color-text-disabled);
+}
+
+/* ── label ────────────────────────────────────────────────────────────── */
+.quick-action__label {
+  margin: 0;
+  max-inline-size: 100%;
+  text-align: center;
+  color: var(--semantic-color-text-brand);
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-sm-size); /* 12 */
+  line-height: var(--typography-body-sm-line-height); /* 17 */
+  font-weight: var(--typography-body-sm-weight); /* 500 */
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.quick-action[data-size='lg'] .quick-action__label {
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+}
+.quick-action[data-scheme='neutral'] .quick-action__label {
+  color: var(--semantic-color-text-neutral);
+}

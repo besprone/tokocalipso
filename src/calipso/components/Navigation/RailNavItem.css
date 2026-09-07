@@ -1,0 +1,279 @@
+/* ── RailNavItem ─────────────────────────────────────────────────────────────
+   Item de `NavigationRail`. Figma: `_building_blocks_rail_navitem`.
+
+   orientation="horizontal" (rail expandido)
+     .rail-navitem            <button> · min-h 48 (32 compact) · radius 16 ·
+                              bg/surface → brandSoft si selected · overflow: clip
+       .rail-navitem__state     overlay hover/pressed/disabled (::after)
+         .rail-navitem__row       flex row · gap 12 · px 12 · py 4
+           .rail-navitem__leading   icono 20px / <Avatar sm> · relative para el badge
+           .rail-navitem__content   <ItemContent size="md"> (label + supporting)
+           .rail-navitem__chevron   chevron de expansión (si expandable)
+
+   orientation="vertical" (rail colapsado)
+         .rail-navitem__col       flex col · items-center · gap 2 · py 4
+           .rail-navitem__leading-box  icono 24px en pill radius-100 · bg brandSoft si selected
+             .rail-navitem__badge      overlay abs top:-4 left:iconSize
+           .rail-navitem__vtext     label (Body/sm) + supporting (Body/xs), centrados
+──────────────────────────────────────────────────────────────────────────── */
+
+.rail-navitem {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  display: flex;
+  inline-size: 100%;
+  overflow: clip;
+  border-radius: var(--containers-radius-200); /* 16px */
+  background-color: var(--semantic-color-bg-surface);
+  color: var(--semantic-color-icon-secondary);
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.rail-navitem:disabled {
+  cursor: default;
+}
+.rail-navitem[data-orientation='horizontal'] {
+  min-block-size: 48px;
+}
+.rail-navitem[data-orientation='horizontal'][data-compact] {
+  min-block-size: 32px;
+}
+.rail-navitem[data-orientation='vertical'] {
+  inline-size: 72px;
+  min-block-size: 48px;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.rail-navitem[data-orientation='horizontal'][data-selected] {
+  background-color: var(--semantic-color-bg-brandSoft);
+  color: var(--semantic-color-icon-brand);
+}
+.rail-navitem[data-orientation='vertical'][data-selected] {
+  color: var(--semantic-color-icon-brand);
+}
+
+/* ── overlay de estado ───────────────────────────────────────────────────── */
+/* El overlay se dibuja distinto según orientación (Figma `_building_blocks_rail_navitem`):
+   · horizontal → cubre toda la fila (incluido disabled).
+   · vertical   → SOLO el pill del icono cambia de tono; disabled no lleva overlay,
+                  únicamente atenúa icono + texto. */
+.rail-navitem__state {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  inline-size: 100%;
+}
+.rail-navitem[data-orientation='horizontal'] .rail-navitem__state::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .rail-navitem[data-orientation='horizontal']:not(:disabled):hover .rail-navitem__state::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.rail-navitem[data-orientation='horizontal']:not(:disabled):active .rail-navitem__state::after,
+.rail-navitem[data-orientation='horizontal'] .rail-navitem__state[data-state='pressed']::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.rail-navitem[data-orientation='horizontal'] .rail-navitem__state[data-state='hovered']::after {
+  background-color: var(--semantic-color-state-hover);
+}
+.rail-navitem[data-orientation='horizontal'][data-disabled] .rail-navitem__state::after {
+  background-color: var(--semantic-color-state-disabled);
+}
+
+/* vertical → overlay sobre el pill del icono */
+.rail-navitem[data-orientation='vertical'] .rail-navitem__leading-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+  pointer-events: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .rail-navitem[data-orientation='vertical']:not(:disabled):hover .rail-navitem__leading-box::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.rail-navitem[data-orientation='vertical']:not(:disabled):active .rail-navitem__leading-box::after,
+.rail-navitem[data-orientation='vertical'] .rail-navitem__state[data-state='pressed'] .rail-navitem__leading-box::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+.rail-navitem[data-orientation='vertical'] .rail-navitem__state[data-state='hovered'] .rail-navitem__leading-box::after {
+  background-color: var(--semantic-color-state-hover);
+}
+
+.rail-navitem:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: -2px;
+}
+
+/* ── horizontal ──────────────────────────────────────────────────────────── */
+.rail-navitem__row {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--internalLayout-space-150); /* 12px */
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+  padding-block: var(--internalLayout-space-50); /* 4px */
+  min-inline-size: 0;
+}
+.rail-navitem__leading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.rail-navitem__icon {
+  display: flex;
+}
+.rail-navitem__icon > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+.rail-navitem__content {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+.rail-navitem .item-content__label {
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+}
+.rail-navitem__compact-label {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+}
+.rail-navitem__chevron {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--semantic-color-icon-secondary);
+  transition: transform var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.rail-navitem__chevron > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+.rail-navitem[data-expanded] .rail-navitem__chevron {
+  transform: rotate(180deg);
+}
+
+/* ── vertical ────────────────────────────────────────────────────────────── */
+.rail-navitem__col {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--internalLayout-space-25); /* 2px */
+  padding-block: var(--internalLayout-space-50); /* 4px */
+}
+.rail-navitem__leading-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--internalLayout-space-50) var(--internalLayout-space-100); /* 4px 8px */
+  border-radius: var(--controls-radius-100); /* 8px */
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.rail-navitem[data-orientation='vertical'][data-selected] .rail-navitem__leading-box {
+  background-color: var(--semantic-color-bg-brandSoft);
+}
+.rail-navitem__leading-box .rail-navitem__icon > svg {
+  inline-size: 24px;
+  block-size: 24px;
+}
+.rail-navitem__vtext {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 100%;
+}
+.rail-navitem__vlabel {
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-sm-size); /* 12 */
+  line-height: var(--typography-body-sm-line-height); /* 17 */
+  font-weight: var(--typography-body-sm-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+  text-align: center;
+}
+.rail-navitem__vsupporting {
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-xs-size); /* 10 */
+  line-height: var(--typography-body-xs-line-height); /* 15 */
+  color: var(--semantic-color-text-secondary);
+  text-align: center;
+}
+
+/* ── trailing / badge ────────────────────────────────────────────────────── */
+.rail-navitem__trailing {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+/* Wrapper flex — sin él, el <span> inline apoya el badge en la baseline de una
+   línea `line-height: normal` y queda ~2px por debajo del centro del item. */
+.rail-navitem__badge {
+  display: flex;
+  align-items: center;
+}
+/* El badge de notificación es un círculo: sin el borde de 1px del Badge `filled`
+   las medidas caen a 19×19 (horizontal) / 16×16 (vertical), como en Figma. */
+.rail-navitem__badge .badge {
+  border-width: 0;
+}
+/* badge overlay (vertical) — esquina superior derecha del pill (Figma: left 24 / top -4) */
+.rail-navitem__leading-box .rail-navitem__badge {
+  position: absolute;
+  top: -4px;
+  inset-inline-start: 100%;
+  transform: translateX(-100%);
+  z-index: 1;
+}
+
+/* ── disabled ───────────────────────────────────────────────────────────── */
+.rail-navitem[data-disabled] .item-content__label,
+.rail-navitem[data-disabled] .item-content__supporting,
+.rail-navitem[data-disabled] .rail-navitem__compact-label,
+.rail-navitem[data-disabled] .rail-navitem__vlabel,
+.rail-navitem[data-disabled] .rail-navitem__vsupporting {
+  color: var(--semantic-color-text-disabled);
+}
+.rail-navitem[data-disabled] {
+  color: var(--semantic-color-icon-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-navitem,
+  .rail-navitem__state::after,
+  .rail-navitem__leading-box,
+  .rail-navitem__leading-box::after,
+  .rail-navitem__chevron {
+    transition: none;
+  }
+}

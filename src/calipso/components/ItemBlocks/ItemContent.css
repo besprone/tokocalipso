@@ -1,0 +1,141 @@
+/* ── ItemContent ─────────────────────────────────────────────────────────────
+   Bloque de texto de un row. Figma: `_building_blocks_content`.
+
+   stacked                              horizontal (solo size=lg)
+   ┌───────────────────────────┐        ┌────┬──────────┬────────┬────┬──────┐
+   │ label ............ overline│        │lbl │supporting│overline│ s2 │action│
+   │ supporting ..... supporting2│       └────┴──────────┴────────┴────┴──────┘
+   │ [action full width]        │         cada uno flex: 1 0 0
+   └───────────────────────────┘
+──────────────────────────────────────────────────────────────────────────── */
+
+.item-content {
+  --_label-size: var(--typography-body-lg-size);
+  --_label-lh: var(--typography-body-lg-line-height);
+  --_supporting-size: var(--typography-body-md-size);
+  --_supporting-lh: var(--typography-body-md-line-height);
+
+  display: flex;
+  min-inline-size: 0;
+  font-family: var(--typography-font-family);
+}
+
+.item-content[data-size='md'] {
+  --_label-size: var(--typography-body-md-size);
+  --_label-lh: var(--typography-body-md-line-height);
+  --_supporting-size: var(--typography-body-sm-size);
+  --_supporting-lh: var(--typography-body-sm-line-height);
+}
+.item-content[data-size='sm'] {
+  --_label-size: var(--typography-body-sm-size);
+  --_label-lh: var(--typography-body-sm-line-height);
+  --_supporting-size: var(--typography-body-xs-size);
+  --_supporting-lh: var(--typography-body-xs-line-height);
+}
+
+/* ── stacked ─────────────────────────────────────────────────────────────── */
+.item-content[data-layout='stacked'] {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--internalLayout-space-100); /* 8px (text ↔ action) */
+}
+.item-content[data-layout='stacked'][data-size='md'] {
+  gap: var(--internalLayout-space-75); /* 6px */
+}
+
+.item-content__text {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+.item-content__row {
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+/* ── horizontal (size=lg) ────────────────────────────────────────────────── */
+.item-content[data-layout='horizontal'] {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--componentSpacing-space-200); /* 16px */
+}
+.item-content[data-layout='horizontal'] > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+.item-content[data-layout='horizontal'] .item-content__label,
+.item-content[data-layout='horizontal'] .item-content__supporting,
+.item-content[data-layout='horizontal'] .item-content__supporting2,
+.item-content[data-layout='horizontal'] .item-content__overline {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-content[data-layout='horizontal'] .item-content__supporting,
+.item-content[data-layout='horizontal'] .item-content__overline {
+  text-align: center;
+}
+.item-content[data-layout='horizontal'] .item-content__supporting2 {
+  text-align: end;
+}
+.item-content[data-layout='horizontal'] .item-content__action {
+  display: flex;
+  justify-content: flex-end;
+}
+/* horizontal iguala todo a body/lg */
+.item-content[data-layout='horizontal'] .item-content__supporting,
+.item-content[data-layout='horizontal'] .item-content__supporting2,
+.item-content[data-layout='horizontal'] .item-content__overline {
+  font-size: var(--typography-body-lg-size);
+  line-height: var(--typography-body-lg-line-height);
+}
+
+/* ── piezas de texto ────────────────────────────────────────────────────── */
+.item-content__label {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  font-size: var(--_label-size);
+  line-height: var(--_label-lh);
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+  color: var(--semantic-color-text-primary);
+  overflow-wrap: anywhere;
+}
+.item-content__supporting {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  font-size: var(--_supporting-size);
+  line-height: var(--_supporting-lh);
+  font-weight: var(--typography-body-lg-weight);
+  color: var(--semantic-color-text-secondary);
+  overflow-wrap: anywhere;
+}
+.item-content__supporting2 {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  font-size: var(--typography-body-sm-size); /* 12 en stacked */
+  line-height: var(--typography-body-sm-line-height);
+  font-weight: var(--typography-body-lg-weight);
+  color: var(--semantic-color-text-tertiary);
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+.item-content__overline {
+  flex-shrink: 0;
+  padding-block: var(--internalLayout-space-25); /* 2px */
+  font-size: var(--typography-body-xs-size); /* 10 en stacked */
+  line-height: var(--typography-body-xs-line-height);
+  font-weight: var(--typography-body-lg-weight);
+  color: var(--semantic-color-text-tertiary);
+  white-space: nowrap;
+}
+
+.item-content__action {
+  block-size: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100);
+}

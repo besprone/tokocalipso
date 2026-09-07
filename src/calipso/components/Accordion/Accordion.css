@@ -1,0 +1,25 @@
+/* ── Accordion ────────────────────────────────────────────────────────────
+   Grupo de `AccordionItem`. Figma: `pattern_accordion`.
+
+   `segmented` deja un gap de 2px entre items — sin bordes propios; el
+   "separador" visible es el `bg/canvas` del contenedor asomando por el gap
+   entre items `bg/surface` (mismo mecanismo que `KeyValue`'s `divider`).
+   `paymentStatus` usa gap 0 para que el `PaymentStatusIndicator` de cada
+   item conecte sin cortes.
+──────────────────────────────────────────────────────────────────────────── */
+
+.accordion {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: var(--containers-radius-200); /* 16px */
+  background-color: var(--semantic-color-bg-canvas);
+}
+.accordion[data-type='segmented'] {
+  gap: var(--internalLayout-space-25); /* 2px */
+}
+.accordion[data-type='paymentStatus'] {
+  gap: 0;
+}

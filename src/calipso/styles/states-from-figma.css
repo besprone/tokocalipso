@@ -1,0 +1,9 @@
+/* Generated from src/tokens/figma-state-tokens.ts — npm run tokens:state */
+:root {
+  --semantic-color-state-disabled: #00000014;
+  --semantic-color-state-hover: #0000000a;
+  --semantic-color-state-focus: #0000000a;
+  --semantic-color-state-focusRing: #5ea6d4;
+  --semantic-color-state-pressed: #00000014;
+  --semantic-color-state-dragged: #0000001f;
+}

@@ -1,0 +1,60 @@
+/* ── NavigationBar ───────────────────────────────────────────────────────────
+   Barra de navegación principal. Figma: `components_navigation_bar`.
+
+     .nav-bar            <nav> fila — bg/surface + borde (top | bottom)
+       .nav-bar__pill      indicador brandSoft 40×32 — posición vía JS (spring)
+       .nav-bar-item ·N    building blocks (ver NavigationBarItem.css)
+
+   El pill se coloca con `left` / `top` en píxeles desde el componente y se
+   anima con un integrador de muelle; aquí solo define su aspecto.
+──────────────────────────────────────────────────────────────────────────── */
+
+.nav-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  max-block-size: 71px;
+  padding-block: var(--internalLayout-space-50); /* 4px */
+  background-color: var(--semantic-color-bg-surface);
+  isolation: isolate;
+}
+
+.nav-bar[data-border='top'] {
+  border-block-start: 1px solid var(--semantic-color-border-subtle);
+}
+.nav-bar[data-border='bottom'] {
+  border-block-end: 1px solid var(--semantic-color-border-subtle);
+}
+
+.nav-bar > .nav-bar-item {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+/* ── indicador ───────────────────────────────────────────────────────────── */
+.nav-bar__pill {
+  position: absolute;
+  z-index: -1; /* detrás de icono + label, sobre el fondo */
+  inline-size: 40px;
+  block-size: 32px;
+  border-radius: var(--controls-radius-100); /* 8px */
+  background-color: var(--semantic-color-bg-brandSoft);
+  pointer-events: none;
+  will-change: left;
+}
+
+/* ── item deshabilitado ──────────────────────────────────────────────────── */
+.nav-bar-item[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── foco de teclado ─────────────────────────────────────────────────────── */
+.nav-bar-item:focus-visible {
+  outline: none;
+}
+.nav-bar-item:focus-visible .nav-bar-item__icon {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: 2px;
+}

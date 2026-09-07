@@ -1,0 +1,8 @@
+/* Generated from src/tokens/figma-motion-tokens.ts — npm run tokens:motion */
+:root {
+  --spring-mass: 1;
+  --spring-stiffness: 100;
+  --spring-damping: 15;
+  --linear-200-duration-ms: 200ms;
+  --linear-200-easing: linear;
+}

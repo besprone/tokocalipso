@@ -1,0 +1,71 @@
+/* ── Breadcrumbs ───────────────────────────────────────────────────────────
+   Indicador de ubicación jerárquica. Figma: `components_breadcrumbs`.
+
+   <nav.breadcrumbs data-size>
+     <ol.breadcrumbs__list>            flex · gap 4
+       <li.breadcrumbs__item>          flex · gap 4  (link + "/")
+         Link.breadcrumbs__link          instancia de components_link
+         span.breadcrumbs__sep           "/" · text/secondary · decorativo
+       <li.breadcrumbs__item--current>
+         span.breadcrumbs__current       text/primary · weight 600 · no interactivo
+
+   `size` solo cambia el padding-inline (md 24 · lg 40). Tipografía idéntica
+   (Body/lg 16/24) en ambos.
+──────────────────────────────────────────────────────────────────────────── */
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  padding-block: var(--internalLayout-space-100); /* 8px */
+  background-color: var(--semantic-color-bg-surface);
+  font-family: var(--typography-font-family);
+}
+.breadcrumbs[data-size='md'] {
+  padding-inline: var(--componentSpacing-space-300); /* 24px */
+}
+.breadcrumbs[data-size='lg'] {
+  padding-inline: var(--sectionSpacing-space-500); /* 40px */
+}
+
+.breadcrumbs__list {
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumbs__item {
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  min-inline-size: 0;
+}
+
+.breadcrumbs__link {
+  white-space: nowrap;
+}
+
+.breadcrumbs__sep {
+  flex-shrink: 0;
+  color: var(--semantic-color-text-secondary);
+  font-size: var(--typography-body-lg-size); /* 16px */
+  line-height: var(--typography-body-lg-line-height); /* 24px */
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+  user-select: none;
+}
+
+.breadcrumbs__item--current {
+  min-inline-size: 0;
+}
+.breadcrumbs__current {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--semantic-color-text-primary);
+  font-size: var(--typography-body-lg-size); /* 16px */
+  line-height: var(--typography-body-lg-line-height); /* 24px */
+  font-weight: var(--typography-body-lg-semiemphasized-weight); /* 600 */
+}

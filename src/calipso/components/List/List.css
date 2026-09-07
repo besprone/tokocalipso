@@ -1,0 +1,31 @@
+/* ── List ────────────────────────────────────────────────────────────────────
+   Contenedor vertical de `ListItem`s. Figma: `components_lists`.
+
+     .list[data-type="segmented"]   grupo tipo tarjeta: bg/subtle + gap 2px
+                                    (los 2px revelan bg/subtle = divisor)
+       [data-radius]                esquinas redondeadas (containers/radius-200)
+     .list[data-type="standard"]    filas planas, sin divisores (gap 0)
+
+   `overflow: clip` recorta las esquinas de los items al radio del grupo —
+   el `ListItem` no tiene radio propio.
+──────────────────────────────────────────────────────────────────────────── */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  overflow: clip;
+}
+
+.list[data-type='segmented'] {
+  gap: var(--internalLayout-space-25); /* 2px — divisor = bg/subtle visible */
+  background-color: var(--semantic-color-bg-subtle);
+}
+
+.list[data-type='segmented'][data-radius] {
+  border-radius: var(--containers-radius-200); /* 16px */
+}
+
+.list[data-type='standard'] {
+  gap: 0;
+}

@@ -1,0 +1,98 @@
+/* ── Home de solicitudes ───────────────────────────────────────────────────
+   Solo layout. Cada valor sale de un token del sistema (Foundations →
+   Spacing / Radius / Layout / Grid / Typography / Color). Ningún color,
+   sombra o tipografía se define fuera de los tokens generados desde Figma.
+
+     .home              columna: AppBar · contenido scrolleable · NavigationBar
+     .home__content     stack de secciones con el margen del grid mobile
+     .home__grid        2 de las 4 columnas del grid mobile (gutter 16)
+     .home__tile        composición interna de la Card contadora
+     .home__promo-*     composición interna de la Card de promoción
+──────────────────────────────────────────────────────────────────────────── */
+
+.home {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  min-block-size: 0;
+  background-color: var(--semantic-color-bg-canvas);
+  font-family: var(--typography-font-family);
+}
+
+/* ── contenido ───────────────────────────────────────────────────────────── */
+.home__content {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-stack-section); /* 32px */
+  padding-inline: var(--mobile-margin); /* 16px */
+  padding-block-start: var(--layout-stack-block); /* 16px */
+  padding-block-end: var(--layout-content-bottomClearance); /* 24px */
+}
+
+.home__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-stack-block); /* 16px */
+}
+
+/* Encabezado de sección: `ItemContent` horizontal reparte el ancho en partes
+   iguales; aquí el título se queda con el sobrante y el `Link` con lo suyo.
+   Es un ajuste de layout — no cambia tipografía, color ni espaciado del DS. */
+.home__section-header .item-content__action {
+  flex: 0 0 auto;
+}
+
+/* ── contadores (2 columnas del grid mobile) ─────────────────────────────── */
+.home__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mobile-gutter); /* 16px */
+}
+
+.home__tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--internalLayout-space-50); /* 4px */
+  padding: var(--componentSpacing-space-200); /* 16px */
+}
+
+.home__tile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+
+/* Display/md — token de tipografía, sin valores propios */
+.home__tile-value {
+  font-size: var(--typography-display-md-size); /* 32px */
+  line-height: var(--typography-display-md-line-height); /* 40px */
+  font-weight: var(--typography-display-md-weight); /* 500 */
+  color: var(--semantic-color-text-primary);
+}
+
+/* ── promociones ─────────────────────────────────────────────────────────── */
+.home__promo-media {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  background-image: var(--semantic-gradient-bg-accent);
+}
+
+.home__promo-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--componentSpacing-space-200); /* 16px */
+  padding: var(--componentSpacing-space-200); /* 16px */
+}
+
+/* ── navegación ──────────────────────────────────────────────────────────── */
+.home__nav {
+  flex: 0 0 auto;
+  padding-block-end: env(safe-area-inset-bottom, 0px);
+  background-color: var(--semantic-color-bg-surface);
+}

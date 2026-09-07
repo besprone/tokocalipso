@@ -1,0 +1,133 @@
+/* ── Switch ────────────────────────────────────────────────────────────────
+   Control binario on/off. Figma: `components_switch`.
+   8 variantes = selected (True/False) × state (enabled · hovered · pressed ·
+   disabled). El `hovered` es la extensión web.
+
+   Capas (espeja Figma):
+     .switch              wrapper 52×32 · <input type=checkbox role=switch> encima
+     .switch__track       pill 52×32 — bg brand (on) / icon-tertiary (off) / bg-disabled
+     .switch__thumb       círculo 24px que se desplaza izquierda↔derecha
+       .switch__state-layer  halo 40px (hover/pressed) detrás del thumb
+
+   Todo se deriva por CSS de :checked / :disabled / :hover / :active — sin
+   estado en React.
+──────────────────────────────────────────────────────────────────────────── */
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  width: 52px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* <input> real: cubre el hit target (52×44, centrado en el track), invisible */
+.switch__input {
+  position: absolute;
+  inset: -6px 0; /* +6px arriba/abajo del track de 32 → 44px de alto */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.switch__input:disabled {
+  cursor: not-allowed;
+}
+
+/* ── track ─────────────────────────────────────────────────────────────── */
+.switch__track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-icon-tertiary); /* off */
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+  /* deja pasar los eventos de puntero al <input> de abajo (cascadea a thumb y
+     state-layer) — sin esto solo se podía alternar en los 6px de overhang */
+  pointer-events: none;
+}
+
+.switch:has(.switch__input:checked) .switch__track {
+  background-color: var(--semantic-color-bg-brand); /* on */
+}
+.switch:has(.switch__input:disabled) .switch__track {
+  background-color: var(--semantic-color-bg-disabled);
+}
+
+/* ── thumb ─────────────────────────────────────────────────────────────── */
+/* Posicionado por su CENTRO (left + translate) para que crezca desde el
+   centro en pressed sin desplazarse. Off: centro en x=16 (4 + 24/2).
+   On: centro en x=36 (52 - 4 - 24/2). */
+.switch__thumb {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  width: var(--_thumb, 24px);
+  height: var(--_thumb, 24px);
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-canvas); /* off */
+  transform: translate(-50%, -50%);
+  transition:
+    left calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    width calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    height calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+.switch:has(.switch__input:checked) .switch__thumb {
+  left: 36px;
+  background-color: var(--semantic-color-bg-surface); /* on */
+}
+
+/* pressed: la bolita crece 24 → 28px (Figma: p-11 → p-13) */
+.switch:has(.switch__input:active:not(:disabled)) .switch__thumb {
+  --_thumb: 28px;
+}
+/* pressed + selected=true: la bolita pasa a brandSoft (Figma) */
+.switch:has(.switch__input:checked:active:not(:disabled)) .switch__thumb {
+  background-color: var(--semantic-color-bg-brandSoft);
+}
+
+.switch:has(.switch__input:disabled) .switch__thumb {
+  background-color: var(--semantic-color-icon-tertiary);
+}
+
+/* ── state layer (halo hover/pressed) ──────────────────────────────────── */
+.switch__state-layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--circular-items-radius-round);
+  background-color: transparent;
+  transform: translate(-50%, -50%);
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .switch:has(.switch__input:hover:not(:disabled)) .switch__state-layer {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+/* pressed: overlay transparente state/pressed en el state-layer, para ambos
+   selected (el cambio de tono lo hace la bolita, no esta capa) */
+.switch:has(.switch__input:active:not(:disabled)) .switch__state-layer {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* ── focus ─────────────────────────────────────────────────────────────── */
+.switch:has(.switch__input:focus-visible) .switch__track {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch__track,
+  .switch__thumb,
+  .switch__state-layer {
+    transition: none;
+  }
+}

@@ -1,0 +1,112 @@
+/* ── FilterChip ────────────────────────────────────────────────────────────
+   Figma: `components_filter_chip`. 6 variantes = selected (false · true)
+   × state (default · pressed · disabled). `hover` es extensión web.
+
+   Capas (espeja Figma):
+     .filter-chip          <button> — bg + borde + radius + padding
+       ::after             capa de estado (inset -1px, cubre el borde)
+     .filter-chip__content fila flex: leading (opc.) + label
+     .filter-chip__label   Typography/Body/md-semiemphasized (600)
+──────────────────────────────────────────────────────────────────────────── */
+
+.filter-chip {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--internalLayout-space-75) var(--internalLayout-space-150); /* 6 12 */
+  border-radius: var(--controls-radius-100); /* 8px */
+  background-color: var(--semantic-color-bg-surface);
+  border: 1px solid var(--semantic-color-border-subtle);
+  cursor: pointer;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing),
+    border-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+/* capa de estado — se compone encima del fondo; -1px para cubrir el borde */
+.filter-chip::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background-color: transparent;
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+  pointer-events: none;
+}
+
+/* ── content ───────────────────────────────────────────────────────────── */
+.filter-chip__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+
+.filter-chip__leading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.filter-chip__leading > svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.filter-chip__label {
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+  white-space: nowrap;
+}
+
+/* ── selected (persistente) ────────────────────────────────────────────── */
+.filter-chip[data-selected] {
+  background-color: var(--semantic-color-bg-brandSoft);
+  border-color: transparent;
+}
+
+/* ── hover (extensión web, solo puntero) ───────────────────────────────── */
+@media (hover: hover) {
+  .filter-chip:hover:not(:disabled)::after {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+
+/* ── pressed (transitorio) ─────────────────────────────────────────────── */
+.filter-chip:active:not(:disabled)::after {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* ── disabled ──────────────────────────────────────────────────────────── */
+.filter-chip:disabled {
+  cursor: default;
+}
+.filter-chip:disabled::after {
+  background-color: var(--semantic-color-state-disabled);
+}
+.filter-chip:disabled .filter-chip__label {
+  color: var(--semantic-color-text-disabled);
+}
+
+/* ── focus ─────────────────────────────────────────────────────────────── */
+.filter-chip:focus-visible {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-chip,
+  .filter-chip::after {
+    transition: none;
+  }
+}

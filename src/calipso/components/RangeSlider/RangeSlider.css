@@ -1,0 +1,66 @@
+/* ── RangeSlider ───────────────────────────────────────────────────────────
+   Componente compuesto de selección de valor / rango. Figma:
+   `components_range_slider`. 6 variantes = type (standard · centered) × 3
+   posiciones de valor.
+
+   Layout (espeja Figma):
+     .range-slider              fila de 48px (hit target); track centrado vertical
+     .range-slider__track       línea base 4px — bg/brandSoft, radius-round
+     .range-slider__track-active segmento activo — bg/brand (left/right por %)
+     .range-slider__handle-wrap posición absoluta (left %) del handle + indicador
+     .range-slider__indicator   burbuja de valor sobre el handle
+──────────────────────────────────────────────────────────────────────────── */
+
+.range-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--sectionSpacing-space-600); /* 48px — hit target */
+}
+
+/* ── track ─────────────────────────────────────────────────────────────── */
+.range-slider__track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-brandSoft);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.range-slider__track-active {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-brand);
+}
+
+/* ── handle ────────────────────────────────────────────────────────────── */
+.range-slider__handle-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ── indicator (sobre el handle) ───────────────────────────────────────── */
+.range-slider__indicator {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 8px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* ── disabled ──────────────────────────────────────────────────────────── */
+.range-slider[data-disabled] {
+  pointer-events: none;
+}
+.range-slider[data-disabled] .range-slider__track-active {
+  background-color: var(--semantic-color-bg-disabled);
+}
+.range-slider[data-disabled] .slider-handle__knob {
+  background-color: var(--semantic-color-bg-disabled);
+}

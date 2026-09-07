@@ -1,0 +1,107 @@
+/* ── Radio ──────────────────────────────────────────────────────────────────
+   Control de selección única (radio button), sin label.
+   Figma: `components_radiobutton` — 8 variantes = 2 type (unselected · selected)
+   × 4 state (default · hovered · pressed · disabled).
+
+   Capas (espeja Figma, idéntico a Checkbox):
+     .radio           target táctil 48×48 · <input type=radio> transparente encima
+     .radio__box      centrado del state layer
+     .radio__content  40×40 · radius controls/radius-150 · overlay de estado
+     .radio__icon     24×24 (Carbon: RadioButton / RadioButtonChecked)
+
+   El ícono se intercambia por CSS según `:has(.radio__input:checked)`, sin
+   estado en React — así los hermanos del grupo se deseleccionan solos.
+──────────────────────────────────────────────────────────────────────────── */
+
+.radio {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.radio__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.radio__input:disabled {
+  cursor: not-allowed;
+}
+
+.radio__box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.radio__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--controls-radius-150); /* 12px */
+  color: var(--semantic-color-icon-secondary); /* unselected por defecto */
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+.radio__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.radio__icon > svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+/* ── intercambio de ícono ────────────────────────────────────────────────── */
+.radio__icon--on {
+  display: none;
+}
+.radio:has(.radio__input:checked) .radio__icon--off {
+  display: none;
+}
+.radio:has(.radio__input:checked) .radio__icon--on {
+  display: flex;
+}
+
+/* ── color por estado (orden: base → checked → disabled) ─────────────────── */
+.radio:has(.radio__input:checked) .radio__content {
+  color: var(--semantic-color-icon-brand);
+}
+.radio:has(.radio__input:disabled) .radio__content {
+  color: var(--semantic-color-icon-disabled);
+}
+
+/* ── state layer: hover / pressed ────────────────────────────────────────── */
+.radio:has(.radio__input:hover:not(:disabled)) .radio__content {
+  background-color: var(--semantic-color-state-hover);
+}
+.radio:has(.radio__input:active:not(:disabled)) .radio__content {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* ── focus (extensión web — accesibilidad de teclado) ────────────────────── */
+.radio:has(.radio__input:focus-visible) .radio__content {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio__content {
+    transition: none;
+  }
+}

@@ -1,0 +1,100 @@
+/* ── Checkbox ───────────────────────────────────────────────────────────────
+   Control de selección binaria, sin label. Figma: `components_checkbox`.
+   13 variantes = 3 type (unselected · selected · indeterminate) × 4 state
+   (default · hovered · pressed · disabled) + 1 (unselected · error).
+
+   Capas (espeja Figma):
+     .checkbox           target táctil 48×48 · <input> transparente encima
+     .checkbox__box      centrado del state layer
+     .checkbox__content  40×40 · radius controls/radius-150 · overlay de estado
+     ícono               24×24 (Carbon: Checkbox / CheckboxCheckedFilled /
+                         CheckboxIndeterminateFilled), color por `currentColor`
+
+   Estados vía tokens globales de state layer — sin opacidades/colores manuales.
+──────────────────────────────────────────────────────────────────────────── */
+
+.checkbox {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+/* <input> real: cubre el target, invisible, es quien recibe la interacción */
+.checkbox__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.checkbox__input:disabled {
+  cursor: not-allowed;
+}
+
+/* ── box (centrado) ──────────────────────────────────────────────────────── */
+.checkbox__box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── content (state layer + ícono) ──────────────────────────────────────── */
+.checkbox__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--controls-radius-150); /* 12px */
+  /* color por defecto = unselected */
+  color: var(--semantic-color-icon-secondary);
+  transition: background-color calc(var(--linear-200-duration-ms)) var(--linear-200-easing);
+}
+
+.checkbox__content > svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+/* ── color del ícono por tipo/estado (orden: base → marcado → error → disabled) ── */
+.checkbox[data-checked] .checkbox__content,
+.checkbox[data-indeterminate] .checkbox__content {
+  color: var(--semantic-color-icon-brand);
+}
+.checkbox[data-error] .checkbox__content {
+  color: var(--semantic-color-icon-danger);
+}
+.checkbox[data-disabled] .checkbox__content {
+  color: var(--semantic-color-icon-disabled);
+}
+
+/* ── state layer: hover / pressed ────────────────────────────────────────── */
+.checkbox:has(.checkbox__input:hover:not(:disabled)) .checkbox__content {
+  background-color: var(--semantic-color-state-hover);
+}
+.checkbox:has(.checkbox__input:active:not(:disabled)) .checkbox__content {
+  background-color: var(--semantic-color-state-pressed);
+}
+
+/* ── focus (extensión web — accesibilidad de teclado) ────────────────────── */
+.checkbox:has(.checkbox__input:focus-visible) .checkbox__content {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+/* ── reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .checkbox__content {
+    transition: none;
+  }
+}

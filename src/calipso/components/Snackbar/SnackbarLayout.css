@@ -1,0 +1,36 @@
+/* ── SnackbarLayout ──────────────────────────────────────────────────────
+   Building block interno de `Snackbar` (`_building_blocks_snackbar_layout`).
+
+   Figma: 1 línea → fila de 48px exactos (layout sin padding vertical, mensaje
+   `h-20` centrado). 2 líneas → 64px (mensaje `h-40` + 12px arriba/abajo). El
+   padding vertical vive en el mensaje (`space-150`) para que la altura de 1
+   línea quede clavada en 48; el `min-height` cubre el caso sin acción. Si el
+   mensaje es muy ancho, envuelve y las acciones bajan a su fila (margin-left:auto).
+   Padding horizontal por spacing tokens: `pl-16 pr-4` (no configurable).
+──────────────────────────────────────────────────────────────────────────── */
+
+.snackbar-layout {
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  min-height: 48px; /* Figma `_building_blocks_snackbar_layout` h-48 (1 línea) */
+  padding-block: 0;
+  padding-inline: var(--componentSpacing-space-200) var(--internalLayout-space-50); /* 16px · 4px */
+}
+
+.snackbar-layout__message {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding-block: var(--internalLayout-space-150); /* 12px → 1 línea = 44, min-height fija 48; 2 líneas = 64 */
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14 */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.snackbar-layout__actions {
+  flex: 0 0 auto;
+}

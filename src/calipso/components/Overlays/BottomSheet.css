@@ -1,0 +1,171 @@
+/* ── BottomSheet ───────────────────────────────────────────────────────────
+   Contenedor modal anclado abajo. Figma: `components_bottom_sheet`.
+
+   .bottom-sheet-overlay            fixed · flex align-end center · backdrop
+     .bottom-sheet-overlay__backdrop
+     .bottom-sheet                  bg/canvas · radius-top 24 · elevation-3 ·
+       .bottom-sheet__handle          barra de arrastre (4×32, icon/tertiary)
+       .bottom-sheet__appbar          header (AppBar sm · close a la izquierda)
+       .bottom-sheet__centered        (type=centered) slotHeading + label/supporting centrados
+       .bottom-sheet__content         content slot · scroll si desborda
+       .bottom-sheet__footer          microcopy + acciones (Button ·1–2)
+
+   Entrada/salida: `translateY(%)` con `motion/spring` (JS, `src/lib/spring`).
+   El backdrop hace fade con `data-state` en el overlay.
+──────────────────────────────────────────────────────────────────────────── */
+
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.bottom-sheet-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(28, 27, 32, 0.4);
+  /* `--bs-drag` (0 abierto → 1 fuera) lo actualiza el JS en cada frame del
+     muelle y durante el arrastre — el backdrop sigue al sheet en todos los casos */
+  opacity: calc(1 - var(--bs-drag, 1));
+}
+
+.bottom-sheet {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  max-inline-size: 480px;
+  max-block-size: 92dvh;
+  padding-block-end: var(--layout-content-bottomClearance); /* 24px */
+  background-color: var(--semantic-color-bg-canvas);
+  border-start-start-radius: var(--containers-radius-300); /* 24px */
+  border-start-end-radius: var(--containers-radius-300);
+  box-shadow: var(--Elevation-elevation-3);
+  font-family: var(--typography-font-family);
+  will-change: transform;
+}
+.bottom-sheet[data-full-height] {
+  block-size: 92dvh;
+}
+
+/* ── zona de arrastre (handle + header) ──────────────────────────────────── */
+.bottom-sheet__drag-zone {
+  flex-shrink: 0;
+}
+.bottom-sheet__drag-zone[data-swipe] {
+  touch-action: none;
+  cursor: grab;
+}
+.bottom-sheet__drag-zone[data-swipe]:active {
+  cursor: grabbing;
+}
+
+/* ── handle ──────────────────────────────────────────────────────────────── */
+.bottom-sheet__handle {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-block: var(--internalLayout-space-75); /* 6px */
+}
+.bottom-sheet__handle-bar {
+  inline-size: 32px;
+  block-size: 4px;
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-icon-tertiary);
+}
+
+/* ── header (AppBar) ─────────────────────────────────────────────────────── */
+.bottom-sheet__appbar {
+  flex-shrink: 0;
+  /* Figma envuelve el app bar con pb 12 */
+  padding-block-end: var(--internalLayout-space-150); /* 12px */
+}
+
+/* ── centered (type=centered) ────────────────────────────────────────────── */
+.bottom-sheet__centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--componentSpacing-space-300); /* 24px */
+  padding-inline: var(--layout-container-inline); /* 16px */
+  text-align: center;
+}
+.bottom-sheet__slot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.bottom-sheet__centered-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  padding-inline: var(--internalLayout-space-150); /* 12px */
+  inline-size: 100%;
+}
+.bottom-sheet__label {
+  margin: 0;
+  color: var(--semantic-color-text-primary);
+  font-size: var(--typography-headline-sm-size); /* 24 */
+  line-height: var(--typography-headline-sm-line-height); /* 32 */
+  font-weight: var(--typography-headline-sm-semiemphasized-weight); /* 600 */
+}
+.bottom-sheet__supporting {
+  margin: 0;
+  color: var(--semantic-color-text-secondary);
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+}
+
+/* ── content slot ────────────────────────────────────────────────────────── */
+.bottom-sheet__content {
+  flex: 0 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  padding-block-start: var(--layout-stack-block); /* 16px */
+  padding-inline: var(--layout-container-inline); /* 16px */
+  color: var(--semantic-color-text-primary);
+}
+.bottom-sheet[data-full-height] .bottom-sheet__content {
+  flex: 1 1 auto;
+}
+
+/* ── footer ──────────────────────────────────────────────────────────────── */
+.bottom-sheet__footer {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--componentSpacing-space-200); /* 16px */
+  padding-block-start: var(--componentSpacing-space-300); /* 24px */
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+}
+.bottom-sheet__microcopy {
+  margin: 0;
+  color: var(--semantic-color-text-tertiary);
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+  text-align: center;
+}
+.bottom-sheet__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+/* especificidad extra (dos clases) a propósito: `.button` trae `all: unset`,
+   que resetea `flex` a su valor inicial — con la misma especificidad que
+   `.bottom-sheet__actions > *` gana por orden de aparición en el bundle, y
+   los botones quedaban a ancho natural en vez de repartirse el espacio */
+.bottom-sheet__footer .bottom-sheet__actions > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
