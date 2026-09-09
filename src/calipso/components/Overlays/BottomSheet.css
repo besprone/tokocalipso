@@ -22,6 +22,12 @@
   align-items: flex-end;
   justify-content: center;
 }
+/* durante la salida el overlay deja de capturar clics — el sheet ya se está
+   yendo y el rebote posterior del muelle es invisible; el tap debe llegar al
+   disparador (ver el corte de `onExited` en BottomSheet.tsx). */
+.bottom-sheet-overlay[data-state='exiting'] {
+  pointer-events: none;
+}
 
 .bottom-sheet-overlay__backdrop {
   position: absolute;

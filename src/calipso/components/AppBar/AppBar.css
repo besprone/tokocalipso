@@ -102,8 +102,19 @@
   /* Figma: gap 0 — las cajas de 48 de los IconButton se tocan y su padding
      interno (12) da los 24px entre glifos. */
   gap: 0;
+  /* Crece por defecto: en `stacked` empuja la acción a la derecha; en `inline`
+     sin bloque de texto (config `search`, o `showHeadline={false}`) deja que el
+     `SearchField` se expanda. */
   flex: 1 1 auto;
   min-inline-size: 0;
+}
+/* `inline` CON bloque de texto: el trailing se queda a su ancho de contenido
+   para no comerle espacio al headline. Con IconButtons no cambia nada (son
+   angostos); con un `Button` evita que el slot crezca hasta media barra y
+   trunque el título. El `.app-bar__text` (flex: 1 1 0) se queda todo el
+   espacio libre. */
+.app-bar[data-layout='inline']:has(.app-bar__text) .app-bar__trailing {
+  flex: 0 0 auto;
 }
 
 /* Alineación óptica del canto exterior a la retícula (16 sm / 24 md·lg).

@@ -93,47 +93,62 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
   // se re-dispara (ni su cleanup cancela el muelle) en cada render
   const onExitedRef = useRef(onExited);
   onExitedRef.current = onExited;
-  const prevOpen = useRef(!open);
   const labelId = useId();
+  /** Progreso animado actual (0 cerrado → 1 abierto). Lo mantiene el muelle y
+   *  es el punto de partida de la siguiente transición — así el efecto
+   *  reconcilia contra el estado real y no contra un flag "ya lo hice"
+   *  (que StrictMode rompe con su doble montaje). */
+  const progress = useRef(0);
 
   const setProgress = (p: number) => {
+    progress.current = p;
     overlayRef.current?.style.setProperty('--dialog-progress', String(p));
   };
 
-  // enter / exit con muelle sobre un progreso 0 (cerrado) → 1 (abierto). También corre en el montaje.
+  // enter / exit con muelle sobre un progreso 0 (cerrado) → 1 (abierto).
+  // Corre en el montaje y en cada cambio de `open`. Reconcilia desde
+  // `progress.current` (el estado real), no desde un flag "ya lo hice" — que
+  // StrictMode rompe montando dos veces en dev. `alive` desactiva las
+  // escrituras de la corrida sustituida (la 2ª es la que gana).
   useEffect(() => {
-    if (prevOpen.current === open) return;
-    prevOpen.current = open;
+    let alive = true;
     cancelSpring.current?.();
+    const target = open ? 1 : 0;
 
-    if (open) {
-      setPhase('entering');
-      if (prefersReducedMotion()) {
-        setProgress(1);
-        setPhase('open');
-      } else {
-        setProgress(0);
-        cancelSpring.current = springTo(0, 1, (p) => {
-          setProgress(p);
-          if (p === 1) setPhase('open');
-        });
-      }
-    } else {
-      setPhase('exiting');
-      if (prefersReducedMotion()) {
-        onExitedRef.current?.();
-      } else {
-        cancelSpring.current = springTo(1, 0, (p) => {
-          setProgress(p);
-          if (p === 0) onExitedRef.current?.();
-        });
-      }
+    setPhase(open ? 'entering' : 'exiting');
+
+    if (prefersReducedMotion()) {
+      setProgress(target);
+      if (open) setPhase('open');
+      else onExitedRef.current?.();
+      return () => {
+        alive = false;
+      };
     }
+
+    setProgress(progress.current); // sincroniza el DOM al punto de partida
+    let exited = false;
+    const cancel = springTo(progress.current, target, (p) => {
+      if (!alive || exited) return;
+      setProgress(p);
+      if (open) {
+        if (p === target) setPhase('open');
+      } else if (p <= target) {
+        // ya invisible (opacity 0) — el rebote posterior del muelle solo
+        // retrasa el desmontaje dejando el overlay capturando clics.
+        exited = true;
+        cancelSpring.current?.();
+        onExitedRef.current?.();
+      }
+    });
+    cancelSpring.current = cancel;
+
+    return () => {
+      alive = false;
+      cancel();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
-
-  // cancela el muelle al desmontar
-  useEffect(() => () => cancelSpring.current?.(), []);
 
   // foco: mover al primer interactivo al abrir, restaurar al cerrar
   useEffect(() => {

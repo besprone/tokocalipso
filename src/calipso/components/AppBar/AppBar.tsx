@@ -57,7 +57,9 @@ export type AppBarProps = {
   /**
    * Slot derecho — acciones secundarias alineadas al final: hasta 3 `IconButton`,
    * un `Button`, un `SearchField`, un `Avatar` / `AvatarAction`. Nunca la acción
-   * crítica de la pantalla.
+   * crítica de la pantalla. En `inline` con `headline`/`supporting` el slot se
+   * queda a su ancho de contenido (no le roba espacio al título); en `stacked`
+   * o en `inline` sin texto (config `search`) crece para alinear/expandir.
    */
   trailing?: ReactNode;
   /** Nombre accesible del `<header>`. */

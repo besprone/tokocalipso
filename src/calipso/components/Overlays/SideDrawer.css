@@ -27,6 +27,12 @@
 .side-drawer-overlay[data-anchor='left'] {
   justify-content: flex-start;
 }
+/* durante la salida el overlay deja de capturar clics — el drawer ya se está
+   yendo; el tap debe llegar al disparador (ver el corte de `onExited` en
+   SideDrawer.tsx). */
+.side-drawer-overlay[data-state='exiting'] {
+  pointer-events: none;
+}
 
 .side-drawer-overlay__backdrop {
   position: absolute;

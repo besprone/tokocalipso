@@ -98,10 +98,10 @@ export const BottomSheet = forwardRef<HTMLDivElement, BottomSheetProps>(function
   onCloseRef.current = onClose;
   onExitedRef.current = onExited;
   /** Posición actual del sheet en % (0 = abierto, 100 = fuera). La mantienen el
-   *  muelle y el drag, y la usa el muelle de salida como punto de partida. */
+   *  muelle y el drag, y es el punto de partida de la siguiente transición —
+   *  así el efecto reconcilia contra la posición real y no contra un flag "ya
+   *  lo hice" (que StrictMode rompe con su doble montaje). */
   const currentPct = useRef(100);
-  // `!open` → el efecto de transición también corre en el montaje inicial
-  const prevOpen = useRef(!open);
   const labelId = useId();
 
   const setTransform = (pct: number) => {
@@ -111,40 +111,52 @@ export const BottomSheet = forwardRef<HTMLDivElement, BottomSheetProps>(function
     overlayRef.current?.style.setProperty('--bs-drag', String(pct / 100));
   };
 
-  // enter / exit con muelle sobre translateY (%). También corre en el montaje.
+  // enter / exit con muelle sobre translateY (%). Corre en el montaje y en
+  // cada cambio de `open`; el cleanup cancela el muelle (también en el
+  // desmonte simulado de StrictMode, y la re-ejecución lo reanuda desde
+  // `currentPct.current`).
   useEffect(() => {
-    if (prevOpen.current === open) return;
-    prevOpen.current = open;
+    // `alive` desactiva las escrituras de ESTA corrida si otra la sustituye
+    // (StrictMode monta dos veces en dev; la 2ª es la que gana).
+    let alive = true;
     cancelSpring.current?.();
+    const target = open ? 0 : 100;
 
-    if (open) {
-      setPhase('entering');
-      if (prefersReducedMotion()) {
-        setTransform(0);
-        setPhase('open');
-      } else {
-        setTransform(100);
-        cancelSpring.current = springTo(100, 0, (y) => {
-          setTransform(y);
-          if (y === 0) setPhase('open');
-        });
-      }
-    } else {
-      setPhase('exiting');
-      if (prefersReducedMotion()) {
-        onExitedRef.current?.();
-      } else {
-        cancelSpring.current = springTo(currentPct.current, 100, (y) => {
-          setTransform(y);
-          if (y === 100) onExitedRef.current?.();
-        });
-      }
+    setPhase(open ? 'entering' : 'exiting');
+
+    if (prefersReducedMotion()) {
+      setTransform(target);
+      if (open) setPhase('open');
+      else onExitedRef.current?.();
+      return () => {
+        alive = false;
+      };
     }
+
+    setTransform(currentPct.current); // sincroniza el DOM al punto de partida
+    let exited = false;
+    const cancel = springTo(currentPct.current, target, (y) => {
+      if (!alive || exited) return;
+      setTransform(y);
+      if (open) {
+        if (y === target) setPhase('open');
+      } else if (y >= target) {
+        // el sheet ya cruzó fuera de pantalla — el rebote posterior del muelle
+        // (ζ≈0.75) es invisible y solo retrasa el desmontaje dejando el overlay
+        // capturando clics. Se corta acá.
+        exited = true;
+        cancelSpring.current?.();
+        onExitedRef.current?.();
+      }
+    });
+    cancelSpring.current = cancel;
+
+    return () => {
+      alive = false;
+      cancel();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
-
-  // cancela el muelle al desmontar
-  useEffect(() => () => cancelSpring.current?.(), []);
 
   // foco: mover al primer interactivo al abrir, restaurar al cerrar
   useEffect(() => {
