@@ -215,8 +215,7 @@ export function HomeSolicitudes() {
           open={sheetAbierto}
           onClose={() => setSheetAbierto(false)}
           onExited={() => setSheetMontado(false)}
-          showClose={false}
-          aria-label="Crear nueva"
+          label="¿Qué quieres crear?"
         >
           <List type="segmented">
             {nuevasOpciones.map((opcion) => (
