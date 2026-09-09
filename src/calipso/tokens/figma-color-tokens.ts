@@ -7,11 +7,16 @@
  * Convención de nombres alineada al export actual de Figma:
  *   ref/green · ref/neutral · ref/error · ref/warning · ref/info · ref/success
  *   ref/accent/mint · ref/accent/orchid   (acentos de marca kubo)
+ *   ref/accent/yellow · ref/accent/red    (acentos de marca maestro)
  *   ref/whiteAlpha · ref/blackAlpha        (tintes con alpha; sufijo/1000 = opacidad, hex #RRGGBBAA)
  *
- * Los tokens dependientes de marca (familias brand, accentPrimary, accentSecondary)
- * están resueltos con la marca kubo: brand = ref/green, accentPrimary = mint, accentSecondary = orchid.
- * La capa de temas nativos (light/inverse) vive en `semantic-theme-aliases.ts` y se aplica en runtime.
+ * El `:root` de `colors-from-figma.css` = **kubo light** (los `semantic/color/*`
+ * de abajo). Las 26 familias dependientes de marca (brand*, accentPrimary*,
+ * accentSecondary*) se redefinen por marca vía `brand-aliases.ts`:
+ *   - estático: bloque `[data-brand="maestro"]` en el mismo CSS.
+ *   - runtime (Storybook): `.storybook/preview.ts`, toggle "Marca".
+ * La capa de temas nativos independiente de marca (light/inverse) vive en
+ * `semantic-theme-aliases.ts` (en `src/tokens/`) y se aplica en runtime.
  */
 import { figmaPathToCssVar } from "./figma-path-to-css";
 
@@ -107,6 +112,30 @@ export const figmaColorTokens: Record<string, string> = {
   "ref/accent/orchid/700": "#65217d",
   "ref/accent/orchid/800": "#471858",
   "ref/accent/orchid/900": "#2c0e38",
+
+  // Acentos de marca maestro (colección `Color`, familia ref/accent):
+  //   accentPrimary → yellow · accentSecondary → red.
+  "ref/accent/yellow/50": "#fffee5",
+  "ref/accent/yellow/100": "#fffcc2",
+  "ref/accent/yellow/200": "#fff98f",
+  "ref/accent/yellow/300": "#fff65c",
+  "ref/accent/yellow/400": "#fff433",
+  "ref/accent/yellow/500": "#fff100",
+  "ref/accent/yellow/600": "#e0d400",
+  "ref/accent/yellow/700": "#b8ae00",
+  "ref/accent/yellow/800": "#8f8700",
+  "ref/accent/yellow/900": "#666000",
+
+  "ref/accent/red/50": "#fdeeed",
+  "ref/accent/red/100": "#fad3d1",
+  "ref/accent/red/200": "#f4a8a4",
+  "ref/accent/red/300": "#ee746d",
+  "ref/accent/red/400": "#e74037",
+  "ref/accent/red/500": "#e1251b",
+  "ref/accent/red/600": "#b21d15",
+  "ref/accent/red/700": "#8d1711",
+  "ref/accent/red/800": "#6d120d",
+  "ref/accent/red/900": "#4d0d09",
 
   // Blanco/negro con opacidad (Figma: ref/whiteAlpha · ref/blackAlpha).
   // Valor: step/1000 = opacidad; p. ej. 200 → 20% → #ffffff33.

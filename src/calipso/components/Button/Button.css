@@ -34,6 +34,9 @@
      Ghost = el label (`--_state-px`), ver override en `emphasis`. Lo consume
      el AppBar para caer en retícula. */
   --optical-inset: 0px;
+  /* padding vertical de área táctil (fuera de la píldora). Lo consume
+     `ButtonActions` para que el gap quede entre PÍLDORAS, no entre cajas. */
+  --button-block-inset: 0px;
 }
 
 /* ── tamaños ─────────────────────────────────────────────────────────────── */
@@ -46,7 +49,8 @@
   --_font-weight: var(--typography-button-md-weight);      /* 600  */
   --_icon-size:   20px;
   --_radius:      var(--controls-radius-125);              /* 10px */
-  padding: var(--internalLayout-space-100) 0;              /* 8px  */
+  --button-block-inset: var(--internalLayout-space-100);   /* 8px  */
+  padding: var(--button-block-inset) 0;
 }
 .button[data-size="sm"] {
   --_state-px:    var(--componentSpacing-space-200);       /* 16px */
@@ -57,7 +61,8 @@
   --_font-weight: var(--typography-button-md-weight);      /* 600  */
   --_icon-size:   20px;
   --_radius:      var(--controls-radius-125);              /* 10px */
-  padding: var(--internalLayout-space-50) 0;               /* 4px  */
+  --button-block-inset: var(--internalLayout-space-50);    /* 4px  */
+  padding: var(--button-block-inset) 0;
 }
 .button[data-size="md"] {
   --_state-px:    var(--componentSpacing-space-300);       /* 24px */

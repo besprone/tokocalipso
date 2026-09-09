@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useEffect, useId, useRef, useState } from 'rea
 import type { HTMLAttributes, ReactNode } from 'react';
 import { Close } from '@carbon/icons-react';
 import { IconButton } from '../IconButton/IconButton';
+import { ButtonActions } from '../ButtonActions/ButtonActions';
 import { prefersReducedMotion, springTo } from '../../lib/spring';
 import './Dialog.css';
 
@@ -44,7 +45,7 @@ export type DialogProps = {
   label?: ReactNode;
   /** Texto descriptivo breve bajo el label. */
   supporting?: ReactNode;
-  /** Sección inferior de acciones — 1–2 `Button`, alineados a la derecha (sin stretch). */
+  /** Sección inferior de acciones — 1–3 `Button`. Se envuelven en `<ButtonActions surface="dialog">` (fila a la derecha, sin stretch; centrada en `type="centered"`). */
   footer?: ReactNode;
   /** Texto legal / aclaratorio sobre los botones del footer (`text/tertiary`, centrado). */
   microcopy?: ReactNode;
@@ -273,7 +274,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
         {showFooter && (
           <div className="dialog__footer">
             {microcopy != null && <p className="dialog__microcopy">{microcopy}</p>}
-            <div className="dialog__actions">{footer}</div>
+            <ButtonActions surface="dialog" className="dialog__actions">
+              {footer}
+            </ButtonActions>
           </div>
         )}
       </div>

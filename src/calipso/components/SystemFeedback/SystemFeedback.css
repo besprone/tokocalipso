@@ -1,0 +1,197 @@
+/* ── SystemFeedback ────────────────────────────────────────────────────────
+   Patrón de layout para feedback del sistema. Figma: `pattern_system_feedback`.
+
+   <div.system-feedback data-emphasis data-state data-size data-transaction? data-sticky?>
+     <div.system-feedback__body>
+       .system-feedback__media        slot visual (banda 160 / cuadro 56)
+       .system-feedback__text-group   texto + contenido
+         .system-feedback__text       label + supporting (text-align: center)
+         .system-feedback__content    slot contextual (a lo ancho)
+     .system-feedback__actions        grupo de CTAs
+
+   Orden vertical fijo. `emphasis` es el switch de layout:
+     low  → stack compacto, gap `layout/stack/block` (16), sin padding.
+     high → banda visual + texto + CTA al pie; `size` escala tipografía/espacio.
+   Tokens: sólo los del layout/texto — el patrón no define color/estado propio.
+──────────────────────────────────────────────────────────────────────────── */
+
+.system-feedback,
+.system-feedback__body,
+.system-feedback__media,
+.system-feedback__text-group,
+.system-feedback__text,
+.system-feedback__content,
+.system-feedback__actions {
+  box-sizing: border-box;
+}
+
+.system-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 100%;
+  font-family: var(--typography-font-family);
+}
+
+/* ── emphasis: low — stack compacto en línea ─────────────────────────────── */
+.system-feedback[data-emphasis='low'] {
+  gap: var(--layout-stack-block); /* 16px entre media · texto · acciones */
+}
+/* body y text-group se colapsan → media, texto y acciones quedan como
+   hermanos directos al gap del contenedor (16), como en Figma. */
+.system-feedback[data-emphasis='low'] .system-feedback__body,
+.system-feedback[data-emphasis='low'] .system-feedback__text-group {
+  display: contents;
+}
+
+/* ── emphasis: high — pantalla / sección completa ────────────────────────── */
+.system-feedback[data-emphasis='high'][data-size='md'] {
+  max-inline-size: 480px; /* layout/web/screen/webonboarding — el pipeline no trae token */
+  margin-inline: auto;
+}
+/* sticky (sólo high + sm): la botonera queda SIEMPRE al pie. Si el contenido
+   cabe, el cuerpo lo centra; si no, el cuerpo scrollea internamente y la
+   botonera no se mueve. El contenedor padre debe tener alto (100dvh, un
+   frame de pantalla, o un flex parent que estire este nodo). */
+.system-feedback[data-sticky] {
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+.system-feedback__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 100%;
+}
+.system-feedback[data-emphasis='high'][data-size='sm'] .system-feedback__body {
+  gap: var(--layout-stack-block); /* 16px */
+  padding: var(--layout-stack-block) var(--layout-container-inline)
+    var(--layout-content-bottomClearance); /* 16 / 16 / 24 */
+}
+.system-feedback[data-emphasis='high'][data-size='md'] .system-feedback__body {
+  gap: var(--layout-stack-section); /* 32px */
+  padding-block-end: var(--layout-content-bottomClearance); /* 24px */
+}
+.system-feedback[data-sticky] .system-feedback__body {
+  flex: 1 1 auto;
+  min-block-size: 0; /* deja que el flex-item encoja y el overflow funcione */
+  overflow-y: auto;
+  /* `safe`: centra cuando sobra espacio, alinea al inicio (sin recortar) y
+     scrollea cuando el contenido excede el alto disponible. */
+  justify-content: safe center;
+}
+
+/* ── slot visual ────────────────────────────────────────────────────────── */
+.system-feedback__media {
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.system-feedback__media > * {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover; /* no-op en SVG inline */
+}
+.system-feedback[data-emphasis='high'] .system-feedback__media {
+  inline-size: 100%;
+  block-size: 160px;
+}
+.system-feedback[data-emphasis='low'] .system-feedback__media {
+  inline-size: 56px;
+  block-size: 56px;
+}
+
+/* ── texto + contenido ──────────────────────────────────────────────────── */
+.system-feedback__text-group {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+}
+/* sm: wrapper real con su propio inset y gap texto↔contenido (Figma "text and content") */
+.system-feedback[data-emphasis='high'][data-size='sm'] .system-feedback__text-group {
+  gap: var(--componentSpacing-space-300); /* 24px */
+  padding-inline: var(--componentSpacing-space-200); /* 16px */
+}
+/* md: se colapsa → texto y contenido quedan al gap del body (32) */
+.system-feedback[data-emphasis='high'][data-size='md'] .system-feedback__text-group {
+  display: contents;
+}
+
+.system-feedback__text {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  text-align: center;
+}
+.system-feedback[data-emphasis='low'] .system-feedback__text,
+.system-feedback[data-emphasis='high'][data-size='sm'] .system-feedback__text {
+  gap: var(--internalLayout-space-50); /* 4px */
+}
+.system-feedback[data-emphasis='high'][data-size='md'] .system-feedback__text {
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+
+.system-feedback__label {
+  margin: 0;
+  color: var(--semantic-color-text-primary);
+}
+.system-feedback[data-emphasis='low'] .system-feedback__label {
+  font-size: var(--typography-body-lg-semiemphasized-size); /* 16 */
+  line-height: var(--typography-body-lg-semiemphasized-line-height); /* 24 */
+  font-weight: var(--typography-body-lg-semiemphasized-weight); /* 600 */
+}
+.system-feedback[data-emphasis='high'][data-size='sm'] .system-feedback__label {
+  font-size: var(--typography-headline-sm-semiemphasized-size); /* 24 */
+  line-height: var(--typography-headline-sm-semiemphasized-line-height); /* 32 */
+  font-weight: var(--typography-headline-sm-semiemphasized-weight); /* 600 */
+}
+.system-feedback[data-emphasis='high'][data-size='md'] .system-feedback__label {
+  font-size: var(--typography-display-sm-size); /* 28 */
+  line-height: var(--typography-display-sm-line-height); /* 36 */
+  /* el pipeline no exporta display-sm-semiemphasized → se toma el weight 600 de headline */
+  font-weight: var(--typography-headline-sm-semiemphasized-weight); /* 600 */
+}
+
+.system-feedback__supporting {
+  margin: 0;
+  color: var(--semantic-color-text-secondary);
+}
+.system-feedback[data-emphasis='low'] .system-feedback__supporting,
+.system-feedback[data-emphasis='high'][data-size='sm'] .system-feedback__supporting {
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+}
+.system-feedback[data-emphasis='high'][data-size='md'] .system-feedback__supporting {
+  font-size: var(--typography-body-lg-size); /* 16 */
+  line-height: var(--typography-body-lg-line-height); /* 24 */
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+}
+
+.system-feedback__content {
+  inline-size: 100%;
+}
+
+/* ── acciones ───────────────────────────────────────────────────────────── */
+/* La dirección / gap / alineación / ancho de los botones los resuelve
+   `ButtonActions` (`surface="screen"` en high, `"feedbackState"` en low —
+   ver ButtonActions.css). Acá sólo el padding del borde (Figma
+   "stickyCTAContainer") y el comportamiento sticky. */
+
+/* sticky: la botonera nunca se comprime ni scrollea — queda fija al pie
+   mientras el cuerpo scrollea por dentro. */
+.system-feedback[data-sticky] .system-feedback__actions {
+  flex-shrink: 0;
+}
+.system-feedback[data-emphasis='high'][data-size='sm'] .system-feedback__actions {
+  padding: var(--layout-stack-block) var(--layout-container-inline)
+    var(--layout-content-bottomClearance); /* 16 / 16 / 24 */
+}
+.system-feedback[data-emphasis='high'][data-size='md'] .system-feedback__actions {
+  padding-block-start: var(--layout-stack-block); /* 16px */
+}
+/* low: la botonera se ajusta al contenido y la centra `.system-feedback` */
+.system-feedback[data-emphasis='low'] .system-feedback__actions {
+  inline-size: auto;
+}

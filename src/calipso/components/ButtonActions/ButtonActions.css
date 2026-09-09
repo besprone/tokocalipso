@@ -1,0 +1,76 @@
+/* ── ButtonActions ─────────────────────────────────────────────────────────
+   Botonera reutilizable. Figma: `patterns_buttons_actions`.
+
+   <div.button-actions data-surface>
+     <Button /> ×1–3
+
+   El `surface` sólo cambia dirección / gap / alineación / ancho de los hijos.
+   El padding del borde lo pone el contenedor que la coloca. `padding: 0` acá.
+   Gaps con tokens: `screen` usa `componentSpacing/space-200` (16); el resto
+   `internalLayout/space-100` (8).
+──────────────────────────────────────────────────────────────────────────── */
+
+.button-actions {
+  box-sizing: border-box;
+  display: flex;
+  inline-size: 100%;
+  padding: 0;
+}
+.button-actions > * {
+  box-sizing: border-box;
+}
+
+/* ── screen — apiladas a lo ancho (CTAs de pantalla completa) ────────────── */
+.button-actions[data-surface='screen'] {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--componentSpacing-space-200); /* 16 */
+}
+.button-actions[data-surface='screen'] > * {
+  inline-size: 100%;
+}
+/* El `Button` lleva padding vertical de área táctil FUERA de la píldora
+   (4px sm · 8px xs · 0 md). Apiladas, ese padding sumaba al gap → se veían a
+   ~24px en vez de 16. Se absorbe con margin negativo: el gap queda entre las
+   píldoras visibles (como los wrappers de altura fija de Figma) y el área
+   táctil se conserva. */
+.button-actions[data-surface='screen'] > .button {
+  margin-block: calc(var(--button-block-inset, 0px) * -1);
+}
+
+/* ── dialog — fila alineada a la derecha (footer de diálogo) ─────────────── */
+.button-actions[data-surface='dialog'] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--internalLayout-space-100); /* 8 */
+}
+
+/* ── card — fila alineada a la izquierda ────────────────────────────────── */
+.button-actions[data-surface='card'] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--internalLayout-space-100);
+}
+
+/* ── feedbackState — fila centrada con wrap (estado compacto) ───────────── */
+.button-actions[data-surface='feedbackState'] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--internalLayout-space-100);
+}
+
+/* ── bottomSheet — fila 50/50 ──────────────────────────────────────────── */
+.button-actions[data-surface='bottomSheet'] {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--internalLayout-space-100);
+}
+.button-actions[data-surface='bottomSheet'] > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}

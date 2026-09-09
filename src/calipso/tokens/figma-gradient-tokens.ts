@@ -15,6 +15,22 @@ export const figmaGradientTokens: Record<string, string> = {
     "linear-gradient(180deg, var(--ref-accent-mint-700) 20%, var(--ref-accent-mint-500) 100%)",
 };
 
+/**
+ * Override de gradientes para la marca `maestro` (bloque `[data-brand="maestro"]`).
+ * `bg/inverse` no cambia (neutral, independiente de marca). `primary` sigue a
+ * `brand` (→ neutral) y `accent` a `accentPrimary` (→ yellow).
+ *
+ * PROVISIONAL: los gradientes son Color Styles en Figma, no variables, así que
+ * no vienen en el export de `_ Color · brand`. Estos stops replican la
+ * estructura del gradiente de kubo (2 pasos de rampa); confirmar con diseño.
+ */
+export const figmaGradientTokensMaestro: Record<string, string> = {
+  "semantic/gradient/bg/primary":
+    "linear-gradient(180deg, var(--ref-neutral-800) 20%, var(--ref-neutral-600) 100%)",
+  "semantic/gradient/bg/accent":
+    "linear-gradient(180deg, var(--ref-accent-yellow-700) 20%, var(--ref-accent-yellow-500) 100%)",
+};
+
 export const gradientTokenNotes: Record<string, string> = {
   "semantic/gradient/bg/inverse":
     "Gradiente oscuro para contextos inverse (fondos oscuros/sólidos, overlays y modales en mode inverse).",
@@ -28,5 +44,12 @@ export function gradientCssBlock(): string {
   const lines = Object.entries(figmaGradientTokens).map(
     ([k, v]) => `  ${figmaPathToCssVar(k)}: ${v};`,
   );
-  return `:root {\n${lines.join("\n")}\n}\n`;
+  const maestroLines = Object.entries(figmaGradientTokensMaestro).map(
+    ([k, v]) => `  ${figmaPathToCssVar(k)}: ${v};`,
+  );
+  return (
+    `:root {\n${lines.join("\n")}\n}\n\n` +
+    `/* Marca maestro (provisional — ver figma-gradient-tokens.ts). */\n` +
+    `[data-brand="maestro"] {\n${maestroLines.join("\n")}\n}\n`
+  );
 }

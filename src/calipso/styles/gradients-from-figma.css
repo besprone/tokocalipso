@@ -4,3 +4,9 @@
   --semantic-gradient-bg-primary: linear-gradient(180deg, var(--ref-green-700) 20%, var(--ref-green-500) 100%);
   --semantic-gradient-bg-accent: linear-gradient(180deg, var(--ref-accent-mint-700) 20%, var(--ref-accent-mint-500) 100%);
 }
+
+/* Marca maestro (provisional — ver figma-gradient-tokens.ts). */
+[data-brand="maestro"] {
+  --semantic-gradient-bg-primary: linear-gradient(180deg, var(--ref-neutral-800) 20%, var(--ref-neutral-600) 100%);
+  --semantic-gradient-bg-accent: linear-gradient(180deg, var(--ref-accent-yellow-700) 20%, var(--ref-accent-yellow-500) 100%);
+}

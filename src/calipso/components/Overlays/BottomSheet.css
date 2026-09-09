@@ -8,7 +8,7 @@
        .bottom-sheet__appbar          header (AppBar sm · close a la izquierda)
        .bottom-sheet__centered        (type=centered) slotHeading + label/supporting centrados
        .bottom-sheet__content         content slot · scroll si desborda
-       .bottom-sheet__footer          microcopy + acciones (Button ·1–2)
+       .bottom-sheet__footer          microcopy + ButtonActions surface="bottomSheet" (50/50)
 
    Entrada/salida: `translateY(%)` con `motion/spring` (JS, `src/lib/spring`).
    El backdrop hace fade con `data-state` en el overlay.
@@ -155,17 +155,6 @@
   font-weight: var(--typography-body-md-weight); /* 500 */
   text-align: center;
 }
-.bottom-sheet__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--internalLayout-space-100); /* 8px */
-}
-/* especificidad extra (dos clases) a propósito: `.button` trae `all: unset`,
-   que resetea `flex` a su valor inicial — con la misma especificidad que
-   `.bottom-sheet__actions > *` gana por orden de aparición en el bundle, y
-   los botones quedaban a ancho natural en vez de repartirse el espacio */
-.bottom-sheet__footer .bottom-sheet__actions > * {
-  flex: 1 1 0;
-  min-inline-size: 0;
-}
+/* la botonera del footer → `ButtonActions surface="bottomSheet"`
+   (fila · gap 8 · botones 50/50 con `flex: 1 1 0`). Ver ButtonActions.css. */
 

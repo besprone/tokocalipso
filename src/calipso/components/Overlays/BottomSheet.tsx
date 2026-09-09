@@ -3,6 +3,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { Close } from '@carbon/icons-react';
 import { AppBar } from '../AppBar/AppBar';
 import { IconButton } from '../IconButton/IconButton';
+import { ButtonActions } from '../ButtonActions/ButtonActions';
 import { prefersReducedMotion, springTo } from '../../lib/spring';
 import './BottomSheet.css';
 
@@ -45,7 +46,7 @@ export type BottomSheetProps = {
   slotHeading?: ReactNode;
   /** Acción extra en el header, a la derecha (rara vez usada). */
   headerAction?: ReactNode;
-  /** Sección inferior de acciones — normalmente 1–2 `Button` (`flex: 1`). */
+  /** Sección inferior de acciones — 1–3 `Button`. Se envuelven en `<ButtonActions surface="bottomSheet">` (fila · 50/50). */
   footer?: ReactNode;
   /** Texto legal / aclaratorio sobre los botones del footer (`text/tertiary`, centrado). */
   microcopy?: ReactNode;
@@ -348,7 +349,7 @@ export const BottomSheet = forwardRef<HTMLDivElement, BottomSheetProps>(function
         {footer != null && (
           <div className="bottom-sheet__footer">
             {microcopy != null && <p className="bottom-sheet__microcopy">{microcopy}</p>}
-            <div className="bottom-sheet__actions">{footer}</div>
+            <ButtonActions surface="bottomSheet">{footer}</ButtonActions>
           </div>
         )}
       </div>

@@ -7,7 +7,7 @@
        .dialog__header                cerrar (+ headerAction) · label/supporting (type=default)
        .dialog__container             (type=centered) slotHeading+label/supporting + content, centrados
        .dialog__content                content slot · scroll si desborda
-       .dialog__footer                 microcopy + acciones (Button · alineados a la derecha)
+       .dialog__footer                 microcopy + ButtonActions surface="dialog" (fila a la derecha)
 
    Entrada/salida: progreso 0→1 con `motion/spring` (JS, `src/lib/spring`) —
    fade + scale, vía `--dialog-progress` en el overlay.
@@ -200,12 +200,8 @@
   font-weight: var(--typography-body-md-weight); /* 500 */
   text-align: center;
 }
-.dialog__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--internalLayout-space-100); /* 8px */
-}
+/* layout de `.dialog__actions` → `ButtonActions surface="dialog"`
+   (fila · gap 8 · justify-end). Acá sólo la desviación de `centered`. */
 /* `centered` — el contenido ya está centrado; unos botones a la derecha
    rompen la simetría. Desviación deliberada de Figma (que mantiene
    justify-end en todos los tipos) por balance visual. */

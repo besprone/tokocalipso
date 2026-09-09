@@ -82,6 +82,26 @@
   --ref-accent-orchid-700: #65217d;
   --ref-accent-orchid-800: #471858;
   --ref-accent-orchid-900: #2c0e38;
+  --ref-accent-yellow-50: #fffee5;
+  --ref-accent-yellow-100: #fffcc2;
+  --ref-accent-yellow-200: #fff98f;
+  --ref-accent-yellow-300: #fff65c;
+  --ref-accent-yellow-400: #fff433;
+  --ref-accent-yellow-500: #fff100;
+  --ref-accent-yellow-600: #e0d400;
+  --ref-accent-yellow-700: #b8ae00;
+  --ref-accent-yellow-800: #8f8700;
+  --ref-accent-yellow-900: #666000;
+  --ref-accent-red-50: #fdeeed;
+  --ref-accent-red-100: #fad3d1;
+  --ref-accent-red-200: #f4a8a4;
+  --ref-accent-red-300: #ee746d;
+  --ref-accent-red-400: #e74037;
+  --ref-accent-red-500: #e1251b;
+  --ref-accent-red-600: #b21d15;
+  --ref-accent-red-700: #8d1711;
+  --ref-accent-red-800: #6d120d;
+  --ref-accent-red-900: #4d0d09;
   --ref-whiteAlpha-0: #ffffff00;
   --ref-whiteAlpha-50: #ffffff0d;
   --ref-whiteAlpha-100: #ffffff1a;
@@ -199,4 +219,36 @@
   --semantic-color-icon-onDanger: #ffffff;
   --semantic-color-icon-info: #1e5d86;
   --semantic-color-icon-onInfo: #ffffff;
+}
+
+/* Marca maestro — redefine solo las familias de marca (brand*, accentPrimary*,
+   accentSecondary*) en modo light. Consumidores sin JS: <html data-brand="maestro">.
+   El modo inverse y el toggle en vivo los maneja .storybook/preview.ts. */
+[data-brand="maestro"] {
+  --semantic-color-text-brand: #2b2a30;
+  --semantic-color-text-onBrand: #ffffff;
+  --semantic-color-text-accentPrimary: #666000;
+  --semantic-color-text-accentSecondary: #8d1711;
+  --semantic-color-text-onAccentPrimary: #1c1b20;
+  --semantic-color-text-onAccentSecondary: #1c1b20;
+  --semantic-color-bg-brand: #2b2a30;
+  --semantic-color-bg-brandSoft: #ededee;
+  --semantic-color-bg-brandMuted: #f7f7f8;
+  --semantic-color-bg-accentPrimary: #fff65c;
+  --semantic-color-bg-accentPrimarySoft: #fff98f;
+  --semantic-color-bg-accentPrimaryMuted: #fffcc2;
+  --semantic-color-bg-accentSecondary: #ee746d;
+  --semantic-color-bg-accentSecondarySoft: #f4a8a4;
+  --semantic-color-bg-accentSecondaryMuted: #fad3d1;
+  --semantic-color-border-brand: #2b2a30;
+  --semantic-color-border-accentPrimary: #fff433;
+  --semantic-color-border-accentPrimaryStrong: #e0d400;
+  --semantic-color-border-accentSecondary: #f4a8a4;
+  --semantic-color-border-accentSecondaryStrong: #e74037;
+  --semantic-color-icon-brand: #2b2a30;
+  --semantic-color-icon-onBrand: #ffffff;
+  --semantic-color-icon-accentPrimary: #666000;
+  --semantic-color-icon-onAccentPrimary: #1c1b20;
+  --semantic-color-icon-accentSecondary: #8d1711;
+  --semantic-color-icon-onAccentSecondary: #1c1b20;
 }
