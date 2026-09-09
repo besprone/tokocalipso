@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Add,
-  ArrowRight,
   Help,
   ListBulleted,
   Notification,
@@ -15,7 +14,6 @@ import { Carousel } from '../../calipso/components/Carousel/Carousel';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
 import { ItemContent } from '../../calipso/components/ItemBlocks';
 import { ItemTrailing } from '../../calipso/components/ItemBlocks/ItemTrailing';
-import { Link } from '../../calipso/components/Link/Link';
 import { NavigationBar } from '../../calipso/components/Navigation';
 import './HomeSolicitudes.css';
 
@@ -130,13 +128,10 @@ export function HomeSolicitudes() {
 
         <main className="home__content">
           <section className="home__section" aria-labelledby="home-solicitudes">
-            <ItemContent
-              id="home-solicitudes"
-              className="home__section-header"
-              layout="horizontal"
-              label="Tus solicitudes"
-              action={<Link href="#solicitudes">ver todas</Link>}
-            />
+            <a className="home__section-header" href="#solicitudes">
+              <ItemContent id="home-solicitudes" label="Tus solicitudes" />
+              <ItemTrailing type="icon" />
+            </a>
 
             <div className="home__grid">
               {contadores.map((contador) => (
@@ -150,7 +145,7 @@ export function HomeSolicitudes() {
                   <div className="home__tile">
                     <div className="home__tile-top">
                       <span className="home__tile-value">{contador.value}</span>
-                      <ItemTrailing type="icon" icon={<ArrowRight />} />
+                      <ItemTrailing type="icon" />
                     </div>
                     <ItemContent size="md" label={contador.label} />
                   </div>
@@ -160,13 +155,10 @@ export function HomeSolicitudes() {
           </section>
 
           <section className="home__section" aria-labelledby="home-promos">
-            <ItemContent
-              id="home-promos"
-              className="home__section-header"
-              layout="horizontal"
-              label="Promociones y campañas"
-              action={<Link href="#promociones">ver todas</Link>}
-            />
+            <a className="home__section-header" href="#promociones">
+              <ItemContent id="home-promos" label="Promociones y campañas" />
+              <ItemTrailing type="icon" />
+            </a>
 
             <Carousel aria-label="Promociones y campañas" itemsPerView={1} loop>
               {promociones.map((promo) => (

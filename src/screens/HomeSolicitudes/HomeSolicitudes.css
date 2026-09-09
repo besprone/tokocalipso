@@ -76,11 +76,45 @@
   gap: var(--layout-stack-block); /* 16px */
 }
 
-/* Encabezado de sección: `ItemContent` horizontal reparte el ancho en partes
-   iguales; aquí el título se queda con el sobrante y el `Link` con lo suyo.
-   Es un ajuste de layout — no cambia tipografía, color ni espaciado del DS. */
-.home__section-header .item-content__action {
-  flex: 0 0 auto;
+/* Encabezado de sección — UN solo elemento navegable: título + chevron.
+   El chevron es el `ItemTrailing` decorativo (sin `onIconClick`), que el DS
+   define justo para esto: "el row es el área táctil". No se anida un
+   `IconButton` porque un <button> dentro de un <a> es HTML inválido — mismo
+   criterio que `QuickAction`.
+
+   El área táctil abraza al contenido (`align-self`) en vez de ocupar el ancho,
+   y el padding se compensa con un margen negativo para que el título siga
+   cayendo en la retícula de 16. */
+.home__section-header {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-100); /* 8px */
+  max-inline-size: 100%;
+  padding: var(--internalLayout-space-50) var(--internalLayout-space-100);
+  margin-inline: calc(var(--internalLayout-space-100) * -1);
+  border-radius: var(--controls-radius-100);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+@media (hover: hover) {
+  .home__section-header:hover {
+    background-color: var(--semantic-color-state-hover);
+  }
+}
+.home__section-header:active {
+  background-color: var(--semantic-color-state-pressed);
+}
+.home__section-header:focus-visible {
+  outline: 2px solid var(--semantic-color-state-focusRing);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home__section-header {
+    transition: none;
+  }
 }
 
 /* ── contadores (2 columnas del grid mobile) ─────────────────────────────── */
