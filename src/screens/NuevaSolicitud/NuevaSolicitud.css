@@ -1,0 +1,69 @@
+/* ── Iniciemos la solicitud ────────────────────────────────────────────────
+   Solo layout, con tokens del sistema. Mismo shell que la home.
+
+     .solicitud            columna a todo el alto, topada a ancho móvil
+       .solicitud__scroll    único bloque que scrollea
+         .solicitud__content stack de campos con el margen del grid mobile
+       .solicitud__footer    CTA fijo al pie, fuera del scroll
+──────────────────────────────────────────────────────────────────────────── */
+
+.solicitud {
+  display: flex;
+  flex-direction: column;
+  block-size: 100dvh;
+  max-inline-size: 480px;
+  margin-inline: auto;
+  background-color: var(--semantic-color-bg-canvas);
+  font-family: var(--typography-font-family);
+}
+
+@media (min-width: 481px) {
+  .solicitud {
+    border-inline: 1px solid var(--semantic-color-border-subtle);
+  }
+}
+
+.solicitud__scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.solicitud__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--componentSpacing-space-300); /* 24px */
+  padding-inline: var(--mobile-margin); /* 16px */
+  padding-block: var(--layout-stack-block) var(--layout-content-bottomClearance);
+}
+
+/* Campo sin componente propio: el `ChipGroup` no trae label, a diferencia del
+   `SelectBottomSheet`. Se le pone uno con la misma tipografía que el label
+   flotado del `TextField` (Body/sm · text/secondary) para que los tres campos
+   se lean como una sola forma. */
+.solicitud__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--internalLayout-space-100); /* 8px */
+}
+
+.solicitud__etiqueta {
+  font-size: var(--typography-body-sm-size); /* 12px */
+  line-height: var(--typography-body-sm-line-height); /* 17px */
+  font-weight: var(--typography-body-lg-weight); /* 500 */
+  color: var(--semantic-color-text-secondary);
+}
+
+/* ── pie ─────────────────────────────────────────────────────────────────── */
+/* Fuera del contenedor de scroll → fijo al borde inferior por construcción. */
+.solicitud__footer {
+  flex: 0 0 auto;
+  padding-inline: var(--mobile-margin); /* 16px */
+  padding-block: var(--componentSpacing-space-200); /* 16px */
+  padding-block-end: calc(
+    var(--componentSpacing-space-200) + env(safe-area-inset-bottom, 0px)
+  );
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--Elevation-elevation-2);
+}

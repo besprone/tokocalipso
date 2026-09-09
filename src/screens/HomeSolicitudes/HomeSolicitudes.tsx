@@ -73,11 +73,11 @@ type Promo = {
  */
 const IMAGEN_PROMO = '/promos/promo.webp';
 
-/** Opciones del sheet de "Nuevo". Todavía no navegan a ningún lado. */
+/** Opciones del sheet de "Nuevo". Solo la de crédito lleva a algún lado. */
 const nuevasOpciones = [
-  'Nueva solicitud de crédito',
-  'Nueva consulta de capacidad',
-  'Nueva cotización',
+  { id: 'credito', label: 'Nueva solicitud de crédito' },
+  { id: 'capacidad', label: 'Nueva consulta de capacidad' },
+  { id: 'cotizacion', label: 'Nueva cotización' },
 ];
 
 const promociones: Promo[] = [
@@ -98,7 +98,11 @@ const promociones: Promo[] = [
   },
 ];
 
-export function HomeSolicitudes() {
+export type HomeSolicitudesProps = {
+  onNuevaSolicitud: () => void;
+};
+
+export function HomeSolicitudes({ onNuevaSolicitud }: HomeSolicitudesProps) {
   const [seccion, setSeccion] = useState('tramites');
   // el sheet se desmonta al terminar su animación de salida (`onExited`)
   const [sheetMontado, setSheetMontado] = useState(false);
@@ -220,11 +224,14 @@ export function HomeSolicitudes() {
           <List type="segmented">
             {nuevasOpciones.map((opcion) => (
               <ListItem
-                key={opcion}
+                key={opcion.id}
                 interactive
-                label={opcion}
+                label={opcion.label}
                 trailing={<ItemTrailing type="icon" icon={<Add />} />}
-                onClick={() => setSheetAbierto(false)}
+                onClick={() => {
+                  setSheetAbierto(false);
+                  if (opcion.id === 'credito') onNuevaSolicitud();
+                }}
               />
             ))}
           </List>

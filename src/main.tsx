@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 
 import "./calipso/styles/tokens.css";
 import "./app.css";
-import { HomeSolicitudes } from "./screens/HomeSolicitudes/HomeSolicitudes";
+import { App } from "./App";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <HomeSolicitudes />
+    <App />
   </StrictMode>,
 );
