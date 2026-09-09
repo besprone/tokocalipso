@@ -55,6 +55,14 @@
   color: var(--semantic-color-text-secondary);
 }
 
+/* Cada opción del radiogroup: el <label> es el área táctil de la fila entera.
+   Como el `List` reparte con `gap` de flex y no con selectores de hijo
+   directo, envolver el `ListItem` no rompe sus divisores. */
+.solicitud__opcion {
+  display: block;
+  cursor: pointer;
+}
+
 /* ── pie ─────────────────────────────────────────────────────────────────── */
 /* Fuera del contenedor de scroll → fijo al borde inferior por construcción. */
 .solicitud__footer {

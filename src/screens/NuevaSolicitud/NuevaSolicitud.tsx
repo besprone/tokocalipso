@@ -4,8 +4,10 @@ import { ArrowLeft } from '@carbon/icons-react';
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
 import { Button } from '../../calipso/components/Button/Button';
 import { ButtonActions } from '../../calipso/components/ButtonActions/ButtonActions';
-import { ChipGroup } from '../../calipso/components/ChipGroup/ChipGroup';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
+import { ItemLeading } from '../../calipso/components/ItemBlocks';
+import { List } from '../../calipso/components/List';
+import { ListItem } from '../../calipso/components/List/ListItem';
 import { SelectBottomSheet } from '../../calipso/components/Select';
 import type { SelectOption } from '../../calipso/components/Select';
 import './NuevaSolicitud.css';
@@ -16,7 +18,7 @@ import './NuevaSolicitud.css';
  * Mapa de la pantalla → sistema:
  *   AppBar (stacked)     back + título + párrafo de contexto
  *   SelectBottomSheet    dependencia y convenio (campo que abre un sheet)
- *   ChipGroup            tipo de firma — elección única, `role="radio"`
+ *   List + Radio         tipo de firma — una opción por fila, `role="radiogroup"`
  *   ButtonActions        CTA fijo al pie, a lo ancho
  *
  * Mismo shell que la home: alto completo, columna de ancho móvil centrada, y
@@ -96,12 +98,31 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
             <span className="solicitud__etiqueta" id="tipo-de-firma">
               Tipo de firma
             </span>
-            <ChipGroup
-              options={tiposDeFirma}
-              value={firma}
-              onChange={setFirma}
-              aria-label="Tipo de firma"
-            />
+            {/* El <label> envuelve la fila entera para que todo el row active
+                el radio. No se usa `ListItem interactive` porque renderiza un
+                <button>, y un <input> dentro de un <button> es HTML inválido.
+                El `role="radiogroup"` sustituye al `role="list"` por defecto:
+                aquí las filas son opciones, no una lista. */}
+            <List type="segmented" role="radiogroup" aria-labelledby="tipo-de-firma">
+              {tiposDeFirma.map((tipo) => (
+                <label key={tipo.value} className="solicitud__opcion">
+                  <ListItem
+                    label={tipo.label}
+                    leading={
+                      <ItemLeading
+                        type="radiobutton"
+                        control={{
+                          name: 'tipo-de-firma',
+                          value: tipo.value,
+                          checked: firma === tipo.value,
+                          onChange: () => setFirma(tipo.value),
+                        }}
+                      />
+                    }
+                  />
+                </label>
+              ))}
+            </List>
           </div>
         </main>
       </div>
