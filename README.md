@@ -31,6 +31,14 @@ aquí; los archivos de `src/calipso/` no se modifican en este proyecto.
 `HomeSolicitudes.css` solo compone layout (grid, stack, padding) con tokens
 generados desde Figma — sin colores, sombras ni tipografías propias.
 
+## Marca
+
+Este flujo es de **Crédito Maestro**, así que el prototipo arranca en
+`data-brand="maestro"` (declarado en `index.html` para que el primer pintado ya
+sea el correcto). El toggle de `src/BrandToggle.tsx` permite cambiar a kubo
+como comparación — sirve para verificar que la pantalla no dependa de la marca,
+no porque este flujo exista en kubo.
+
 ## Desarrollo
 
 ```bash

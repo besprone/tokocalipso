@@ -6,6 +6,9 @@ export type Brand = 'kubo' | 'maestro';
 const CLAVE = 'toko-brand';
 const MARCAS: Brand[] = ['kubo', 'maestro'];
 
+/** Este flujo es de Crédito Maestro. kubo queda solo como comparación. */
+const MARCA_POR_DEFECTO: Brand = 'maestro';
+
 /**
  * Toggle de marca — andamiaje del prototipo, NO es parte del producto ni del
  * design system. El DS emite `:root` con kubo y un bloque
@@ -13,13 +16,13 @@ const MARCAS: Brand[] = ['kubo', 'maestro'];
  * cambiar de marca es cambiar un atributo en <html>.
  */
 
-/** Marca guardada, o kubo si no hay nada (o si el storage no está disponible). */
+/** Marca guardada, o la de por defecto si no hay nada o el storage falla. */
 export function marcaGuardada(): Brand {
   try {
     const v = localStorage.getItem(CLAVE);
-    return v === 'maestro' || v === 'kubo' ? v : 'kubo';
+    return v === 'maestro' || v === 'kubo' ? v : MARCA_POR_DEFECTO;
   } catch {
-    return 'kubo';
+    return MARCA_POR_DEFECTO;
   }
 }
 
