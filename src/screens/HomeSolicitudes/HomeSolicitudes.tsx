@@ -128,10 +128,12 @@ export function HomeSolicitudes() {
 
         <main className="home__content">
           <section className="home__section" aria-labelledby="home-solicitudes">
-            <a className="home__section-header" href="#solicitudes">
+            <div className="home__section-header">
               <ItemContent id="home-solicitudes" label="Tus solicitudes" />
-              <ItemTrailing type="icon" />
-            </a>
+              <Button emphasis="secondary" size="sm">
+                Ver
+              </Button>
+            </div>
 
             <div className="home__grid">
               {contadores.map((contador) => (
@@ -155,10 +157,12 @@ export function HomeSolicitudes() {
           </section>
 
           <section className="home__section" aria-labelledby="home-promos">
-            <a className="home__section-header" href="#promociones">
+            <div className="home__section-header">
               <ItemContent id="home-promos" label="Promociones y campañas" />
-              <ItemTrailing type="icon" />
-            </a>
+              <Button emphasis="secondary" size="sm">
+                Ver
+              </Button>
+            </div>
 
             <Carousel aria-label="Promociones y campañas" itemsPerView={1} loop>
               {promociones.map((promo) => (
