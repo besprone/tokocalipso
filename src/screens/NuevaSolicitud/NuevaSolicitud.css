@@ -72,6 +72,11 @@
   padding-block-end: calc(
     var(--componentSpacing-space-200) + env(safe-area-inset-bottom, 0px)
   );
+}
+
+/* Solo cuando queda contenido por debajo del scroll: ahí sí hay algo que
+   separar. Si la forma cabe entera, el pie se funde con el canvas. */
+.solicitud__footer[data-elevado] {
   background-color: var(--semantic-color-bg-surface);
   box-shadow: var(--Elevation-elevation-2);
 }
