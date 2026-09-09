@@ -61,6 +61,22 @@
   flex: 0 0 auto;
 }
 
+/* Workaround temporal a un bug del BottomSheet del DS.
+   Al cerrar, el muelle de salida sigue oscilando fuera de pantalla: a los
+   ~410ms el sheet ya es invisible (translateY > 100%), pero no se desmonta
+   hasta los ~978ms, y en esos ~570ms el backdrop sigue capturando clics. El
+   efecto es un clic muerto: cierras, vuelves a tocar "Nuevo" y no pasa nada
+   hasta el segundo clic.
+
+   Mientras el DS lo corrige, el backdrop deja de capturar en cuanto empieza la
+   salida. Contrapartida: durante los ~400ms en que el sheet todavía se ve
+   saliendo, un clic pasa al contenido de atrás — preferible al clic muerto,
+   porque a esas alturas el usuario ya descartó el sheet. Quitar cuando el DS
+   dispare `onExited` al salir de pantalla en vez de al asentarse el muelle. */
+.bottom-sheet-overlay[data-state='exiting'] {
+  pointer-events: none;
+}
+
 /* ── contenido ───────────────────────────────────────────────────────────── */
 .home__content {
   display: flex;
