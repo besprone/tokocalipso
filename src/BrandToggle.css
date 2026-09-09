@@ -1,0 +1,74 @@
+/* Andamiaje del prototipo — no es design system. Usa tokens solo para no
+   desentonar; deliberadamente discreto para que no se lea como UI de producto. */
+
+.brand-toggle {
+  position: fixed;
+  inset-block-end: var(--componentSpacing-space-200); /* 16px */
+  inset-inline-start: var(--componentSpacing-space-200);
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  padding: var(--internalLayout-space-50);
+  padding-inline-start: var(--internalLayout-space-150); /* 12px */
+
+  border: 1px solid var(--semantic-color-border-subtle);
+  border-radius: var(--circular-items-radius-round);
+  background-color: var(--semantic-color-bg-surface);
+  box-shadow: var(--Elevation-elevation-2);
+  font-family: var(--typography-font-family);
+
+  opacity: 0.5;
+  transition: opacity var(--linear-200-duration-ms) var(--linear-200-easing);
+}
+.brand-toggle:hover,
+.brand-toggle:focus-within {
+  opacity: 1;
+}
+
+/* Sin gutter lateral, se sube por encima de la NavigationBar (71px) para no
+   tapar sus controles. */
+@media (max-width: 520px) {
+  .brand-toggle {
+    inset-block-end: calc(71px + var(--internalLayout-space-100));
+  }
+}
+
+.brand-toggle__etiqueta {
+  font-size: var(--typography-body-xs-size);
+  line-height: var(--typography-body-xs-line-height);
+  font-weight: var(--typography-body-xs-weight);
+  color: var(--semantic-color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.brand-toggle__opcion {
+  appearance: none;
+  margin: 0;
+  border: 0;
+  cursor: pointer;
+  padding: var(--internalLayout-space-50) var(--internalLayout-space-100);
+  border-radius: var(--circular-items-radius-round);
+  background-color: transparent;
+  color: var(--semantic-color-text-secondary);
+  font-family: inherit;
+  font-size: var(--typography-body-sm-size);
+  line-height: var(--typography-body-sm-line-height);
+  font-weight: var(--typography-body-sm-semiemphasized-weight);
+}
+.brand-toggle__opcion[data-activa] {
+  background-color: var(--semantic-color-bg-inverse);
+  color: var(--semantic-color-text-onBrand);
+}
+.brand-toggle__opcion:focus-visible {
+  outline: 2px solid var(--semantic-color-border-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-toggle {
+    transition: none;
+  }
+}
