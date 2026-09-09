@@ -33,11 +33,13 @@ generados desde Figma — sin colores, sombras ni tipografías propias.
 
 ## Marca
 
-Este flujo es de **Crédito Maestro**, así que el prototipo arranca en
-`data-brand="maestro"` (declarado en `index.html` para que el primer pintado ya
-sea el correcto). El toggle de `src/BrandToggle.tsx` permite cambiar a kubo
-como comparación — sirve para verificar que la pantalla no dependa de la marca,
-no porque este flujo exista en kubo.
+Este flujo es de **Crédito Maestro**. La marca se declara una sola vez, en el
+`data-brand="maestro"` del `index.html`, y de ahí la toma el bloque de marca
+que emite el DS.
+
+Este flujo no existe en kubo, así que el prototipo no trae selector de marca.
+Para comparar contra kubo puntualmente, basta quitar ese atributo — kubo es el
+`:root` del sistema.
 
 ## Desarrollo
 
