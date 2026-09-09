@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Add,
   Help,
+  Image as ImageIcon,
   ListBulleted,
   Notification,
   Search,
@@ -12,6 +13,7 @@ import { Button } from '../../calipso/components/Button/Button';
 import { Card } from '../../calipso/components/Card/Card';
 import { Carousel } from '../../calipso/components/Carousel/Carousel';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
+import { ImgSlot } from '../../calipso/components/ImgSlot';
 import { ItemContent } from '../../calipso/components/ItemBlocks';
 import { ItemTrailing } from '../../calipso/components/ItemBlocks/ItemTrailing';
 import { NavigationBar } from '../../calipso/components/Navigation';
@@ -60,6 +62,13 @@ type Promo = {
   title: string;
   body: string;
 };
+
+/**
+ * Arte de las promos. Por ahora la misma en las tres tarjetas; cuando cada
+ * campaña tenga la suya, pasa a ser un campo de `Promo`. Vacío = `ImgSlot`
+ * pinta su placeholder.
+ */
+const IMAGEN_PROMO = '';
 
 const promociones: Promo[] = [
   {
@@ -167,7 +176,9 @@ export function HomeSolicitudes() {
             <Carousel aria-label="Promociones y campañas" itemsPerView={1} loop>
               {promociones.map((promo) => (
                 <Card key={promo.id} elevation="flat">
-                  <span className="home__promo-media" aria-hidden="true" />
+                  <ImgSlot size="lg" icon={<ImageIcon />}>
+                    {IMAGEN_PROMO ? <img src={IMAGEN_PROMO} alt="" /> : undefined}
+                  </ImgSlot>
                   <div className="home__promo-body">
                     <ItemContent label={promo.title} supporting={promo.body} />
                     <Button emphasis="secondary" size="sm">

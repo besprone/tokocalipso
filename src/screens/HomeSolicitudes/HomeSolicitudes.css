@@ -10,7 +10,8 @@
        .home__nav         NavigationBar fija, fuera del scroll
      .home__grid        2 de las 4 columnas del grid mobile (gutter 16)
      .home__tile        composición interna de la Card contadora
-     .home__promo-*     composición interna de la Card de promoción
+     .home__promo-body  composición interna de la Card de promoción
+                        (el media es un `ImgSlot` del DS, sin CSS propio)
 ──────────────────────────────────────────────────────────────────────────── */
 
 .home {
@@ -124,13 +125,6 @@
 }
 
 /* ── promociones ─────────────────────────────────────────────────────────── */
-.home__promo-media {
-  display: block;
-  inline-size: 100%;
-  aspect-ratio: 16 / 10;
-  background-image: var(--semantic-gradient-bg-accent);
-}
-
 .home__promo-body {
   display: flex;
   flex-direction: column;
