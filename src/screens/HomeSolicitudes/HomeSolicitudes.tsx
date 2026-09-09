@@ -16,7 +16,10 @@ import { IconButton } from '../../calipso/components/IconButton/IconButton';
 import { ImgSlot } from '../../calipso/components/ImgSlot';
 import { ItemContent } from '../../calipso/components/ItemBlocks';
 import { ItemTrailing } from '../../calipso/components/ItemBlocks/ItemTrailing';
+import { List } from '../../calipso/components/List';
+import { ListItem } from '../../calipso/components/List/ListItem';
 import { NavigationBar } from '../../calipso/components/Navigation';
+import { BottomSheet } from '../../calipso/components/Overlays';
 import './HomeSolicitudes.css';
 
 /**
@@ -70,6 +73,13 @@ type Promo = {
  */
 const IMAGEN_PROMO = '/promos/promo.webp';
 
+/** Opciones del sheet de "Nuevo". Todavía no navegan a ningún lado. */
+const nuevasOpciones = [
+  'Nueva solicitud de crédito',
+  'Nueva consulta de capacidad',
+  'Nueva cotización',
+];
+
 const promociones: Promo[] = [
   {
     id: 'navidad',
@@ -90,6 +100,14 @@ const promociones: Promo[] = [
 
 export function HomeSolicitudes() {
   const [seccion, setSeccion] = useState('tramites');
+  // el sheet se desmonta al terminar su animación de salida (`onExited`)
+  const [sheetMontado, setSheetMontado] = useState(false);
+  const [sheetAbierto, setSheetAbierto] = useState(false);
+
+  const abrirSheet = () => {
+    setSheetMontado(true);
+    setSheetAbierto(true);
+  };
   const [colapsada, setColapsada] = useState(false);
   const [enTope, setEnTope] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -114,7 +132,7 @@ export function HomeSolicitudes() {
     <IconButton emphasis="ghost" scheme="neutral" size="lg" icon={<Help />} aria-label="Ayuda" />
   );
   const nuevo = (
-    <Button emphasis="primary" size="sm" icon={<Add />}>
+    <Button emphasis="primary" size="sm" icon={<Add />} onClick={abrirSheet}>
       Nuevo
     </Button>
   );
@@ -191,6 +209,28 @@ export function HomeSolicitudes() {
           </section>
         </main>
       </div>
+
+      {sheetMontado && (
+        <BottomSheet
+          open={sheetAbierto}
+          onClose={() => setSheetAbierto(false)}
+          onExited={() => setSheetMontado(false)}
+          showClose={false}
+          aria-label="Crear nueva"
+        >
+          <List type="segmented">
+            {nuevasOpciones.map((opcion) => (
+              <ListItem
+                key={opcion}
+                interactive
+                label={opcion}
+                trailing={<ItemTrailing type="icon" icon={<Add />} />}
+                onClick={() => setSheetAbierto(false)}
+              />
+            ))}
+          </List>
+        </BottomSheet>
+      )}
 
       <div className="home__nav">
         <NavigationBar
