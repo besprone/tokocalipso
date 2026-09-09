@@ -68,7 +68,7 @@ type Promo = {
  * campaña tenga la suya, pasa a ser un campo de `Promo`. Vacío = `ImgSlot`
  * pinta su placeholder.
  */
-const IMAGEN_PROMO = '';
+const IMAGEN_PROMO = '/promos/promo.webp';
 
 const promociones: Promo[] = [
   {
