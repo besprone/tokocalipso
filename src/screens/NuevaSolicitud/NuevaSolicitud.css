@@ -28,6 +28,14 @@
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* columna para poder empujar el CTA al fondo cuando sobra alto: `sticky`
+     solo ancla si hay desbordamiento, y con la forma corta quedaría pegado
+     al contenido en vez de abajo. */
+  display: flex;
+  flex-direction: column;
+}
+.solicitud__scroll > .button-actions {
+  margin-block-start: auto;
 }
 
 .solicitud__content {
@@ -66,22 +74,4 @@
 .solicitud__opcion {
   display: block;
   cursor: pointer;
-}
-
-/* ── pie ─────────────────────────────────────────────────────────────────── */
-/* Fuera del contenedor de scroll → fijo al borde inferior por construcción. */
-.solicitud__footer {
-  flex: 0 0 auto;
-  padding-inline: var(--layout-container-inline); /* 16px */
-  padding-block-start: var(--layout-stack-block); /* 16px */
-  padding-block-end: calc(
-    var(--layout-content-bottomClearance) + env(safe-area-inset-bottom, 0px)
-  ); /* 24px */
-}
-
-/* Figma separa el CTA con un borde de 1px sobre `bg/canvas` — no con fondo
-   blanco ni sombra. Se mantiene condicional: solo aparece cuando queda
-   contenido por debajo del scroll, que es lo que hay que separar. */
-.solicitud__footer[data-elevado] {
-  border-block-start: 1px solid var(--semantic-color-border-default);
 }

@@ -5,7 +5,7 @@
      [data-type="img"]           marco circular bg/canvas, overflow clip · xs–xl
      [data-type="avatar"]        <Avatar> (o slot) · xs–xl
      [data-type="number"]        círculo bg/accentPrimaryMuted 32px + número
-     [data-type="checkbox"]      <Checkbox> en columna de 24px, alto de fila
+     [data-type="checkbox"]      <Checkbox> en caja de 24px (área táctil 48 desborda)
      [data-type="radiobutton"]   <Radio> idem
      [data-type="paymentStatus"] slot (timeline)
 
@@ -126,13 +126,21 @@
   color: var(--semantic-color-text-onAccentPrimary);
 }
 
-/* ── checkbox / radiobutton ──────────────────────────────────────────────── */
+/* ── checkbox / radiobutton ──────────────────────────────────────────────────
+   Figma `_building_blocks_leading` es una caja de 24×24; el control (área
+   táctil 48) la desborda sin empujar la fila (queda en 56). Absoluto en vez de
+   `min-block-size` (que inflaba la fila a 80). */
 .item-leading__control {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-inline-size: 24px;
-  min-block-size: 56px;
+  position: relative;
+  display: block;
+  inline-size: 24px;
+  block-size: 24px;
+}
+.item-leading__control > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* ── paymentStatus ───────────────────────────────────────────────────────── */

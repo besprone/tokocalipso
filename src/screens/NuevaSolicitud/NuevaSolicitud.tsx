@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
@@ -19,8 +19,8 @@ import './NuevaSolicitud.css';
  *   AppBar (stacked)     back + título + párrafo de contexto
  *   SelectBottomSheet    dependencia y convenio (campo que abre un sheet)
  *   List + Radio         tipo de firma — una opción por fila, `role="radiogroup"`
- *   ButtonActions        CTA fijo al pie, a lo ancho (se eleva solo si hay
- *                        contenido por debajo del scroll)
+ *   ButtonActions        CTA fijo al pie (`sticky`), con su borde en `auto`:
+ *                        solo aparece si queda contenido por debajo
  *
  * Mismo shell que la home: alto completo, columna de ancho móvil centrada, y
  * solo el bloque de contenido scrollea.
@@ -53,37 +53,14 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
   const [dependencia, setDependencia] = useState('');
   const [convenio, setConvenio] = useState('');
   const [firma, setFirma] = useState('autografa');
-  const [pieElevado, setPieElevado] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const puedeComenzar = dependencia !== '' && convenio !== '';
 
-  /**
-   * El pie solo se separa del contenido cuando hay algo por debajo del scroll.
-   * Si todo cabe en pantalla —el caso normal de esta forma— no hay nada que
-   * separar, así que no lleva ni fondo ni sombra.
-   */
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const revisar = () => {
-      const hayMas = el.scrollHeight - el.clientHeight - el.scrollTop > 1;
-      setPieElevado(hayMas);
-    };
-    revisar();
-    el.addEventListener('scroll', revisar, { passive: true });
-    const ro = new ResizeObserver(revisar);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener('scroll', revisar);
-      ro.disconnect();
-    };
-  }, []);
-
   return (
     <div className="solicitud">
-      <div className="solicitud__scroll" ref={scrollRef}>
+      <div className="solicitud__scroll">
         <AppBar
+          configuration="navigation"
           layout="stacked"
           size="sm"
           headline="Iniciemos la solicitud"
@@ -151,10 +128,8 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
             </List>
           </div>
         </main>
-      </div>
 
-      <div className="solicitud__footer" data-elevado={pieElevado || undefined}>
-        <ButtonActions surface="screen">
+        <ButtonActions surface="screen" sticky>
           <Button emphasis="primary" size="sm" disabled={!puedeComenzar}>
             Comenzar solicitud
           </Button>

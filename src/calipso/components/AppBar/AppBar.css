@@ -243,6 +243,11 @@
 }
 .app-bar[data-configuration='dialog'][data-layout='stacked'] > *,
 .app-bar[data-configuration='navigation'][data-layout='stacked'] > * {
+  /* `.app-bar__text` es content-box con `padding-inline: 12` — sin border-box,
+     `inline-size: 100%` lo hace medir 100% + 24 y desbordar; como esas configs
+     centran (`align-items: center`), sobresale y se come su propio inset óptico
+     (headline/supporting caían a 4px en vez de 16). */
+  box-sizing: border-box;
   inline-size: 100%;
   max-inline-size: 480px;
 }

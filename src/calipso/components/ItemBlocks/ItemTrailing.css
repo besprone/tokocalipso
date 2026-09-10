@@ -2,9 +2,9 @@
    Bloque del borde derecho de un row. Figma: `_building_blocks_trailing`.
 
      [data-type="icon"]      IconButton ghost (chevron) o icono decorativo · 24px
-     [data-type="checkbox"]  <Checkbox> centrado
-     [data-type="radio"]     <Radio> centrado
-     [data-type="switch"]    <Switch> (52×32)
+     [data-type="checkbox"]  <Checkbox> en caja de 24px (área táctil 48 desborda)
+     [data-type="radio"]     <Radio> idem
+     [data-type="switch"]    <Switch> (52×32 · sin caja, ya es su tamaño visible)
      [data-type="badge"]     slot — un <Badge>
      [data-type="text"]      texto derecha · Body/lg-semiemphasized · text/primary
 ──────────────────────────────────────────────────────────────────────────── */
@@ -14,6 +14,26 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+/* ── checkbox / radio ────────────────────────────────────────────────────────
+   Figma `_building_blocks_trailing` es una caja de 24×24; el control (área
+   táctil 48) la desborda y NO participa del layout — así la fila se queda en
+   56. Se centra el control con posicionamiento absoluto (con `grid` +
+   `place-items: center` el track mide min-content = 48 y el control queda
+   desfasado 12px). */
+.item-trailing[data-type='checkbox'] .item-trailing__control,
+.item-trailing[data-type='radio'] .item-trailing__control {
+  position: relative;
+  display: block;
+  inline-size: 24px;
+  block-size: 24px;
+}
+.item-trailing__control > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .item-trailing__icon {

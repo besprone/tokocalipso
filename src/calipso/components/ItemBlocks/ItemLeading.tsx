@@ -20,7 +20,16 @@ export type ItemLeadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type ControlProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
-  'checked' | 'defaultChecked' | 'disabled' | 'name' | 'value' | 'required' | 'aria-label' | 'aria-labelledby'
+  | 'checked'
+  | 'defaultChecked'
+  | 'disabled'
+  | 'name'
+  | 'value'
+  | 'required'
+  | 'aria-label'
+  | 'aria-labelledby'
+  | 'aria-hidden'
+  | 'tabIndex'
 > & { onChange?: (e: ChangeEvent<HTMLInputElement>) => void };
 
 type BaseProps = {
