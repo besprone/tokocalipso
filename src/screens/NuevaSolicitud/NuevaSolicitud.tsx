@@ -102,21 +102,23 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
         />
 
         <main className="solicitud__content">
-          <SelectBottomSheet
-            label="Dependencia"
-            placeholder="Selecciona..."
-            options={dependencias}
-            value={dependencia}
-            onChange={setDependencia}
-          />
+          <div className="solicitud__grupo">
+            <SelectBottomSheet
+              label="Dependencia"
+              placeholder="Selecciona..."
+              options={dependencias}
+              value={dependencia}
+              onChange={setDependencia}
+            />
 
-          <SelectBottomSheet
-            label="Convenio"
-            placeholder="Selecciona..."
-            options={convenios}
-            value={convenio}
-            onChange={setConvenio}
-          />
+            <SelectBottomSheet
+              label="Convenio"
+              placeholder="Selecciona..."
+              options={convenios}
+              value={convenio}
+              onChange={setConvenio}
+            />
+          </div>
 
           <div className="solicitud__campo">
             <span className="solicitud__etiqueta" id="tipo-de-firma">
@@ -153,7 +155,7 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
 
       <div className="solicitud__footer" data-elevado={pieElevado || undefined}>
         <ButtonActions surface="screen">
-          <Button emphasis="primary" size="md" disabled={!puedeComenzar}>
+          <Button emphasis="primary" size="sm" disabled={!puedeComenzar}>
             Comenzar solicitud
           </Button>
         </ButtonActions>
