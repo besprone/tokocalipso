@@ -68,6 +68,28 @@
   cursor: pointer;
 }
 
+/* Workaround temporal a un desajuste del `ItemTrailing` del DS.
+   En Figma el slot trailing es una caja de 24px y el radiobutton de 48 la
+   desborda: el área táctil no participa del layout. En el código el slot toma
+   los 48 completos, así que la fila se va a 72 en vez de los 56 que especifica
+   el `_building_blocks_list_item` — y queda más alta que las filas del sheet
+   de Dependencia, que sí miden 56.
+
+   Aquí se encaja el slot en 24 y el radio se centra encima sin empujar. El
+   área táctil sigue siendo 48×48, y de todos modos toda la fila es tappable
+   por el <label>. Quitar cuando el DS lo corrija. */
+.solicitud__campo .item-trailing[data-type='radio'] {
+  position: relative;
+  inline-size: var(--size-24);
+  block-size: var(--size-24);
+}
+.solicitud__campo .item-trailing[data-type='radio'] > .radio {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+}
+
 /* ── pie ─────────────────────────────────────────────────────────────────── */
 /* Fuera del contenedor de scroll → fijo al borde inferior por construcción. */
 .solicitud__footer {
