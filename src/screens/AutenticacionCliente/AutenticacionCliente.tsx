@@ -6,6 +6,7 @@ import { Button } from '../../calipso/components/Button/Button';
 import { ButtonActions } from '../../calipso/components/ButtonActions';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
 import { TextField } from '../../calipso/components/TextField/TextField';
+import { useConfirmarSalida } from '../../hooks/useConfirmarSalida';
 import './AutenticacionCliente.css';
 
 /**
@@ -16,6 +17,8 @@ import './AutenticacionCliente.css';
  *   TextField × 2     celular y correo de el/la cliente
  *   banner            aviso contextual — ver nota abajo
  *   ButtonActions     CTA sticky, bloqueado hasta llenar los dos campos
+ *   useConfirmarSalida  sheet de confirmación al salir (nodo 13:2257),
+ *                       compartido con las demás pantallas del flujo
  *
  * El banner (`pattern_app_feedback_banner` en Figma: bg/infoMuted + icono +
  * texto) no tiene componente dedicado en el DS — `Card` es la superficie más
@@ -36,6 +39,7 @@ export type AutenticacionClienteProps = {
 export function AutenticacionCliente({ onRegresar, onSalir, onEnviar }: AutenticacionClienteProps) {
   const [celular, setCelular] = useState('');
   const [correo, setCorreo] = useState('');
+  const { abrir: abrirConfirmacion, sheet: confirmarSalida } = useConfirmarSalida(onSalir);
 
   const puedeEnviar = celular.trim() !== '' && correo.trim() !== '';
 
@@ -66,7 +70,7 @@ export function AutenticacionCliente({ onRegresar, onSalir, onEnviar }: Autentic
               size="lg"
               icon={<Close />}
               aria-label="Salir de la solicitud"
-              onClick={onSalir}
+              onClick={abrirConfirmacion}
             />
           }
         />
@@ -104,6 +108,8 @@ export function AutenticacionCliente({ onRegresar, onSalir, onEnviar }: Autentic
           </Button>
         </ButtonActions>
       </div>
+
+      {confirmarSalida}
     </div>
   );
 }
