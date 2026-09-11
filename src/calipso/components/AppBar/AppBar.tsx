@@ -17,6 +17,20 @@ function getScrollTop(target: ScrollTarget): number {
   return target instanceof Window ? target.scrollY : target.scrollTop;
 }
 
+// Colapsar reduce el alto propio de la barra — si eso deja al contenedor sin
+// overflow real, `scrollTop` se clampea a 0 aunque el usuario no haya
+// scrolleado ahí. Sin `hasScrollableContent`, ese 0 forzado se leía como
+// "llegó al tope" y expandía de nuevo, lo que volvía a liberar el mismo
+// scroll: parpadeo en loop. `y <= 0` solo es una señal confiable de "el
+// usuario llegó al tope" cuando el contenedor todavía tiene overflow real.
+function hasScrollableContent(target: ScrollTarget): boolean {
+  if (target instanceof Window) {
+    const el = document.scrollingElement ?? document.documentElement;
+    return el.scrollHeight > el.clientHeight;
+  }
+  return target.scrollHeight > target.clientHeight;
+}
+
 export type AppBarSize = 'sm' | 'md' | 'lg';
 export type AppBarLayout = 'inline' | 'stacked';
 export type AppBarElevation = 'flat' | 'raised';
@@ -82,6 +96,12 @@ export type AppBarProps = {
    * navegador ancla en otro elemento del contenido; el fix real vive en el
    * contenedor con scroll, fuera del alcance del componente (ver story `En
    * contexto (scroll)`).
+   *
+   * Si al colapsar sobra menos scroll del que el colapso libera (alto
+   * expandido − alto colapsado), el navegador ajusta `scrollTop` hacia 0 por
+   * sí solo — el AppBar lo distingue de un scroll real del usuario y no se
+   * re-expande por ese ajuste (evita el parpadeo colapsa→expande→colapsa;
+   * ver story `En contexto (scroll corto — sin parpadeo)`).
    */
   collapseOnScroll?: boolean;
   /** Umbral en px para colapsar (ver `collapseOnScroll`). Default `24`. */
@@ -159,9 +179,15 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
     let lastY = getScrollTop(target);
     const onScroll = () => {
       const y = getScrollTop(target);
-      setAtTop(y <= 0);
-      if (y > lastY && y > collapseThreshold) setCollapsed(true);
-      if (y <= 0) setCollapsed(false);
+      // Ver `hasScrollableContent`: un `y<=0` forzado por el propio colapso
+      // (sin overflow real de por medio) no cuenta como "llegó al tope".
+      const atTopForReal = y <= 0 && hasScrollableContent(target);
+      setAtTop(atTopForReal);
+      if (y > lastY && y > collapseThreshold) {
+        setCollapsed(true);
+      } else if (atTopForReal) {
+        setCollapsed(false);
+      }
       lastY = y;
     };
     target.addEventListener('scroll', onScroll, { passive: true });
