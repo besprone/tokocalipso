@@ -73,10 +73,16 @@ export type AppBarProps = {
    * `collapseThreshold` px, y vuelve a `stacked` solo al llegar al tope
    * (no en cualquier subida — igual que el patrón que reemplaza); `elevation`
    * pasa a `raised` en cuanto se despega del tope, antes de ese umbral.
-   * Mientras está activo, ignora `layout`/`elevation` explícitos. El
-   * posicionamiento fijo/sticky del propio AppBar sigue siendo del
-   * consumidor — esto solo resuelve el swap de layout/elevation. Default
-   * `false`.
+   * Mientras está activo, ignora `layout`/`elevation` explícitos.
+   *
+   * También ancla la barra (`position: sticky; top: 0`) — colapsar solo
+   * tiene sentido si la barra sigue visible mientras se scrollea; sin
+   * anclaje propio, un consumidor sin wrapper sticky ve la barra colapsar Y
+   * salirse de pantalla con el resto del contenido (`elevation="raised"`
+   * quedaba aplicado a una barra que ya no estaba ahí). No es una prop
+   * aparte — no hay uso razonable de `collapseOnScroll` sin sticky, sería
+   * una combinación rota. El ancestro con scroll (el que se posiciona
+   * `sticky` CONTRA) sigue siendo del consumidor. Default `false`.
    *
    * **Requiere `overflow-anchor: none` en el contenedor CON SCROLL del
    * consumidor.** El cambio de alto de la barra (stacked→inline) puede
@@ -129,10 +135,10 @@ export type AppBarProps = {
  * normalmente back) + acciones secundarias (`trailing`). **No** es un contenedor
  * de contenido y **no** reemplaza al tab bar. Las `configuration` de Figma se
  * pueden pasar por la prop (capa opcional) o componerse con `layout`/`size` +
- * slots. El swap de `layout`/`elevation` al scrollear lo resuelve
- * `collapseOnScroll` (ver stories `En contexto (scroll)` / `Colapsada ↔
- * expandida`); el posicionamiento fijo/sticky del propio AppBar sigue siendo
- * del consumidor.
+ * slots. El swap de `layout`/`elevation` al scrollear y el anclaje
+ * (`position: sticky`) los resuelve `collapseOnScroll` (ver stories `En
+ * contexto (scroll)` / `Colapsada ↔ expandida`); sin `collapseOnScroll`, el
+ * posicionamiento sigue siendo del consumidor.
  */
 export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
   {
@@ -239,6 +245,7 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
       data-layout={layout}
       data-elevation={elevation}
       data-configuration={configuration}
+      data-sticky={collapseOnScroll || undefined}
       className={['app-bar', className].filter(Boolean).join(' ')}
     >
       <div className="app-bar__row">

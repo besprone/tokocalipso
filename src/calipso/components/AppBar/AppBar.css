@@ -55,6 +55,21 @@
   padding-inline: var(--internalLayout-space-150); /* 12px */
 }
 
+/* `collapseOnScroll` ancla la propia barra — colapsar solo tiene sentido si
+   la barra sigue visible mientras se scrollea; sin esto, un consumidor sin
+   wrapper sticky propio veía la barra colapsar Y salirse de pantalla con el
+   resto del contenido. El ancestro con scroll (contra el que `sticky` se
+   posiciona) sigue siendo del consumidor. `z-index` necesario porque la
+   barra es anterior en el DOM al contenido que scrollea debajo — sin él,
+   `position:sticky` la mantiene en su lugar pero el contenido siguiente
+   puede seguir pintándose encima (mismo z-index:1 que ya usaban las stories
+   a mano). */
+.app-bar[data-sticky] {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 /* elevation=flat → SIN fondo (la barra está en el top, nada se scrollea debajo).
    elevation=raised (on-scroll) → fondo `bg/surface` opaco + sombra. */
 .app-bar[data-elevation='flat'] {

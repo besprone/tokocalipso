@@ -119,18 +119,16 @@ export function HomeSolicitudes({ onNuevaSolicitud }: HomeSolicitudesProps) {
   return (
     <div className="home">
       <div className="home__scroll">
-        <div className="home__bar">
-          <AppBar
-            configuration="home"
-            size="sm"
-            layout="stacked"
-            collapseOnScroll
-            headline="Hola, Gerardo!"
-            aria-label="Inicio"
-            leading={ayuda}
-            trailing={nuevo}
-          />
-        </div>
+        <AppBar
+          configuration="home"
+          size="sm"
+          layout="stacked"
+          collapseOnScroll
+          headline="Hola, Gerardo!"
+          aria-label="Inicio"
+          leading={ayuda}
+          trailing={nuevo}
+        />
 
         <main className="home__content">
           <section className="home__section" aria-labelledby="home-solicitudes">
