@@ -10,6 +10,8 @@ import { List } from '../../calipso/components/List';
 import { ListItem } from '../../calipso/components/List/ListItem';
 import { SelectBottomSheet } from '../../calipso/components/Select';
 import type { SelectOption } from '../../calipso/components/Select';
+import { dependencias, tieneFirmaDisponible } from '../../datos/convenios';
+import type { Convenio } from '../../datos/convenios';
 import './NuevaSolicitud.css';
 
 /**
@@ -26,24 +28,34 @@ import './NuevaSolicitud.css';
  * solo el bloque de contenido scrollea.
  */
 
-/** Placeholders — pendientes de los catálogos reales. */
-const dependencias: SelectOption[] = [
-  { value: 'issste', label: 'ISSSTE' },
-  { value: 'imss', label: 'IMSS' },
-  { value: 'sep', label: 'SEP' },
-  { value: 'pemex', label: 'Pemex' },
-];
-
-const convenios: SelectOption[] = [
-  { value: 'nomina', label: 'Nómina' },
-  { value: 'pension', label: 'Pensión' },
-  { value: 'jubilados', label: 'Jubilados' },
-];
-
 const tiposDeFirma = [
   { value: 'autografa', label: 'Firma autógrafa' },
   { value: 'digital', label: 'Firma digital' },
-];
+] as const;
+
+type TipoDeFirma = (typeof tiposDeFirma)[number]['value'];
+
+/**
+ * Propuesta cuando el convenio admite las dos. Sin convenio no se propone
+ * nada: la pantalla no presume una respuesta antes de tener con qué.
+ */
+const FIRMA_PROPUESTA: TipoDeFirma = 'autografa';
+
+const opcionesDependencia: SelectOption[] = dependencias.map((d) => ({
+  value: d.nombre,
+  label: d.nombre,
+}));
+
+/**
+ * Qué firma queda seleccionada al elegir un convenio. Si solo admite una, esa
+ * queda fija; si admite las dos, se propone la autógrafa y el usuario decide.
+ */
+function firmaInicial(convenio: Convenio): TipoDeFirma | '' {
+  if (convenio.firmaAutografa && convenio.firmaDigital) return FIRMA_PROPUESTA;
+  if (convenio.firmaAutografa) return 'autografa';
+  if (convenio.firmaDigital) return 'digital';
+  return '';
+}
 
 export type NuevaSolicitudProps = {
   onRegresar: () => void;
@@ -52,9 +64,57 @@ export type NuevaSolicitudProps = {
 export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
   const [dependencia, setDependencia] = useState('');
   const [convenio, setConvenio] = useState('');
-  const [firma, setFirma] = useState('autografa');
+  const [firma, setFirma] = useState<TipoDeFirma | ''>('');
 
-  const puedeComenzar = dependencia !== '' && convenio !== '';
+  const dependenciaElegida = dependencias.find((d) => d.nombre === dependencia);
+  const convenioElegido = dependenciaElegida?.convenios.find((c) => c.nombre === convenio);
+
+  /** Los convenios sin ninguna firma disponible se listan, pero deshabilitados. */
+  const opcionesConvenio: SelectOption[] =
+    dependenciaElegida?.convenios.map((c) => ({
+      value: c.nombre,
+      label: c.nombre,
+      disabled: !tieneFirmaDisponible(c),
+    })) ?? [];
+
+  const elegirDependencia = (valor: string) => {
+    setDependencia(valor);
+    // el convenio anterior no existe en la nueva dependencia
+    const d = dependencias.find((x) => x.nombre === valor);
+    // con un solo convenio no hay nada que elegir: se preselecciona aunque no
+    // tenga firma disponible — así el callejón sin salida se ve, en vez de
+    // dejar el campo vacío sin explicar por qué no avanza
+    const unico = d?.convenios.length === 1 ? d.convenios[0] : undefined;
+    setConvenio(unico?.nombre ?? '');
+    setFirma(unico ? firmaInicial(unico) : '');
+  };
+
+  const elegirConvenio = (valor: string) => {
+    setConvenio(valor);
+    const c = dependenciaElegida?.convenios.find((x) => x.nombre === valor);
+    if (!c) {
+      setFirma('');
+      return;
+    }
+    // si lo que ya venía marcado sigue siendo válido, se respeta
+    const sigueValiendo =
+      (firma === 'autografa' && c.firmaAutografa) || (firma === 'digital' && c.firmaDigital);
+    setFirma(sigueValiendo ? firma : firmaInicial(c));
+  };
+
+  const puedeComenzar = convenioElegido != null && firma !== '';
+
+  /**
+   * Solo se bloquea cuando YA hay convenio y ese convenio admite una sola
+   * firma: ahí no hay nada que elegir, así que van las dos filas inertes con
+   * la que aplica marcada — dejar la otra habilitada sugeriría una alternativa
+   * que no existe.
+   *
+   * Mientras no hay convenio el campo se ve normal, con la propuesta marcada:
+   * apagarlo de entrada haría ver la pantalla como si estuviera rota al cargar.
+   */
+  const firmaDeterminada =
+    convenioElegido != null && !(convenioElegido.firmaAutografa && convenioElegido.firmaDigital);
 
   return (
     <div className="solicitud">
@@ -83,17 +143,18 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
             <SelectBottomSheet
               label="Dependencia"
               placeholder="Selecciona..."
-              options={dependencias}
+              options={opcionesDependencia}
               value={dependencia}
-              onChange={setDependencia}
+              onChange={elegirDependencia}
             />
 
             <SelectBottomSheet
               label="Convenio"
               placeholder="Selecciona..."
-              options={convenios}
+              options={opcionesConvenio}
               value={convenio}
-              onChange={setConvenio}
+              onChange={elegirConvenio}
+              disabled={dependenciaElegida == null}
             />
           </div>
 
@@ -111,6 +172,7 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
                 <label key={tipo.value} className="solicitud__opcion">
                   <ListItem
                     label={tipo.label}
+                    disabled={firmaDeterminada}
                     trailing={
                       <ItemTrailing
                         type="radio"
@@ -118,6 +180,7 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
                           name: 'tipo-de-firma',
                           value: tipo.value,
                           checked: firma === tipo.value,
+                          disabled: firmaDeterminada,
                           onChange: () => setFirma(tipo.value),
                         }}
                       />
