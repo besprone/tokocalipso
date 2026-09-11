@@ -34,6 +34,22 @@
   /* solo la sombra hace fade; el fondo se vuelve opaco al instante al scrollear */
   transition: box-shadow var(--linear-200-duration-ms) var(--linear-200-easing);
 }
+/* `collapseOnScroll` cambia el alto propio de la barra (stacked→inline) EN
+   RESPUESTA al scroll. Excluye el propio subárbol de participar como nodo
+   ancla del scroll-anchoring del navegador (`overflow-anchor` no se hereda).
+   Esto es NECESARIO PERO NO SUFICIENTE: si el navegador elige como ancla
+   algún elemento del contenido de todos modos (fuera de este subárbol — el
+   siguiente párrafo visible bajo la barra, típicamente), igual "compensa" el
+   cambio de alto corrigiendo el `scrollTop` en el mismo instante, empujando
+   el contenido de vuelta hacia arriba y peleando visualmente contra el gesto
+   de scroll que causó el colapso. El fix completo (`overflow-anchor: none`
+   en el contenedor CON SCROLL) tiene que vivir del lado del consumidor — ver
+   el JSDoc de `collapseOnScroll` en AppBar.tsx y la story `En contexto
+   (scroll)`. */
+.app-bar,
+.app-bar * {
+  overflow-anchor: none;
+}
 .app-bar[data-size='md'],
 .app-bar[data-size='lg'] {
   padding-inline: var(--internalLayout-space-150); /* 12px */

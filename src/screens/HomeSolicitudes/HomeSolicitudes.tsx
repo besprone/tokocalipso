@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Add,
   Help,
@@ -39,14 +39,9 @@ import './HomeSolicitudes.css';
  * de ancho móvil centrada. Solo el bloque de contenido scrollea — el AppBar
  * queda sticky arriba y la NavigationBar fija abajo, fuera del scroll.
  *
- * El AppBar sigue el patrón `Colapsada ↔ expandida` del sistema: expandido
- * (`stacked`) en el tope, colapsado (`inline` `sm`) al bajar, y de vuelta a
- * expandido al volver al tope. `elevation` pasa a `raised` en cuanto el
- * contenido se mueve — es el estado on-scroll que define el DS.
+ * El colapso del AppBar al scrollear lo resuelve el propio componente con
+ * `collapseOnScroll`.
  */
-
-/** Umbral de scroll (px) a partir del cual la barra colapsa. */
-const UMBRAL_COLAPSO = 24;
 
 type Contador = {
   value: string;
@@ -112,26 +107,6 @@ export function HomeSolicitudes({ onNuevaSolicitud }: HomeSolicitudesProps) {
     setSheetMontado(true);
     setSheetAbierto(true);
   };
-  const [colapsada, setColapsada] = useState(false);
-  const [enTope, setEnTope] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const ultimaY = useRef(0);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const onScroll = () => {
-      const y = el.scrollTop;
-      setEnTope(y <= 0);
-      // colapsa al bajar; se expande sola al volver al tope
-      if (y > ultimaY.current && y > UMBRAL_COLAPSO) setColapsada(true);
-      if (y <= 0) setColapsada(false);
-      ultimaY.current = y;
-    };
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
-
   const ayuda = (
     <IconButton emphasis="ghost" scheme="neutral" size="lg" icon={<Help />} aria-label="Ayuda" />
   );
@@ -143,13 +118,13 @@ export function HomeSolicitudes({ onNuevaSolicitud }: HomeSolicitudesProps) {
 
   return (
     <div className="home">
-      <div className="home__scroll" ref={scrollRef}>
+      <div className="home__scroll">
         <div className="home__bar">
           <AppBar
             configuration="home"
             size="sm"
-            layout={colapsada ? 'inline' : 'stacked'}
-            elevation={enTope ? 'flat' : 'raised'}
+            layout="stacked"
+            collapseOnScroll
             headline="Hola, Gerardo!"
             aria-label="Inicio"
             leading={ayuda}

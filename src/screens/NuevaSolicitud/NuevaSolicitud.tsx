@@ -124,6 +124,7 @@ export function NuevaSolicitud({ onRegresar, onComenzar }: NuevaSolicitudProps) 
           configuration="navigation"
           layout="stacked"
           size="sm"
+          collapseOnScroll
           headline="Iniciemos la solicitud"
           supporting="Para comenzar la solicitud debes seleccionar en qué dependencia y convenio se encuentra registrado el cliente."
           aria-label="Iniciemos la solicitud"

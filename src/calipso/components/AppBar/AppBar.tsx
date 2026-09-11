@@ -1,6 +1,21 @@
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import './AppBar.css';
+
+type ScrollTarget = HTMLElement | Window;
+
+function getScrollParent(node: HTMLElement | null): ScrollTarget {
+  let el = node?.parentElement ?? null;
+  while (el) {
+    if (/(auto|scroll)/.test(getComputedStyle(el).overflowY)) return el;
+    el = el.parentElement;
+  }
+  return window;
+}
+
+function getScrollTop(target: ScrollTarget): number {
+  return target instanceof Window ? target.scrollY : target.scrollTop;
+}
 
 export type AppBarSize = 'sm' | 'md' | 'lg';
 export type AppBarLayout = 'inline' | 'stacked';
@@ -46,6 +61,31 @@ export type AppBarProps = {
    * - `dos-columnas` → `inline` centrado ancho + `elevation="raised"` por defecto.
    */
   configuration?: AppBarConfiguration;
+  /**
+   * `true` — el propio AppBar resuelve el patrón "colapsar al bajar,
+   * expandir al llegar al tope" (ver story `En contexto (scroll)`): `layout`
+   * pasa a `inline` en cuanto el ancestro con scroll baja más de
+   * `collapseThreshold` px, y vuelve a `stacked` solo al llegar al tope
+   * (no en cualquier subida — igual que el patrón que reemplaza); `elevation`
+   * pasa a `raised` en cuanto se despega del tope, antes de ese umbral.
+   * Mientras está activo, ignora `layout`/`elevation` explícitos. El
+   * posicionamiento fijo/sticky del propio AppBar sigue siendo del
+   * consumidor — esto solo resuelve el swap de layout/elevation. Default
+   * `false`.
+   *
+   * **Requiere `overflow-anchor: none` en el contenedor CON SCROLL del
+   * consumidor.** El cambio de alto de la barra (stacked→inline) puede
+   * disparar el scroll-anchoring del navegador, que "compensa" ese cambio
+   * corrigiendo el `scrollTop` en el mismo instante — visualmente, el scroll
+   * pega un salto hacia el tope justo cuando la barra colapsa. El AppBar ya
+   * se excluye a sí mismo de ser el nodo ancla, pero eso no alcanza si el
+   * navegador ancla en otro elemento del contenido; el fix real vive en el
+   * contenedor con scroll, fuera del alcance del componente (ver story `En
+   * contexto (scroll)`).
+   */
+  collapseOnScroll?: boolean;
+  /** Umbral en px para colapsar (ver `collapseOnScroll`). Default `24`. */
+  collapseThreshold?: number;
   /** Slot izquierdo — normalmente un `IconButton` (back / menú) o un `Brand`. */
   leading?: ReactNode;
   /** Título de la vista. `Headline/xs` en `sm`, `Display/sm` en `md`/`lg`. */
@@ -73,8 +113,10 @@ export type AppBarProps = {
  * normalmente back) + acciones secundarias (`trailing`). **No** es un contenedor
  * de contenido y **no** reemplaza al tab bar. Las `configuration` de Figma se
  * pueden pasar por la prop (capa opcional) o componerse con `layout`/`size` +
- * slots. El posicionamiento fijo y la elevación on-scroll son del consumidor
- * (ver stories `En contexto` / `Colapsada ↔ expandida`).
+ * slots. El swap de `layout`/`elevation` al scrollear lo resuelve
+ * `collapseOnScroll` (ver stories `En contexto (scroll)` / `Colapsada ↔
+ * expandida`); el posicionamiento fijo/sticky del propio AppBar sigue siendo
+ * del consumidor.
  */
 export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
   {
@@ -82,6 +124,8 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
     layout: layoutProp,
     elevation: elevationProp,
     configuration,
+    collapseOnScroll = false,
+    collapseThreshold = 24,
     leading,
     headline,
     supporting,
@@ -92,10 +136,44 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
   },
   ref,
 ) {
-  const layout: AppBarLayout =
-    layoutProp ?? (configuration && STACKED_CONFIGS.has(configuration) ? 'stacked' : 'inline');
-  const elevation: AppBarElevation =
-    elevationProp ?? (configuration && RAISED_CONFIGS.has(configuration) ? 'raised' : 'flat');
+  const headerRef = useRef<HTMLElement | null>(null);
+  const [collapsed, setCollapsed] = useState(false);
+  const [atTop, setAtTop] = useState(true);
+
+  const setHeaderRef = (node: HTMLElement | null) => {
+    headerRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) ref.current = node;
+  };
+
+  // Mismo patrón que la story `En contexto (scroll)`: colapsa (stacked→inline)
+  // al bajar más de `collapseThreshold`, expande solo al llegar al tope
+  // (no en cualquier subida); `raised` apenas se despega del tope. El
+  // ancestro con scroll se resuelve igual que `divider="auto"` de
+  // `ButtonActions` — el default (`window`) sirve para scroll de página
+  // completa, pero un contenedor `overflow` propio necesita resolverse
+  // explícitamente o el listener nunca ve el scroll real.
+  useEffect(() => {
+    if (!collapseOnScroll) return;
+    const target = getScrollParent(headerRef.current);
+    let lastY = getScrollTop(target);
+    const onScroll = () => {
+      const y = getScrollTop(target);
+      setAtTop(y <= 0);
+      if (y > lastY && y > collapseThreshold) setCollapsed(true);
+      if (y <= 0) setCollapsed(false);
+      lastY = y;
+    };
+    target.addEventListener('scroll', onScroll, { passive: true });
+    return () => target.removeEventListener('scroll', onScroll);
+  }, [collapseOnScroll, collapseThreshold]);
+
+  const layout: AppBarLayout = collapseOnScroll
+    ? (collapsed ? 'inline' : 'stacked')
+    : (layoutProp ?? (configuration && STACKED_CONFIGS.has(configuration) ? 'stacked' : 'inline'));
+  const elevation: AppBarElevation = collapseOnScroll
+    ? (atTop ? 'flat' : 'raised')
+    : (elevationProp ?? (configuration && RAISED_CONFIGS.has(configuration) ? 'raised' : 'flat'));
 
   const showText = showHeadline ?? (headline != null || supporting != null);
   const hasText =
@@ -111,7 +189,7 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
   return (
     <header
       {...props}
-      ref={ref}
+      ref={setHeaderRef}
       data-size={size}
       data-layout={layout}
       data-elevation={elevation}

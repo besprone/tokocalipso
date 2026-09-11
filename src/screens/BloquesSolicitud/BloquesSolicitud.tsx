@@ -60,6 +60,7 @@ export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps)
         <AppBar
           layout="stacked"
           size="sm"
+          collapseOnScroll
           headline="Inicia la solicitud de crédito"
           supporting="Completa los bloques de información para enviar tu solicitud. El proceso completo puede tardar hasta 15 minutos."
           aria-label="Inicia la solicitud de crédito"
