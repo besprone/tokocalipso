@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Close } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
+import { BottomSheet } from '../../calipso/components/Overlays';
 import { Button } from '../../calipso/components/Button/Button';
 import { ButtonActions } from '../../calipso/components/ButtonActions';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
@@ -19,6 +20,8 @@ import './BloquesSolicitud.css';
  *   LinearProgress       avance del proceso, con el porcentaje al lado
  *   List + ListItem      un bloque por fila; se habilitan en orden
  *   ButtonActions        CTA sticky con microcopy, bloqueado hasta completar
+ *   BottomSheet          confirmación al salir (nodo 13:2257) — se abre desde
+ *                        el IconButton "Salir de la solicitud" del AppBar
  */
 
 const bloques = [
@@ -49,6 +52,26 @@ export type BloquesSolicitudProps = {
 export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps) {
   // ningún bloque está construido todavía; el orden es secuencial
   const [completados] = useState<string[]>([]);
+  // el sheet se desmonta al terminar su animación de salida (`onExited`)
+  const [sheetMontado, setSheetMontado] = useState(false);
+  const [sheetAbierto, setSheetAbierto] = useState(false);
+
+  const abrirConfirmacion = () => {
+    setSheetMontado(true);
+    setSheetAbierto(true);
+  };
+  const cerrarConfirmacion = () => setSheetAbierto(false);
+
+  const descartarYSalir = () => {
+    cerrarConfirmacion();
+    onSalir();
+  };
+  const guardarYSalir = () => {
+    // TODO: persistir el borrador cuando exista guardado real; por ahora
+    // el efecto visible es el mismo que descartar — no hay backend.
+    cerrarConfirmacion();
+    onSalir();
+  };
 
   const avance = porcentaje(completados.length);
   const siguiente = bloques.find((b) => !completados.includes(b.id));
@@ -81,7 +104,7 @@ export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps)
               size="lg"
               icon={<Close />}
               aria-label="Salir de la solicitud"
-              onClick={onSalir}
+              onClick={abrirConfirmacion}
             />
           }
         />
@@ -115,6 +138,26 @@ export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps)
           </Button>
         </ButtonActions>
       </div>
+
+      {sheetMontado && (
+        <BottomSheet
+          open={sheetAbierto}
+          onClose={cerrarConfirmacion}
+          onExited={() => setSheetMontado(false)}
+          label="¿Guardar la solicitud?"
+          supporting="Puedes retomarla después desde tus solicitudes guardadas."
+          footer={
+            <>
+              <Button emphasis="secondary" size="sm" onClick={descartarYSalir}>
+                Descartar y salir
+              </Button>
+              <Button emphasis="primary" size="sm" onClick={guardarYSalir}>
+                Guardar y salir
+              </Button>
+            </>
+          }
+        />
+      )}
     </div>
   );
 }
