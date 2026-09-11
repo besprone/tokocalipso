@@ -1,0 +1,67 @@
+/* ── Inicia la solicitud de crédito ────────────────────────────────────────
+   Solo layout, con tokens. Mismo shell que las otras pantallas.
+──────────────────────────────────────────────────────────────────────────── */
+
+.bloques {
+  display: flex;
+  flex-direction: column;
+  block-size: 100dvh;
+  max-inline-size: 480px;
+  margin-inline: auto;
+  background-color: var(--semantic-color-bg-canvas);
+  font-family: var(--typography-font-family);
+}
+
+@media (min-width: 481px) {
+  .bloques {
+    border-inline: 1px solid var(--semantic-color-border-subtle);
+  }
+}
+
+.bloques__scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+}
+.bloques__scroll > .button-actions {
+  margin-block-start: auto;
+}
+
+.bloques__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-container-inline); /* 16px */
+  padding-inline: var(--layout-container-inline);
+  padding-block: var(--layout-stack-block) var(--layout-content-bottomClearance);
+}
+
+/* barra + porcentaje en una fila */
+.bloques__avance {
+  display: flex;
+  align-items: center;
+  gap: var(--componentSpacing-space-200); /* 16px */
+}
+
+.bloques__porcentaje {
+  flex: 0 0 auto;
+  font-size: var(--typography-body-md-semiemphasized-size); /* 14px */
+  line-height: var(--typography-body-md-semiemphasized-line-height); /* 20px */
+  font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
+  color: var(--semantic-color-text-primary);
+}
+
+/* Figma pone la microcopy dentro del contenedor sticky, sobre los botones.
+   `ButtonActions` no tiene slot para ella (`BottomSheet` sí), así que va como
+   primer hijo: el `surface="screen"` ya la deja a lo ancho y con los 16 de
+   separación que pide el diseño. */
+.bloques__microcopy {
+  margin: 0;
+  text-align: center;
+  font-size: var(--typography-body-md-size); /* 14px */
+  line-height: var(--typography-body-md-line-height); /* 20px */
+  font-weight: var(--typography-body-md-weight); /* 500 */
+  color: var(--semantic-color-text-secondary);
+}

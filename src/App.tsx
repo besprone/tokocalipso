@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { HomeSolicitudes } from './screens/HomeSolicitudes/HomeSolicitudes';
+import { BloquesSolicitud } from './screens/BloquesSolicitud/BloquesSolicitud';
 import { NuevaSolicitud } from './screens/NuevaSolicitud/NuevaSolicitud';
 
 /**
@@ -9,13 +10,26 @@ import { NuevaSolicitud } from './screens/NuevaSolicitud/NuevaSolicitud';
  * Con dos pantallas no hace falta más. Cuando haya URLs que compartir, deep
  * links o botón atrás del navegador, aquí es donde entra un router de verdad.
  */
-type Vista = 'home' | 'nuevaSolicitud';
+type Vista = 'home' | 'nuevaSolicitud' | 'bloques';
 
 export function App() {
   const [vista, setVista] = useState<Vista>('home');
 
+  if (vista === 'bloques') {
+    return (
+      <BloquesSolicitud
+        onRegresar={() => setVista('nuevaSolicitud')}
+        onSalir={() => setVista('home')}
+      />
+    );
+  }
   if (vista === 'nuevaSolicitud') {
-    return <NuevaSolicitud onRegresar={() => setVista('home')} />;
+    return (
+      <NuevaSolicitud
+        onRegresar={() => setVista('home')}
+        onComenzar={() => setVista('bloques')}
+      />
+    );
   }
   return <HomeSolicitudes onNuevaSolicitud={() => setVista('nuevaSolicitud')} />;
 }

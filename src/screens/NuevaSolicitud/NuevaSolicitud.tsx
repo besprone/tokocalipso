@@ -59,9 +59,10 @@ function firmaInicial(convenio: Convenio): TipoDeFirma | '' {
 
 export type NuevaSolicitudProps = {
   onRegresar: () => void;
+  onComenzar: () => void;
 };
 
-export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
+export function NuevaSolicitud({ onRegresar, onComenzar }: NuevaSolicitudProps) {
   const [dependencia, setDependencia] = useState('');
   const [convenio, setConvenio] = useState('');
   const [firma, setFirma] = useState<TipoDeFirma | ''>('');
@@ -193,7 +194,12 @@ export function NuevaSolicitud({ onRegresar }: NuevaSolicitudProps) {
         </main>
 
         <ButtonActions surface="screen" sticky>
-          <Button emphasis="primary" size="sm" disabled={!puedeComenzar}>
+          <Button
+            emphasis="primary"
+            size="sm"
+            disabled={!puedeComenzar}
+            onClick={onComenzar}
+          >
             Comenzar solicitud
           </Button>
         </ButtonActions>
