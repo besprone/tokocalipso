@@ -126,6 +126,20 @@ button.list-item:disabled {
 .list-item[data-disabled] .list-item__trailing {
   color: var(--semantic-color-icon-disabled);
 }
+/* `.item-trailing__icon` / `.item-leading__icon` fijan su propio `color`
+   (icon/brand · icon/secondary) — el `color` heredado de arriba no les llega
+   (una regla propia siempre gana sobre la heredada, sin importar
+   especificidad). `.item-trailing__text` tiene el mismo problema con
+   text/primary. Building blocks que dibujan su propio token semántico
+   (Badge, el marco de avatar/número/paymentStatus de ItemLeading) quedan
+   fuera — no son un color heredado, son su propia identidad visual. */
+.list-item[data-disabled] .item-trailing__icon,
+.list-item[data-disabled] .item-leading__icon {
+  color: var(--semantic-color-icon-disabled);
+}
+.list-item[data-disabled] .item-trailing__text {
+  color: var(--semantic-color-text-disabled);
+}
 
 /* ── foco de teclado ────────────────────────────────────────────────────── */
 .list-item:focus-visible {
