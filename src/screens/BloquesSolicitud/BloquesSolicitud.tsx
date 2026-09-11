@@ -10,6 +10,8 @@ import { ItemTrailing } from '../../calipso/components/ItemBlocks/ItemTrailing';
 import { LinearProgress } from '../../calipso/components/LinearProgress/LinearProgress';
 import { List } from '../../calipso/components/List';
 import { ListItem } from '../../calipso/components/List/ListItem';
+import { bloques, porcentaje } from '../../datos/bloques';
+import type { BloqueId } from '../../datos/bloques';
 import './BloquesSolicitud.css';
 
 /**
@@ -22,36 +24,23 @@ import './BloquesSolicitud.css';
  *   ButtonActions        CTA sticky con microcopy, bloqueado hasta completar
  *   BottomSheet          confirmación al salir (nodo 13:2257) — se abre desde
  *                        el IconButton "Salir de la solicitud" del AppBar
- */
-
-const bloques = [
-  { id: 'identificacion', nombre: 'Identificación y autenticación' },
-  { id: 'oferta', nombre: 'Seleccionar oferta' },
-  { id: 'informacion', nombre: 'Información de la solicitud' },
-  { id: 'documentos', nombre: 'Documentos' },
-] as const;
-
-/**
- * El proceso son 5 pasos: elegir dependencia, convenio y firma —ya hecho al
- * llegar aquí— más los cuatro bloques. De ahí que se entre con 20%.
  *
- * Se calcula, no se fija: el componente de Figma es estático y su valor no es
- * una regla.
+ * `completados` vive en App: sobrevive a entrar a un bloque y volver.
  */
-const PASOS_TOTALES = bloques.length + 1;
-
-function porcentaje(completados: number): number {
-  return Math.round(((completados + 1) / PASOS_TOTALES) * 100);
-}
 
 export type BloquesSolicitudProps = {
+  completados: BloqueId[];
+  onAbrirBloque: (id: BloqueId) => void;
   onRegresar: () => void;
   onSalir: () => void;
 };
 
-export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps) {
-  // ningún bloque está construido todavía; el orden es secuencial
-  const [completados] = useState<string[]>([]);
+export function BloquesSolicitud({
+  completados,
+  onAbrirBloque,
+  onRegresar,
+  onSalir,
+}: BloquesSolicitudProps) {
   // el sheet se desmonta al terminar su animación de salida (`onExited`)
   const [sheetMontado, setSheetMontado] = useState(false);
   const [sheetAbierto, setSheetAbierto] = useState(false);
@@ -117,7 +106,8 @@ export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps)
 
           <List type="segmented">
             {bloques.map((bloque) => {
-              const habilitado = bloque.id === siguiente?.id;
+              const completado = completados.includes(bloque.id);
+              const habilitado = completado || bloque.id === siguiente?.id;
               return (
                 <ListItem
                   key={bloque.id}
@@ -125,7 +115,7 @@ export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps)
                   disabled={!habilitado}
                   label={bloque.nombre}
                   trailing={<ItemTrailing type="icon" />}
-                  onClick={() => undefined}
+                  onClick={() => onAbrirBloque(bloque.id)}
                 />
               );
             })}
