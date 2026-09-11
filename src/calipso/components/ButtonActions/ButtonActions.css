@@ -82,15 +82,27 @@
 .button-actions[data-surface='screen'][data-sticky] {
   position: sticky;
   bottom: 0;
+  /* patrón "sticky footer" de flexbox: si el ancestro con scroll es
+     `display:flex; flex-direction:column`, este margen consume el espacio
+     sobrante y empuja la botonera al pie cuando el contenido no llena el
+     alto — sin esto haría falta un `<div>` envoltorio para lograrlo, y ESE
+     envoltorio rompe el containing block de `position: sticky` (la botonera
+     deja de pegarse durante el scroll). Fuera de un ancestro flex, `auto`
+     no hace nada (equivale a 0). */
+  margin-block-start: auto;
   background: var(--semantic-color-bg-canvas);
   padding: var(--layout-stack-block) var(--layout-container-inline)
     var(--layout-content-bottomClearance);
 }
 /* borde superior: `always` siempre · `auto` sólo si hay contenido debajo
-   (data-scrolled lo pone el sentinel + IntersectionObserver). */
+   (data-scrolled lo pone el sentinel + IntersectionObserver). `box-shadow`
+   en vez de `border-block-start`: un border real suma su grosor al alto de
+   la barra (auto), y ese alto lo mide el ResizeObserver de arriba para
+   calcular el `rootMargin` del sentinel — si aparecer/desaparecer el borde
+   cambiara el alto, entraría en un loop con su propia medición. */
 .button-actions[data-surface='screen'][data-sticky][data-divider='always'],
 .button-actions[data-surface='screen'][data-sticky][data-divider='auto'][data-scrolled] {
-  border-block-start: 1px solid var(--semantic-color-border-default);
+  box-shadow: inset 0 1px 0 0 var(--semantic-color-border-default);
 }
 .button-actions__sentinel {
   display: block;

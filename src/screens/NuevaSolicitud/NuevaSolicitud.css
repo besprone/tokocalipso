@@ -28,14 +28,10 @@
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* columna para poder empujar el CTA al fondo cuando sobra alto: `sticky`
-     solo ancla si hay desbordamiento, y con la forma corta quedaría pegado
-     al contenido en vez de abajo. */
+  /* columna: el `margin-block-start: auto` del propio ButtonActions sticky
+     necesita un ancestro flex para empujar el CTA al fondo. */
   display: flex;
   flex-direction: column;
-}
-.solicitud__scroll > .button-actions {
-  margin-block-start: auto;
 }
 
 .solicitud__content {

@@ -11,6 +11,15 @@ export type ButtonActionsSurface =
 
 export type ButtonActionsDivider = 'auto' | 'always' | 'never';
 
+function getScrollParent(node: HTMLElement | null): HTMLElement | null {
+  let el = node?.parentElement ?? null;
+  while (el) {
+    if (/(auto|scroll)/.test(getComputedStyle(el).overflowY)) return el;
+    el = el.parentElement;
+  }
+  return null;
+}
+
 export type ButtonActionsProps = {
   /**
    * Contexto donde se coloca la botonera — define dirección, separación y
@@ -60,24 +69,67 @@ export const ButtonActions = forwardRef<HTMLDivElement, ButtonActionsProps>(
     const isSticky = sticky && surface === 'screen';
     const useSentinel = isSticky && divider === 'auto';
     const sentinelRef = useRef<HTMLSpanElement | null>(null);
+    const barRef = useRef<HTMLDivElement | null>(null);
     const [scrolled, setScrolled] = useState(false);
+    // Alto real de la botonera (varía con microcopy / wrap de botones) — el
+    // observer lo necesita para descontarlo del root, ver más abajo.
+    const [barHeight, setBarHeight] = useState(0);
 
+    const setBarRef = (node: HTMLDivElement | null) => {
+      barRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) ref.current = node;
+    };
+
+    // La barra es sticky y se pinta ENCIMA del final del contenido — mide su
+    // propio alto para poder recortarlo del viewport que observa el sentinel.
+    useEffect(() => {
+      if (!useSentinel) return;
+      const node = barRef.current;
+      if (!node || typeof ResizeObserver === 'undefined') {
+        if (node) setBarHeight(node.offsetHeight);
+        return;
+      }
+      const ro = new ResizeObserver(() => setBarHeight(node.offsetHeight));
+      ro.observe(node);
+      return () => ro.disconnect();
+    }, [useSentinel]);
+
+    // El sentinel vive en el flujo normal, justo antes de la barra; con scroll
+    // corto, su posición "natural" puede caer DENTRO de los últimos `barHeight`
+    // px del contenedor — es decir, tapada por la barra sticky — y aun así
+    // contar como "visible" para el IntersectionObserver si no se descuenta el
+    // alto de la barra. `rootMargin` recorta el borde inferior del *root*
+    // exactamente ese alto: si el sentinel cae en esa franja tapada, deja de
+    // intersectar y el borde se muestra (queda contenido oculto detrás de la
+    // barra). Ese recorte solo tiene efecto si el root es el ANCESTRO CON
+    // SCROLL real — el default (`root: null`) mide contra el viewport del
+    // documento, que normalmente no coincide con un contenedor scrolleable
+    // anidado (p. ej. un modal, un `overflow: auto` propio), y ahí el recorte
+    // no tiene ningún efecto visible.
     useEffect(() => {
       if (!useSentinel) return;
       const node = sentinelRef.current;
       if (!node || typeof IntersectionObserver === 'undefined') return;
-      const io = new IntersectionObserver(
-        ([entry]) => setScrolled(!entry.isIntersecting),
-        { threshold: 0 },
-      );
+      // -1px de margen de tolerancia: al scrollear hasta el final, el borde
+      // inferior del sentinel cae EXACTAMENTE sobre el borde recortado del
+      // root (ratio de intersección 0 justo en el límite) — un empate que
+      // los navegadores resuelven de forma inconsistente. Recortar 1px menos
+      // que el alto real desempata siempre hacia "visible" en ese punto,
+      // sin afectar el caso reportado (contenido tapado por decenas de px).
+      const io = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), {
+        root: getScrollParent(node),
+        threshold: 0,
+        rootMargin: `0px 0px -${Math.max(barHeight - 1, 0)}px 0px`,
+      });
       io.observe(node);
       return () => io.disconnect();
-    }, [useSentinel]);
+    }, [useSentinel, barHeight]);
 
     const bar = (
       <div
         {...props}
-        ref={ref}
+        ref={setBarRef}
         data-surface={surface}
         data-sticky={isSticky || undefined}
         data-divider={isSticky ? divider : undefined}
