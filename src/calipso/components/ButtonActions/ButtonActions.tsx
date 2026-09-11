@@ -47,6 +47,14 @@ export type ButtonActionsProps = {
    * `sticky` es `false`.
    */
   divider?: ButtonActionsDivider;
+  /**
+   * Texto de apoyo sobre la botonera (`stickyCTAContainer` de Figma —
+   * `Body/md` sobre `text/secondary`, centrado). Misma prop que ya tiene
+   * `BottomSheet`, para componer ambas superficies igual. Se renderiza como
+   * primer hijo, antes de `children` — en `surface="screen"` el `gap` de la
+   * columna (16px) ya separa el texto de los botones sin CSS adicional.
+   */
+  microcopy?: ReactNode;
   /** 1–3 `<Button>`. El orden visual es el orden del markup (el primario suele ir último en apilado y a la derecha en fila). */
   children: ReactNode;
   className?: string;
@@ -63,7 +71,7 @@ export type ButtonActionsProps = {
  */
 export const ButtonActions = forwardRef<HTMLDivElement, ButtonActionsProps>(
   function ButtonActions(
-    { surface = 'screen', sticky = false, divider = 'auto', children, className, ...props },
+    { surface = 'screen', sticky = false, divider = 'auto', microcopy, children, className, ...props },
     ref,
   ) {
     const isSticky = sticky && surface === 'screen';
@@ -136,6 +144,7 @@ export const ButtonActions = forwardRef<HTMLDivElement, ButtonActionsProps>(
         data-scrolled={useSentinel && scrolled ? '' : undefined}
         className={['button-actions', className].filter(Boolean).join(' ')}
       >
+        {microcopy != null && <p className="button-actions__microcopy">{microcopy}</p>}
         {children}
       </div>
     );

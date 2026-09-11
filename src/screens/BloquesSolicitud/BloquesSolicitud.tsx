@@ -109,8 +109,7 @@ export function BloquesSolicitud({ onRegresar, onSalir }: BloquesSolicitudProps)
           </List>
         </main>
 
-        <ButtonActions surface="screen" sticky>
-          <p className="bloques__microcopy">Completa los bloques para enviar.</p>
+        <ButtonActions surface="screen" sticky microcopy="Completa los bloques para enviar.">
           <Button emphasis="primary" size="sm" disabled={!todoListo}>
             Enviar solicitud
           </Button>

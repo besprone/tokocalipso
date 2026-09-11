@@ -17,18 +17,9 @@ function getScrollTop(target: ScrollTarget): number {
   return target instanceof Window ? target.scrollY : target.scrollTop;
 }
 
-// Colapsar reduce el alto propio de la barra — si eso deja al contenedor sin
-// overflow real, `scrollTop` se clampea a 0 aunque el usuario no haya
-// scrolleado ahí. Sin `hasScrollableContent`, ese 0 forzado se leía como
-// "llegó al tope" y expandía de nuevo, lo que volvía a liberar el mismo
-// scroll: parpadeo en loop. `y <= 0` solo es una señal confiable de "el
-// usuario llegó al tope" cuando el contenedor todavía tiene overflow real.
-function hasScrollableContent(target: ScrollTarget): boolean {
-  if (target instanceof Window) {
-    const el = document.scrollingElement ?? document.documentElement;
-    return el.scrollHeight > el.clientHeight;
-  }
-  return target.scrollHeight > target.clientHeight;
+function getMaxScroll(target: ScrollTarget): number {
+  const el = target instanceof Window ? (document.scrollingElement ?? document.documentElement) : target;
+  return el.scrollHeight - el.clientHeight;
 }
 
 export type AppBarSize = 'sm' | 'md' | 'lg';
@@ -97,11 +88,16 @@ export type AppBarProps = {
    * contenedor con scroll, fuera del alcance del componente (ver story `En
    * contexto (scroll)`).
    *
-   * Si al colapsar sobra menos scroll del que el colapso libera (alto
-   * expandido − alto colapsado), el navegador ajusta `scrollTop` hacia 0 por
-   * sí solo — el AppBar lo distingue de un scroll real del usuario y no se
-   * re-expande por ese ajuste (evita el parpadeo colapsa→expande→colapsa;
-   * ver story `En contexto (scroll corto — sin parpadeo)`).
+   * Solo colapsa si el scroll restante alcanza a cubrir lo que el colapso
+   * libera (alto expandido − alto colapsado) — si no, colapsar dejaría al
+   * contenedor sin overflow, el navegador ajustaría `scrollTop` a 0 por su
+   * cuenta, y sin este chequeo eso se leía como "llegó al tope" y
+   * re-expandía, liberando el mismo scroll de nuevo: parpadeo en loop, y en
+   * el caso límite (todo el scroll restante es justo lo que libera el
+   * colapso) la barra quedaba colapsada sin forma de volver a expandirse, ni
+   * scrolleando, porque ya no quedaba nada que scrollear. El alto colapsado
+   * se mide contra el DOM real (un clon oculto en `layout="inline"`), no se
+   * calcula — ver story `En contexto (scroll corto — sin parpadeo)`.
    */
   collapseOnScroll?: boolean;
   /** Umbral en px para colapsar (ver `collapseOnScroll`). Default `24`. */
@@ -157,14 +153,32 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
   ref,
 ) {
   const headerRef = useRef<HTMLElement | null>(null);
+  const measureRef = useRef<HTMLElement | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [atTop, setAtTop] = useState(true);
+  // Alto que tendría la barra en `layout="inline"` — medido contra un clon
+  // oculto (ver más abajo), no calculado: depende del contenido real
+  // (headline/supporting presentes o no, largo del texto) igual que el alto
+  // expandido, que ya se mide directo del header real.
+  const [collapsedHeight, setCollapsedHeight] = useState<number | null>(null);
 
   const setHeaderRef = (node: HTMLElement | null) => {
     headerRef.current = node;
     if (typeof ref === 'function') ref(node);
     else if (ref) ref.current = node;
   };
+
+  useEffect(() => {
+    if (!collapseOnScroll) return;
+    const node = measureRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') {
+      if (node) setCollapsedHeight(node.getBoundingClientRect().height);
+      return;
+    }
+    const ro = new ResizeObserver(() => setCollapsedHeight(node.getBoundingClientRect().height));
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [collapseOnScroll]);
 
   // Mismo patrón que la story `En contexto (scroll)`: colapsa (stacked→inline)
   // al bajar más de `collapseThreshold`, expande solo al llegar al tope
@@ -179,20 +193,25 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
     let lastY = getScrollTop(target);
     const onScroll = () => {
       const y = getScrollTop(target);
-      // Ver `hasScrollableContent`: un `y<=0` forzado por el propio colapso
-      // (sin overflow real de por medio) no cuenta como "llegó al tope".
-      const atTopForReal = y <= 0 && hasScrollableContent(target);
-      setAtTop(atTopForReal);
+      setAtTop(y <= 0);
       if (y > lastY && y > collapseThreshold) {
-        setCollapsed(true);
-      } else if (atTopForReal) {
+        // Solo colapsa si lo que sobra por scrollear alcanza a cubrir lo
+        // que el colapso va a liberar — si no, colapsar dejaría al
+        // contenedor sin overflow (ver JSDoc de `collapseOnScroll`).
+        // `collapsedHeight == null` (el clon todavía no midió) cuenta como
+        // "no alcanza": mejor no colapsar todavía que colapsar y quedar
+        // atrapada.
+        const expandedHeight = headerRef.current?.getBoundingClientRect().height ?? 0;
+        const freed = collapsedHeight == null ? Infinity : expandedHeight - collapsedHeight;
+        if (getMaxScroll(target) >= freed) setCollapsed(true);
+      } else if (y <= 0) {
         setCollapsed(false);
       }
       lastY = y;
     };
     target.addEventListener('scroll', onScroll, { passive: true });
     return () => target.removeEventListener('scroll', onScroll);
-  }, [collapseOnScroll, collapseThreshold]);
+  }, [collapseOnScroll, collapseThreshold, collapsedHeight]);
 
   const layout: AppBarLayout = collapseOnScroll
     ? (collapsed ? 'inline' : 'stacked')
@@ -212,7 +231,7 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
     </div>
   ) : null;
 
-  return (
+  const header = (
     <header
       {...props}
       ref={setHeaderRef}
@@ -229,5 +248,35 @@ export const AppBar = forwardRef<HTMLElement, AppBarProps>(function AppBar(
       </div>
       {layout === 'stacked' && text}
     </header>
+  );
+
+  if (!collapseOnScroll) return header;
+  return (
+    <>
+      {header}
+      {/* Clon oculto SOLO para medir el alto real en `layout="inline"` — ver
+          `collapsedHeight` arriba. `position:fixed` fuera de pantalla en vez
+          de `display:none` (que no genera caja, imposible de medir);
+          `visibility:hidden` lo saca del árbol de accesibilidad y de la
+          interacción sin necesidad de duplicar `aria-hidden` a mano. */}
+      <header
+        ref={(node: HTMLElement | null) => {
+          measureRef.current = node;
+        }}
+        aria-hidden="true"
+        data-size={size}
+        data-layout="inline"
+        data-elevation="flat"
+        data-configuration={configuration}
+        className={['app-bar', className].filter(Boolean).join(' ')}
+        style={{ position: 'fixed', top: -9999, left: -9999, visibility: 'hidden', pointerEvents: 'none' }}
+      >
+        <div className="app-bar__row">
+          {leading != null && <div className="app-bar__leading">{leading}</div>}
+          {text}
+          {trailing != null && <div className="app-bar__trailing">{trailing}</div>}
+        </div>
+      </header>
+    </>
   );
 });

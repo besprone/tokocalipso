@@ -49,16 +49,3 @@
   font-weight: var(--typography-body-md-semiemphasized-weight); /* 600 */
   color: var(--semantic-color-text-primary);
 }
-
-/* Figma pone la microcopy dentro del contenedor sticky, sobre los botones.
-   `ButtonActions` no tiene slot para ella (`BottomSheet` sí), así que va como
-   primer hijo: el `surface="screen"` ya la deja a lo ancho y con los 16 de
-   separación que pide el diseño. */
-.bloques__microcopy {
-  margin: 0;
-  text-align: center;
-  font-size: var(--typography-body-md-size); /* 14px */
-  line-height: var(--typography-body-md-line-height); /* 20px */
-  font-weight: var(--typography-body-md-weight); /* 500 */
-  color: var(--semantic-color-text-secondary);
-}
