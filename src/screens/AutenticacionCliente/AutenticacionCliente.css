@@ -5,7 +5,6 @@
        .autenticacion__scroll    único bloque que scrollea
          .autenticacion__contenido  stack: campos + banner
            .autenticacion__campos    los dos TextField, separados 16
-           .autenticacion__banner    aviso contextual — ver nota en el .tsx
 ──────────────────────────────────────────────────────────────────────────── */
 
 .autenticacion {
@@ -47,33 +46,4 @@
   display: flex;
   flex-direction: column;
   gap: var(--componentSpacing-space-200); /* 16px */
-}
-
-/* ── banner ──────────────────────────────────────────────────────────────
-   Sin componente dedicado (ver nota en AutenticacionCliente.tsx): se
-   compone a mano con los mismos tokens semánticos que usaría un `Card`
-   `elevation="flat"` — radio y superficie —, más el tono `info` que `Card`
-   no expone. */
-.autenticacion__banner {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--componentSpacing-space-200); /* 16px */
-  padding: var(--componentSpacing-space-200); /* 16px */
-  border-radius: var(--containers-radius-200); /* 16px, igual que Card */
-  background-color: var(--semantic-color-bg-infoMuted);
-}
-
-.autenticacion__banner-icono {
-  flex-shrink: 0;
-  inline-size: 20px;
-  block-size: 20px;
-  color: var(--semantic-color-icon-info);
-}
-
-.autenticacion__banner-texto {
-  margin: 0;
-  font-size: var(--typography-body-sm-size); /* 12px */
-  line-height: var(--typography-body-sm-line-height); /* 17px */
-  font-weight: var(--typography-body-sm-weight); /* 500 */
-  color: var(--semantic-color-text-secondary);
 }

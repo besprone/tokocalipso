@@ -1,0 +1,15 @@
+/* ── MarketingBanner ──────────────────────────────────────────────────────
+   Patrón promocional. Figma: `pattern_app_marketing_banner`. Instancia `Card`
+   + `BannerLayout` (shell interno, ver BannerLayout.css) — acá solo el fondo
+   teñido por `accent`. Sin leading (usa `trailing` para la ilustración).
+
+   .marketing-banner[data-accent]  = <Card>, bg teñido (ver abajo)
+     <BannerLayout eyebrow bottomRow={<CtaAffordance/>} trailing>
+──────────────────────────────────────────────────────────────────────────── */
+
+.marketing-banner[data-accent='mint'] .card__surface {
+  background-color: var(--semantic-color-bg-accentPrimaryMuted);
+}
+.marketing-banner[data-accent='orchid'] .card__surface {
+  background-color: var(--semantic-color-bg-accentSecondaryMuted);
+}

@@ -1,0 +1,64 @@
+/* ── FeedbackBanner ───────────────────────────────────────────────────────
+   Patrón de comunicación de estado del dashboard. Figma: `pattern_app_feedback_banner`.
+   Instancia `Card` (radio/elevación/superficie) + `BannerLayout` (shell
+   interno, ver BannerLayout.css) — acá solo el fondo/icono teñidos por `type`
+   y los ajustes propios de las acciones.
+
+   .feedback-banner[data-type]   = <Card>, bg teñido (ver abajo)
+     <BannerLayout leading bottomRow>
+       .feedback-banner__icon      20px, color icon/<type>
+       .feedback-banner__actions   <ButtonActions surface="dialog">
+──────────────────────────────────────────────────────────────────────────── */
+
+.feedback-banner[data-type='info'] .card__surface {
+  background-color: var(--semantic-color-bg-infoMuted);
+}
+.feedback-banner[data-type='success'] .card__surface {
+  background-color: var(--semantic-color-bg-successMuted);
+}
+.feedback-banner[data-type='error'] .card__surface {
+  background-color: var(--semantic-color-bg-dangerMuted);
+}
+.feedback-banner[data-type='warning'] .card__surface {
+  background-color: var(--semantic-color-bg-warningMuted);
+}
+
+.feedback-banner__icon {
+  display: flex;
+  flex-shrink: 0;
+}
+.feedback-banner__icon > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+.feedback-banner[data-type='info'] .feedback-banner__icon {
+  color: var(--semantic-color-icon-info);
+}
+.feedback-banner[data-type='success'] .feedback-banner__icon {
+  color: var(--semantic-color-icon-success);
+}
+.feedback-banner[data-type='error'] .feedback-banner__icon {
+  color: var(--semantic-color-icon-danger);
+}
+.feedback-banner[data-type='warning'] .feedback-banner__icon {
+  color: var(--semantic-color-icon-warning);
+}
+
+/* `ButtonActions surface="dialog"` ya es fila/derecha/gap-8, pero solo
+   `surface="screen"` absorbe el `--button-block-inset` del `Button` (el
+   padding vertical de área táctil FUERA de la píldora — ver PR #97). Acá
+   igual hace falta: sin esto, el `xs` de las acciones (inset 8px) deja 24px
+   entre la píldora visible y el borde de la card en vez de los 16px del
+   padding — se absorbe localmente en vez de tocar `ButtonActions` (que
+   Dialog/BottomSheet también consumen con otros tamaños, ya verificados). */
+.feedback-banner__actions .button {
+  margin-block: calc(var(--button-block-inset, 0px) * -1);
+}
+
+/* Ghost de acciones: verde de marca en info/success (default de `Button`);
+   en error/warning se recolorea a `text/neutral` — así lo tiene el propio
+   Figma (instancia por instancia, no una regla derivable de un único token). */
+.feedback-banner[data-type='error'] .feedback-banner__actions .button[data-emphasis='ghost'],
+.feedback-banner[data-type='warning'] .feedback-banner__actions .button[data-emphasis='ghost'] {
+  --_text-color: var(--semantic-color-text-neutral);
+}

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { ArrowLeft, Close, Information } from '@carbon/icons-react';
+import { ArrowLeft, Close } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
+import { FeedbackBanner } from '../../calipso/components/Banner';
 import { Button } from '../../calipso/components/Button/Button';
 import { ButtonActions } from '../../calipso/components/ButtonActions';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
@@ -15,19 +16,14 @@ import './AutenticacionCliente.css';
  * Mapa de la pantalla → sistema:
  *   AppBar (stacked)  back + cerrar + título + contexto
  *   TextField × 2     celular y correo de el/la cliente
- *   banner            aviso contextual — ver nota abajo
+ *   FeedbackBanner    aviso contextual (nodo 16:3381, `pattern_app_feedback_banner`)
  *   ButtonActions     CTA sticky, bloqueado hasta llenar los dos campos
  *   useConfirmarSalida  sheet de confirmación al salir (nodo 13:2257),
  *                       compartido con las demás pantallas del flujo
  *
- * El banner (`pattern_app_feedback_banner` en Figma: bg/infoMuted + icono +
- * texto) no tiene componente dedicado en el DS — `Card` es la superficie más
- * cercana, pero fija `bg/surface` sin variante de tono, así que usarla aquí
- * implicaría pisar `.card__surface` desde la pantalla. Se compone a mano con
- * los mismos tokens semánticos (bg/infoMuted, icon/info, containers/radius-200)
- * en vez de forzar un componente que no expone lo que hace falta. Candidato a
- * reporte: un banner de feedback contextual persistente, o una variante de
- * tono en `Card`.
+ * El nodo de Figma para este banner solo trae `supporting` (Body/sm), sin
+ * headline — pero `FeedbackBanner.headline` es obligatorio en el DS. Se usa
+ * "Sugerencia" como headline corto y el texto del nodo pasa a `supporting`.
  */
 
 export type AutenticacionClienteProps = {
@@ -94,12 +90,10 @@ export function AutenticacionCliente({ onRegresar, onSalir, onEnviar }: Autentic
             />
           </div>
 
-          <div className="autenticacion__banner" role="note">
-            <Information className="autenticacion__banner-icono" aria-hidden="true" />
-            <p className="autenticacion__banner-texto">
-              Si Sara está contigo, podrás capturar su INE, selfie y firma directo desde esta app.
-            </p>
-          </div>
+          <FeedbackBanner
+            headline="Sugerencia"
+            supporting="Si Sara está contigo, podrás capturar su INE, selfie y firma directo desde esta app."
+          />
         </main>
 
         <ButtonActions surface="screen" sticky>

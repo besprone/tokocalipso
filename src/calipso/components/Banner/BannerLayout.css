@@ -1,0 +1,76 @@
+/* ── BannerLayout ─────────────────────────────────────────────────────────
+   Shell interno compartido por `FeedbackBanner`/`MarketingBanner`. Figma:
+   `_building_blocks_layout_banner` (subconjunto de slots — ver BannerLayout.tsx).
+   Se instancia SIEMPRE dentro de `Card`; no define fondo ni radio propios.
+
+   .banner-layout               fila: leading? · body · trailing? · gap 16 · padding 16
+     .banner-layout__leading      slot opcional (icono) · alineado arriba
+     .banner-layout__body         columna flex:1 · gap 8 (texto ↔ bottomRow)
+       .banner-layout__text         columna · gap 2
+         .banner-layout__eyebrow      Body/xs · text/tertiary (opcional)
+         .banner-layout__headline     Body/md-emphasized (700) · text/primary
+         .banner-layout__supporting   Body/sm (500) · text/secondary
+       {bottomRow}
+     .banner-layout__trailing     slot opcional (ilustración) · centrado, self-stretch
+──────────────────────────────────────────────────────────────────────────── */
+
+.banner-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--componentSpacing-space-200); /* 16px */
+  padding: var(--componentSpacing-space-200); /* 16px */
+  font-family: var(--typography-font-family);
+}
+
+.banner-layout__leading {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.banner-layout__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--internalLayout-space-100); /* 8px */
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+.banner-layout__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--internalLayout-space-25); /* 2px */
+}
+
+.banner-layout__eyebrow {
+  margin: 0;
+  color: var(--semantic-color-text-tertiary);
+  font-size: var(--typography-body-xs-size); /* 10 */
+  line-height: var(--typography-body-xs-line-height); /* 15 */
+  font-weight: var(--typography-body-xs-weight); /* 500 */
+}
+.banner-layout__headline {
+  margin: 0;
+  color: var(--semantic-color-text-primary);
+  font-size: var(--typography-body-md-emphasized-size); /* 14 */
+  line-height: var(--typography-body-md-emphasized-line-height); /* 20 */
+  font-weight: var(--typography-body-md-emphasized-weight); /* 700 */
+}
+.banner-layout__supporting {
+  margin: 0;
+  color: var(--semantic-color-text-secondary);
+  font-size: var(--typography-body-sm-size); /* 12 */
+  line-height: var(--typography-body-sm-line-height); /* 17 */
+  font-weight: var(--typography-body-sm-weight); /* 500 */
+}
+
+/* `align-self:stretch` — el slot ocupa el alto completo de la fila (icono
+   incluido, texto multilínea incluido) para que su propio contenido pueda
+   centrarse verticalmente contra ESE alto, sin depender de `align-items` de
+   `.banner-layout` (que se queda en `flex-start` por el texto/leading). */
+.banner-layout__trailing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+}

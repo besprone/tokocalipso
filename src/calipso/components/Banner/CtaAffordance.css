@@ -1,0 +1,66 @@
+/* ── CtaAffordance ────────────────────────────────────────────────────────
+   Chip de acción única del banner promocional. Figma:
+   `_building_blocks_app_banner_cta_affordance`.
+
+   .cta-affordance[data-scheme][data-size]
+     .cta-affordance__icon    opcional · 16px (sm) / 20px (md)
+     .cta-affordance__label   Body/sm-semiemphasized (sm) / Body/md-semiemphasized (md), 600
+──────────────────────────────────────────────────────────────────────────── */
+
+.cta-affordance {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--internalLayout-space-50); /* 4px */
+  cursor: pointer;
+  font-family: var(--typography-font-family);
+  font-weight: var(--typography-body-sm-semiemphasized-weight); /* 600 */
+  /* `BannerLayout.__body` es una columna flex — sin esto, `align-items:
+     stretch` (default) estira el chip al ancho completo del contenedor en
+     vez de dejarlo a lo ancho de su propio contenido (texto + padding). */
+  align-self: flex-start;
+}
+
+.cta-affordance[data-size='sm'] {
+  padding: var(--internalLayout-space-50) var(--internalLayout-space-100); /* 4/8 */
+  border-radius: var(--controls-radius-100); /* 8 */
+}
+.cta-affordance[data-size='md'] {
+  padding: var(--internalLayout-space-75) var(--internalLayout-space-150); /* 6/12 */
+  border-radius: var(--controls-radius-125); /* 10 */
+}
+
+.cta-affordance[data-scheme='brand'] {
+  background-color: var(--semantic-color-bg-brandSoft);
+  color: var(--semantic-color-text-brand);
+}
+.cta-affordance[data-scheme='neutral'] {
+  background-color: var(--semantic-color-bg-neutralSoft);
+  color: var(--semantic-color-text-neutral);
+}
+
+.cta-affordance__icon {
+  display: flex;
+}
+.cta-affordance[data-size='sm'] .cta-affordance__icon > svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+.cta-affordance[data-size='md'] .cta-affordance__icon > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+.cta-affordance__label {
+  white-space: nowrap;
+}
+.cta-affordance[data-size='sm'] .cta-affordance__label {
+  font-size: var(--typography-body-sm-size); /* 12 */
+  line-height: var(--typography-body-sm-line-height); /* 17 */
+}
+.cta-affordance[data-size='md'] .cta-affordance__label {
+  font-size: var(--typography-body-md-size); /* 14 */
+  line-height: var(--typography-body-md-line-height); /* 20 */
+}
