@@ -1,0 +1,51 @@
+/* ── Seguimiento de identificación ─────────────────────────────────────────
+   Solo layout, con tokens del sistema. Mismo shell que las otras pantallas.
+
+     .seguimiento            columna a todo el alto, topada a ancho móvil
+       .seguimiento__scroll    único bloque que scrollea
+         .seguimiento__contenido  List de pasos + banner opcional
+──────────────────────────────────────────────────────────────────────────── */
+
+.seguimiento {
+  display: flex;
+  flex-direction: column;
+  block-size: 100dvh;
+  max-inline-size: 480px;
+  margin-inline: auto;
+  background-color: var(--semantic-color-bg-canvas);
+  font-family: var(--typography-font-family);
+}
+
+@media (min-width: 481px) {
+  .seguimiento {
+    border-inline: 1px solid var(--semantic-color-border-subtle);
+  }
+}
+
+.seguimiento__scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* columna: el `margin-block-start: auto` del propio ButtonActions sticky
+     necesita un ancestro flex para empujar el CTA al fondo. */
+  display: flex;
+  flex-direction: column;
+}
+
+.seguimiento__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-container-inline); /* 16px */
+  padding-inline: var(--layout-container-inline); /* 16px */
+  padding-block: var(--layout-stack-block) var(--layout-content-bottomClearance);
+}
+
+/* ── statusBadge (ver nota en el .tsx) ──────────────────────────────────── */
+/* "activo" no lleva color propio: CircularProgress ya trae el suyo fijo. */
+.seguimiento__glifo-pendiente {
+  color: var(--semantic-color-icon-tertiary);
+}
+.seguimiento__glifo-completado {
+  color: var(--semantic-color-icon-success);
+}

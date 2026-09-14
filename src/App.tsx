@@ -8,10 +8,12 @@ import {
   datosIdentificacionVacios,
 } from './screens/AutenticacionCliente/AutenticacionCliente';
 import type { DatosIdentificacion } from './screens/AutenticacionCliente/AutenticacionCliente';
+import { SeguimientoIdentificacion } from './screens/SeguimientoIdentificacion/SeguimientoIdentificacion';
 import { porcentaje } from './datos/bloques';
 import type { BloqueId } from './datos/bloques';
 import { datosSolicitudVacios } from './datos/convenios';
 import type { DatosSolicitud } from './datos/convenios';
+import { ULTIMO_ESTADO } from './datos/seguimientoIdentificacion';
 
 /**
  * Navegación del prototipo: un estado de vista, sin router.
@@ -34,7 +36,7 @@ import type { DatosSolicitud } from './datos/convenios';
  * un "salir" — pero solo pregunta si ya hay algo real que perder
  * (`completados.length > 0`); si no, descarta directo sin sheet.
  */
-type Vista = 'home' | 'nuevaSolicitud' | 'bloques' | 'identificacion';
+type Vista = 'home' | 'nuevaSolicitud' | 'bloques' | 'identificacion' | 'seguimientoIdentificacion';
 
 export function App() {
   const [vista, setVista] = useState<Vista>('home');
@@ -42,6 +44,9 @@ export function App() {
   const [datosSolicitud, setDatosSolicitud] = useState<DatosSolicitud>(datosSolicitudVacios);
   const [datosIdentificacion, setDatosIdentificacion] =
     useState<DatosIdentificacion>(datosIdentificacionVacios);
+  /** `null` = todavía no se envió el enlace de "Identificación y
+   *  autenticación"; con eso decide `abrirBloque` a qué pantalla entrar. */
+  const [pasoSeguimiento, setPasoSeguimiento] = useState<number | null>(null);
 
   /**
    * Lo que el `LinearProgress` de `BloquesSolicitud` muestra AHORA — separado
@@ -85,6 +90,7 @@ export function App() {
     setCompletados([]);
     setDatosSolicitud(datosSolicitudVacios);
     setDatosIdentificacion(datosIdentificacionVacios);
+    setPasoSeguimiento(null);
     setAvanceMostrado(0);
     setVista('home');
   };
@@ -96,12 +102,25 @@ export function App() {
 
   const abrirBloque = (id: BloqueId) => {
     if (id === 'identificacion') {
-      setVista('identificacion');
+      // el enlace ya se envió antes (el formulario no se vuelve a mostrar):
+      // entra directo al seguimiento, en el punto donde se quedó.
+      setVista(pasoSeguimiento === null ? 'identificacion' : 'seguimientoIdentificacion');
       return;
     }
     // los otros tres bloques todavía no tienen pantalla propia
   };
 
+  if (vista === 'seguimientoIdentificacion' && pasoSeguimiento !== null) {
+    return (
+      <SeguimientoIdentificacion
+        pasoActual={pasoSeguimiento}
+        onAvanzar={() => setPasoSeguimiento((actual) => Math.min((actual ?? 0) + 1, ULTIMO_ESTADO))}
+        onRegresar={() => setVista('bloques')}
+        onSalir={salirYReiniciar}
+        onCompletar={() => completarBloque('identificacion')}
+      />
+    );
+  }
   if (vista === 'identificacion') {
     return (
       <AutenticacionCliente
@@ -109,7 +128,10 @@ export function App() {
         onCambiarDatos={cambiarDatosIdentificacion}
         onRegresar={() => setVista('bloques')}
         onSalir={salirYReiniciar}
-        onEnviar={() => completarBloque('identificacion')}
+        onEnviar={() => {
+          setPasoSeguimiento(0);
+          setVista('seguimientoIdentificacion');
+        }}
       />
     );
   }
@@ -129,7 +151,7 @@ export function App() {
       <NuevaSolicitud
         datos={datosSolicitud}
         onCambiarDatos={cambiarDatosSolicitud}
-        hayProgreso={completados.length > 0}
+        hayProgreso={completados.length > 0 || pasoSeguimiento !== null}
         onSalir={salirYReiniciar}
         onComenzar={() => setVista('bloques')}
       />
