@@ -40,7 +40,13 @@ export function StatusBadge({ status = 'pending', 'aria-label': ariaLabel }: Sta
   if (status === 'processing') {
     return (
       <span className="status-badge" data-status={status}>
-        <CircularProgress indeterminate size="xs" aria-label={label} />
+        <RadioButton aria-hidden="true" />
+        <CircularProgress
+          indeterminate
+          size="xs"
+          aria-label={label}
+          className="status-badge__spinner"
+        />
       </span>
     );
   }
