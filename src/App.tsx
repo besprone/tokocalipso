@@ -23,6 +23,16 @@ import type { DatosSolicitud } from './datos/convenios';
  * aquí, no en el `useState` de cada pantalla (que se resetea al desmontar):
  * `completados`, `datosSolicitud` (dependencia/convenio/firma) y
  * `datosIdentificacion` (celular/correo).
+ *
+ * Ese estado sobrevive SOLO al retroceder con el back del AppBar dentro del
+ * flujo (bloques → nuevaSolicitud, identificación → bloques). Salir de la
+ * solicitud —el sheet de confirmación, en cualquier pantalla que lo tenga—
+ * lo borra todo: por ahora "Descartar y salir" y "Guardar y salir" hacen lo
+ * mismo, porque no hay backend que de verdad guarde el borrador (ver el TODO
+ * en useConfirmarSalida). "Iniciemos la solicitud" es un caso aparte: no
+ * tiene pantalla anterior DENTRO del flujo, así que su back se comporta como
+ * un "salir" — pero solo pregunta si ya hay algo real que perder
+ * (`completados.length > 0`); si no, descarta directo sin sheet.
  */
 type Vista = 'home' | 'nuevaSolicitud' | 'bloques' | 'identificacion';
 
@@ -69,6 +79,16 @@ export function App() {
   const cambiarDatosIdentificacion = (parcial: Partial<DatosIdentificacion>) =>
     setDatosIdentificacion((actual) => ({ ...actual, ...parcial }));
 
+  /** Sale de la solicitud y la borra — el único `onSalir` de las tres
+   *  pantallas del flujo, sin importar desde dónde se llame. */
+  const salirYReiniciar = () => {
+    setCompletados([]);
+    setDatosSolicitud(datosSolicitudVacios);
+    setDatosIdentificacion(datosIdentificacionVacios);
+    setAvanceMostrado(0);
+    setVista('home');
+  };
+
   const completarBloque = (id: BloqueId) => {
     setCompletados((actual) => (actual.includes(id) ? actual : [...actual, id]));
     setVista('bloques');
@@ -88,7 +108,7 @@ export function App() {
         datos={datosIdentificacion}
         onCambiarDatos={cambiarDatosIdentificacion}
         onRegresar={() => setVista('bloques')}
-        onSalir={() => setVista('home')}
+        onSalir={salirYReiniciar}
         onEnviar={() => completarBloque('identificacion')}
       />
     );
@@ -100,7 +120,7 @@ export function App() {
         avance={avanceMostrado}
         onAbrirBloque={abrirBloque}
         onRegresar={() => setVista('nuevaSolicitud')}
-        onSalir={() => setVista('home')}
+        onSalir={salirYReiniciar}
       />
     );
   }
@@ -109,7 +129,8 @@ export function App() {
       <NuevaSolicitud
         datos={datosSolicitud}
         onCambiarDatos={cambiarDatosSolicitud}
-        onRegresar={() => setVista('home')}
+        hayProgreso={completados.length > 0}
+        onSalir={salirYReiniciar}
         onComenzar={() => setVista('bloques')}
       />
     );

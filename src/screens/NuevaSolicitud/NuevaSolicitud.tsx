@@ -11,6 +11,7 @@ import { SelectBottomSheet } from '../../calipso/components/Select';
 import type { SelectOption } from '../../calipso/components/Select';
 import { dependencias, firmaInicial, tieneFirmaDisponible, tiposDeFirma } from '../../datos/convenios';
 import type { DatosSolicitud } from '../../datos/convenios';
+import { useConfirmarSalida } from '../../hooks/useConfirmarSalida';
 import './NuevaSolicitud.css';
 
 /**
@@ -28,6 +29,12 @@ import './NuevaSolicitud.css';
  *
  * Controlada por App.tsx (`datos` + `onCambiarDatos`): si el usuario regresa
  * a esta pantalla, lo que ya había elegido sigue ahí.
+ *
+ * El back del AppBar no tiene una pantalla anterior DENTRO del flujo —acá
+ * empieza—, así que se comporta como "salir": si ya hay al menos un bloque
+ * completado (`hayProgreso`) pregunta con el mismo sheet de confirmación que
+ * usan las demás pantallas; si no, no hay nada real que perder y descarta
+ * directo.
  */
 
 const opcionesDependencia: SelectOption[] = dependencias.map((d) => ({
@@ -38,12 +45,23 @@ const opcionesDependencia: SelectOption[] = dependencias.map((d) => ({
 export type NuevaSolicitudProps = {
   datos: DatosSolicitud;
   onCambiarDatos: (parcial: Partial<DatosSolicitud>) => void;
-  onRegresar: () => void;
+  /** Ya hay al menos un bloque completado — el back del AppBar pregunta
+   *  antes de descartarlo, en vez de salir directo. */
+  hayProgreso: boolean;
+  onSalir: () => void;
   onComenzar: () => void;
 };
 
-export function NuevaSolicitud({ datos, onCambiarDatos, onRegresar, onComenzar }: NuevaSolicitudProps) {
+export function NuevaSolicitud({
+  datos,
+  onCambiarDatos,
+  hayProgreso,
+  onSalir,
+  onComenzar,
+}: NuevaSolicitudProps) {
   const { dependencia, convenio, firma } = datos;
+  const { abrir: abrirConfirmacion, sheet: confirmarSalida } = useConfirmarSalida(onSalir);
+  const manejarRegresar = hayProgreso ? abrirConfirmacion : onSalir;
 
   const dependenciaElegida = dependencias.find((d) => d.nombre === dependencia);
   const convenioElegido = dependenciaElegida?.convenios.find((c) => c.nombre === convenio);
@@ -114,7 +132,7 @@ export function NuevaSolicitud({ datos, onCambiarDatos, onRegresar, onComenzar }
               size="lg"
               icon={<ArrowLeft />}
               aria-label="Regresar"
-              onClick={onRegresar}
+              onClick={manejarRegresar}
             />
           }
         />
@@ -184,6 +202,8 @@ export function NuevaSolicitud({ datos, onCambiarDatos, onRegresar, onComenzar }
           </Button>
         </ButtonActions>
       </div>
+
+      {confirmarSalida}
     </div>
   );
 }
