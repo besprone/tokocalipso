@@ -53,15 +53,29 @@ export type SeguimientoIdentificacionProps = {
   onCompletar: () => void;
 };
 
-// El `svg` va como hijo DIRECTO de `.item-leading__icon` (sin wrapper): el
-// CSS del DS lo redimensiona con un selector `> svg`, que un wrapper
-// intermedio rompería.
+// `RadioButton`/`CheckmarkFilled` van como hijo DIRECTO de `.item-leading__icon`
+// a propósito: el CSS del DS los redimensiona a 20px con un selector `> svg`,
+// que coincide con el tamaño real que traen (20px con `size={20}`).
+//
+// `CircularProgress` NO puede ir directo ahí: es TAMBIÉN un `<svg>`, así que
+// esa misma regla lo capturaba y lo forzaba a 20px por especificidad —
+// pisando su propio CSS (`[data-size="xs"] { width: 16px; height: 16px; }`,
+// que es el tamaño correcto según el DS: nodo `components_circular_
+// indeterminate_progress_indicator`, 16px dentro de una caja de 20 con 2px
+// de margen por lado). El `<span>` rompe el combinador `>` para que esa
+// regla no lo alcance — no es un hueco del DS, es evitar que una regla
+// pensada para glifos simples se aplique a un componente que ya trae su
+// propio sistema de tamaños.
 function StatusBadge({ estado }: { estado: 'pendiente' | 'activo' | 'completado' }) {
   if (estado === 'completado') {
     return <CheckmarkFilled size={20} aria-hidden="true" className="seguimiento__glifo-completado" />;
   }
   if (estado === 'activo') {
-    return <CircularProgress indeterminate size="xs" aria-hidden="true" />;
+    return (
+      <span className="seguimiento__badge-activo" aria-hidden="true">
+        <CircularProgress indeterminate size="xs" />
+      </span>
+    );
   }
   return <RadioButton size={20} aria-hidden="true" className="seguimiento__glifo-pendiente" />;
 }
