@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowLeft, Close } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
@@ -26,7 +27,20 @@ import './AutenticacionCliente.css';
  *
  * Controlada por App.tsx (`datos` + `onCambiarDatos`): si el usuario regresa
  * a esta pantalla sin enviar, lo que ya había escrito sigue ahí.
+ *
+ * Valida celular (10 dígitos) y correo (formato básico) antes de habilitar
+ * el envío. El error solo se muestra después de que el campo pierde el foco
+ * una vez (`tocado`) — así no se regaña al usuario antes de que termine de
+ * escribir.
  */
+
+function esCelularValido(v: string): boolean {
+  return /^\d{10}$/.test(v.replace(/[\s-]/g, ''));
+}
+
+function esCorreoValido(v: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
 
 export type DatosIdentificacion = {
   celular: string;
@@ -52,8 +66,12 @@ export function AutenticacionCliente({
 }: AutenticacionClienteProps) {
   const { celular, correo } = datos;
   const { abrir: abrirConfirmacion, sheet: confirmarSalida } = useConfirmarSalida(onSalir);
+  const [celularTocado, setCelularTocado] = useState(false);
+  const [correoTocado, setCorreoTocado] = useState(false);
 
-  const puedeEnviar = celular.trim() !== '' && correo.trim() !== '';
+  const celularValido = esCelularValido(celular);
+  const correoValido = esCorreoValido(correo);
+  const puedeEnviar = celularValido && correoValido;
 
   return (
     <div className="autenticacion">
@@ -96,6 +114,13 @@ export function AutenticacionCliente({
               autoComplete="tel"
               value={celular}
               onChange={(e) => onCambiarDatos({ celular: e.target.value })}
+              onBlur={() => setCelularTocado(true)}
+              error={celularTocado && celular !== '' && !celularValido}
+              helperText={
+                celularTocado && celular !== '' && !celularValido
+                  ? 'Ingresa un número a 10 dígitos.'
+                  : undefined
+              }
             />
             <TextField
               label="Correo electrónico"
@@ -103,6 +128,13 @@ export function AutenticacionCliente({
               autoComplete="email"
               value={correo}
               onChange={(e) => onCambiarDatos({ correo: e.target.value })}
+              onBlur={() => setCorreoTocado(true)}
+              error={correoTocado && correo !== '' && !correoValido}
+              helperText={
+                correoTocado && correo !== '' && !correoValido
+                  ? 'Ingresa un correo válido.'
+                  : undefined
+              }
             />
           </div>
 
