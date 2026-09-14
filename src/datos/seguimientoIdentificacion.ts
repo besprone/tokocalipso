@@ -73,13 +73,17 @@ export const estadosSeguimiento: EstadoSeguimiento[] = [
 
 export const ULTIMO_ESTADO = estadosSeguimiento.length - 1;
 
-/** Estado (pendiente/activo/completado) de un paso dado el índice del estado actual. */
+/**
+ * Estado de un paso dado el índice del estado actual, con los mismos nombres
+ * que `StatusBadgeStatus` del DS (`ItemLeading type="statusBadge"`) — así se
+ * pasa directo, sin traducir.
+ */
 export function estadoDelPaso(
   indicePaso: number,
   indiceEstadoActual: number,
-): 'pendiente' | 'activo' | 'completado' {
+): 'pending' | 'processing' | 'completed' {
   const activo = estadosSeguimiento[indiceEstadoActual].pasoActivo;
-  if (activo === indicePaso) return 'activo';
-  if (activo === null || indicePaso < activo) return 'completado';
-  return 'pendiente';
+  if (activo === indicePaso) return 'processing';
+  if (activo === null || indicePaso < activo) return 'completed';
+  return 'pending';
 }

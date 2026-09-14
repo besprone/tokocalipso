@@ -4,6 +4,8 @@ import { Avatar } from '../Avatar/Avatar';
 import type { AvatarProps } from '../Avatar/Avatar';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Radio } from '../Radio/Radio';
+import { StatusBadge } from './StatusBadge';
+import type { StatusBadgeStatus } from './StatusBadge';
 import './ItemLeading.css';
 
 export type ItemLeadingType =
@@ -13,9 +15,10 @@ export type ItemLeadingType =
   | 'number'
   | 'checkbox'
   | 'radiobutton'
-  | 'paymentStatus';
+  | 'paymentStatus'
+  | 'statusBadge';
 
-/** `icon` acepta `sm`·`md`; `img`/`avatar` aceptan `xs`–`xl`; el resto es `sm`. */
+/** `icon` acepta `sm`·`md`; `img`/`avatar` aceptan `xs`–`xl`; el resto (incluido `statusBadge`, siempre 20px) es `sm`. */
 export type ItemLeadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type ControlProps = Pick<
@@ -53,6 +56,10 @@ type BaseProps = {
   badge?: boolean;
   /** `type` checkbox·radiobutton — props del control. */
   control?: ControlProps;
+  /** `type="statusBadge"` — estado del badge. Default `pending`. */
+  status?: StatusBadgeStatus;
+  /** `type="statusBadge"` — nombre accesible (ej. "Pago fallido"). Default: uno genérico por `status`. */
+  statusLabel?: string;
 };
 
 export type ItemLeadingProps = BaseProps & Omit<HTMLAttributes<HTMLSpanElement>, keyof BaseProps>;
@@ -64,6 +71,9 @@ export type ItemLeadingProps = BaseProps & Omit<HTMLAttributes<HTMLSpanElement>,
  * `type="avatar"` instancia `<Avatar>` (con el `size` de `ItemLeading`) desde
  * `avatarProps`; `avatar` es un escape hatch. `paymentStatus` sigue siendo un
  * slot hasta que exista su componente (`_building_block_paymentstatus`).
+ * `type="statusBadge"` instancia `StatusBadge` (building block interno,
+ * `ItemBlocks/StatusBadge.tsx` — no confundir con `_building_blocks_paymentStatus`,
+ * son dos building blocks de Figma distintos).
  */
 export function ItemLeading({
   type,
@@ -76,6 +86,8 @@ export function ItemLeading({
   number,
   badge = false,
   control,
+  status,
+  statusLabel,
   className,
   ...props
 }: ItemLeadingProps) {
@@ -126,6 +138,8 @@ export function ItemLeading({
       )}
 
       {type === 'paymentStatus' && <span className="item-leading__payment">{paymentStatus}</span>}
+
+      {type === 'statusBadge' && <StatusBadge status={status} aria-label={statusLabel} />}
     </span>
   );
 }

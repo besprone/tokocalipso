@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
-import { ArrowLeft, CheckmarkFilled, Close, RadioButton } from '@carbon/icons-react';
+import { ArrowLeft, Close } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
 import { FeedbackBanner } from '../../calipso/components/Banner';
 import { Button } from '../../calipso/components/Button/Button';
 import { ButtonActions } from '../../calipso/components/ButtonActions';
-import { CircularProgress } from '../../calipso/components/CircularProgress/CircularProgress';
 import { IconButton } from '../../calipso/components/IconButton/IconButton';
 import { ItemLeading } from '../../calipso/components/ItemBlocks';
 import { List } from '../../calipso/components/List';
@@ -28,21 +27,15 @@ import './SeguimientoIdentificacion.css';
  *
  * Mapa de la pantalla → sistema:
  *   AppBar (stacked)    back + cerrar + título/contexto, cambian con el estado
- *   List + ListItem     un paso por fila; el leading es el statusBadge — ver
- *                        nota abajo, no hay componente dedicado en el DS
+ *   List + ListItem     un paso por fila; el leading es `ItemLeading
+ *                        type="statusBadge"` (`_building_blocks_statusBadge`)
  *   FeedbackBanner       solo en los dos primeros estados (nodo 16:3381)
  *   ButtonActions        CTA sticky, texto y acción cambian con el estado
  *
- * El `_building_blocks_statusBadge` de Figma (pendiente/activo/completado) no
- * tiene componente propio en el catálogo — se resuelve por completo con
- * piezas que ya existen, sin pisar ninguna clase interna:
- *   pendiente   RadioButton (Carbon) en icon/tertiary
- *   activo      CircularProgress indeterminate size="xs" (16px en una caja de
- *               20, igual que especifica el nodo)
- *   completado  CheckmarkFilled (Carbon) en icon/success — el nodo de Figma
- *               trae el verde de marca de kubo (ref/green/500, #2e9f30) en vez
- *               del semántico; se usa icon/success (#1f6f40, no depende de
- *               marca) porque es el token correcto, no el valor pegado.
+ * Ya no hay ningún ícono ni color a mano en esta pantalla: `StatusBadge` es
+ * componente del DS (llegó con él el punto exacto que se había reportado —
+ * ver commits de la migración). Antes de esta versión había una composición
+ * propia con Carbon icons sueltos + CircularProgress; se retiró entera.
  */
 
 export type SeguimientoIdentificacionProps = {
@@ -52,33 +45,6 @@ export type SeguimientoIdentificacionProps = {
   onSalir: () => void;
   onCompletar: () => void;
 };
-
-// `RadioButton`/`CheckmarkFilled` van como hijo DIRECTO de `.item-leading__icon`
-// a propósito: el CSS del DS los redimensiona a 20px con un selector `> svg`,
-// que coincide con el tamaño real que traen (20px con `size={20}`).
-//
-// `CircularProgress` NO puede ir directo ahí: es TAMBIÉN un `<svg>`, así que
-// esa misma regla lo capturaba y lo forzaba a 20px por especificidad —
-// pisando su propio CSS (`[data-size="xs"] { width: 16px; height: 16px; }`,
-// que es el tamaño correcto según el DS: nodo `components_circular_
-// indeterminate_progress_indicator`, 16px dentro de una caja de 20 con 2px
-// de margen por lado). El `<span>` rompe el combinador `>` para que esa
-// regla no lo alcance — no es un hueco del DS, es evitar que una regla
-// pensada para glifos simples se aplique a un componente que ya trae su
-// propio sistema de tamaños.
-function StatusBadge({ estado }: { estado: 'pendiente' | 'activo' | 'completado' }) {
-  if (estado === 'completado') {
-    return <CheckmarkFilled size={20} aria-hidden="true" className="seguimiento__glifo-completado" />;
-  }
-  if (estado === 'activo') {
-    return (
-      <span className="seguimiento__badge-activo" aria-hidden="true">
-        <CircularProgress indeterminate size="xs" />
-      </span>
-    );
-  }
-  return <RadioButton size={20} aria-hidden="true" className="seguimiento__glifo-pendiente" />;
-}
 
 export function SeguimientoIdentificacion({
   pasoActual,
@@ -140,12 +106,7 @@ export function SeguimientoIdentificacion({
                 key={paso.id}
                 label={paso.nombre}
                 supporting={paso.supporting}
-                leading={
-                  <ItemLeading
-                    type="icon"
-                    icon={<StatusBadge estado={estadoDelPaso(indice, pasoActual)} />}
-                  />
-                }
+                leading={<ItemLeading type="statusBadge" status={estadoDelPaso(indice, pasoActual)} />}
               />
             ))}
           </List>

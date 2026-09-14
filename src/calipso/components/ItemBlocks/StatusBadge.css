@@ -1,0 +1,32 @@
+/* ── StatusBadge ──────────────────────────────────────────────────────────
+   Icono de estado 20×20. Figma: `_building_blocks_statusBadge`. Building
+   block interno de `ItemLeading` (`type="statusBadge"`).
+
+   [data-status="pending"]     RadioButton · icon/secondary
+   [data-status="processing"]  <CircularProgress indeterminate size="xs">
+   [data-status="completed"]   CheckmarkFilled · icon/success
+   [data-status="failed"]      Close · icon/danger
+──────────────────────────────────────────────────────────────────────────── */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 20px;
+  block-size: 20px;
+  flex-shrink: 0;
+}
+.status-badge > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+.status-badge[data-status='pending'] {
+  color: var(--semantic-color-icon-secondary);
+}
+.status-badge[data-status='completed'] {
+  color: var(--semantic-color-icon-success);
+}
+.status-badge[data-status='failed'] {
+  color: var(--semantic-color-icon-danger);
+}

@@ -40,17 +40,3 @@
   padding-inline: var(--layout-container-inline); /* 16px */
   padding-block: var(--layout-stack-block) var(--layout-content-bottomClearance);
 }
-
-/* ── statusBadge (ver nota en el .tsx) ──────────────────────────────────── */
-.seguimiento__glifo-pendiente {
-  color: var(--semantic-color-icon-tertiary);
-}
-.seguimiento__glifo-completado {
-  color: var(--semantic-color-icon-success);
-}
-/* El wrapper del CircularProgress "activo": sin tamaño ni color propios —
-   solo existe para que el `> svg` de ItemLeading no lo alcance (ver .tsx).
-   `.item-leading__icon` ya centra con flex, así que basta con no estorbar. */
-.seguimiento__badge-activo {
-  display: flex;
-}

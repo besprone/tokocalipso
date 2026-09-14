@@ -8,6 +8,7 @@
      [data-type="checkbox"]      <Checkbox> en caja de 24px (área táctil 48 desborda)
      [data-type="radiobutton"]   <Radio> idem
      [data-type="paymentStatus"] slot (timeline)
+     [data-type="statusBadge"]   <StatusBadge> 20px fijo — ver StatusBadge.css
 
    img/avatar: badge `+` opcional abajo-derecha (`badge` prop).
 ──────────────────────────────────────────────────────────────────────────── */
