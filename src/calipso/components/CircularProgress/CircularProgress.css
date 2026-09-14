@@ -4,7 +4,10 @@
    El arco usa pathLength="100" → dasharray/offset en unidades 0–100.
 
    indeterminate → svg gira + el arco varía su dasharray en bucle
-                   (ciclo = 4 × var(--linear-200-duration-ms) = 800ms).
+                   (ciclo = 6 × var(--linear-200-duration-ms) = 1200ms —
+                   multiplicador propio del componente, no toca el token
+                   compartido `--linear-200-duration-ms` que usan otras
+                   transiciones de 200ms en el resto del DS).
    determinate   → arco estático rotado -90° (arranca a las 12);
                    stroke-dashoffset = 100 − value (inline).
 ──────────────────────────────────────────────────────────────────────── */
@@ -49,14 +52,14 @@
 /* ── indeterminate — svg gira + arco en bucle ───────────────────────── */
 .circular-progress[data-indeterminate] {
   animation: circular-progress-rotate
-    calc(var(--linear-200-duration-ms) * 4)
+    calc(var(--linear-200-duration-ms) * 6)
     var(--linear-200-easing)
     infinite;
 }
 .circular-progress[data-indeterminate] .circular-progress__arc {
   stroke-dasharray: 1.5, 100;
   animation: circular-progress-dash
-    calc(var(--linear-200-duration-ms) * 4)
+    calc(var(--linear-200-duration-ms) * 6)
     var(--linear-200-easing)
     infinite;
 }
