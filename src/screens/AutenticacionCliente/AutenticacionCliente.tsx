@@ -63,7 +63,7 @@ export function AutenticacionCliente({
           size="sm"
           collapseOnScroll
           headline="Autentiquemos al cliente"
-          supporting="Ingresa el número de celular y correo de Sara. Le enviaremos un enlace por WhatsApp para que confirme su identidad."
+          supporting="Ingresa el número de celular y correo del cliente. Le enviaremos un enlace por WhatsApp para que confirme su identidad."
           aria-label="Autentiquemos al cliente"
           leading={
             <IconButton
@@ -108,13 +108,13 @@ export function AutenticacionCliente({
 
           <FeedbackBanner
             headline="Sugerencia"
-            supporting="Si Sara está contigo, podrás capturar su INE, selfie y firma directo desde esta app."
+            supporting="Si el cliente está contigo, podrás capturar su INE, selfie y firma directo desde esta app."
           />
         </main>
 
         <ButtonActions surface="screen" sticky>
           <Button emphasis="primary" size="sm" disabled={!puedeEnviar} onClick={onEnviar}>
-            Enviar enlace a Sara
+            Enviar enlace
           </Button>
         </ButtonActions>
       </div>
