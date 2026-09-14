@@ -8,7 +8,7 @@ import { ItemTrailing } from '../../calipso/components/ItemBlocks/ItemTrailing';
 import { LinearProgress } from '../../calipso/components/LinearProgress/LinearProgress';
 import { List } from '../../calipso/components/List';
 import { ListItem } from '../../calipso/components/List/ListItem';
-import { bloques, porcentaje } from '../../datos/bloques';
+import { bloques } from '../../datos/bloques';
 import type { BloqueId } from '../../datos/bloques';
 import { useConfirmarSalida } from '../../hooks/useConfirmarSalida';
 import './BloquesSolicitud.css';
@@ -18,7 +18,9 @@ import './BloquesSolicitud.css';
  *
  * Mapa de la pantalla → sistema:
  *   AppBar (stacked)     back + cerrar + título + tiempo estimado
- *   LinearProgress       avance del proceso, con el porcentaje al lado
+ *   LinearProgress       avance del proceso — el valor lo controla App.tsx,
+ *                        que lo anima de "antes" a "ahora" al montar (ver
+ *                        la nota de `avanceMostrado` ahí)
  *   List + ListItem      un bloque por fila; se habilitan en orden
  *   ButtonActions        CTA sticky con microcopy, bloqueado hasta completar
  *   useConfirmarSalida   sheet de confirmación al salir (nodo 13:2257),
@@ -29,6 +31,8 @@ import './BloquesSolicitud.css';
 
 export type BloquesSolicitudProps = {
   completados: BloqueId[];
+  /** Lo que la barra debe mostrar AHORA — ver `avanceMostrado` en App.tsx. */
+  avance: number;
   onAbrirBloque: (id: BloqueId) => void;
   onRegresar: () => void;
   onSalir: () => void;
@@ -36,13 +40,13 @@ export type BloquesSolicitudProps = {
 
 export function BloquesSolicitud({
   completados,
+  avance,
   onAbrirBloque,
   onRegresar,
   onSalir,
 }: BloquesSolicitudProps) {
   const { abrir: abrirConfirmacion, sheet: confirmarSalida } = useConfirmarSalida(onSalir);
 
-  const avance = porcentaje(completados.length);
   const siguiente = bloques.find((b) => !completados.includes(b.id));
   const todoListo = completados.length === bloques.length;
 

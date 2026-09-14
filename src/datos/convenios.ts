@@ -155,3 +155,46 @@ export const dependencias: Dependencia[] = [
 export function tieneFirmaDisponible(c: Convenio): boolean {
   return c.firmaAutografa || c.firmaDigital;
 }
+
+/**
+ * Tipo de firma con la que se levanta la solicitud. Vive aquí (no en
+ * NuevaSolicitud) porque App.tsx necesita tiparlo para mantener el estado
+ * del formulario entre pantallas.
+ */
+export const tiposDeFirma = [
+  { value: 'autografa', label: 'Firma autógrafa' },
+  { value: 'digital', label: 'Firma digital' },
+] as const;
+
+export type TipoDeFirma = (typeof tiposDeFirma)[number]['value'];
+
+/**
+ * Propuesta cuando el convenio admite las dos. Sin convenio no se propone
+ * nada: la pantalla no presume una respuesta antes de tener con qué.
+ */
+const FIRMA_PROPUESTA: TipoDeFirma = 'autografa';
+
+/**
+ * Qué firma queda seleccionada al elegir un convenio. Si solo admite una, esa
+ * queda fija; si admite las dos, se propone la autógrafa y el usuario decide.
+ */
+export function firmaInicial(convenio: Convenio): TipoDeFirma | '' {
+  if (convenio.firmaAutografa && convenio.firmaDigital) return FIRMA_PROPUESTA;
+  if (convenio.firmaAutografa) return 'autografa';
+  if (convenio.firmaDigital) return 'digital';
+  return '';
+}
+
+/** Estado del formulario de "Iniciemos la solicitud" — vive en App.tsx para
+ *  sobrevivir a salir de la pantalla y volver. */
+export type DatosSolicitud = {
+  dependencia: string;
+  convenio: string;
+  firma: TipoDeFirma | '';
+};
+
+export const datosSolicitudVacios: DatosSolicitud = {
+  dependencia: '',
+  convenio: '',
+  firma: '',
+};

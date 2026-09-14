@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ArrowLeft, Close } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
@@ -24,17 +23,34 @@ import './AutenticacionCliente.css';
  * El nodo de Figma para este banner solo trae `supporting` (Body/sm), sin
  * headline — pero `FeedbackBanner.headline` es obligatorio en el DS. Se usa
  * "Sugerencia" como headline corto y el texto del nodo pasa a `supporting`.
+ *
+ * Controlada por App.tsx (`datos` + `onCambiarDatos`): si el usuario regresa
+ * a esta pantalla sin enviar, lo que ya había escrito sigue ahí.
  */
 
+export type DatosIdentificacion = {
+  celular: string;
+  correo: string;
+};
+
+export const datosIdentificacionVacios: DatosIdentificacion = { celular: '', correo: '' };
+
 export type AutenticacionClienteProps = {
+  datos: DatosIdentificacion;
+  onCambiarDatos: (parcial: Partial<DatosIdentificacion>) => void;
   onRegresar: () => void;
   onSalir: () => void;
   onEnviar: () => void;
 };
 
-export function AutenticacionCliente({ onRegresar, onSalir, onEnviar }: AutenticacionClienteProps) {
-  const [celular, setCelular] = useState('');
-  const [correo, setCorreo] = useState('');
+export function AutenticacionCliente({
+  datos,
+  onCambiarDatos,
+  onRegresar,
+  onSalir,
+  onEnviar,
+}: AutenticacionClienteProps) {
+  const { celular, correo } = datos;
   const { abrir: abrirConfirmacion, sheet: confirmarSalida } = useConfirmarSalida(onSalir);
 
   const puedeEnviar = celular.trim() !== '' && correo.trim() !== '';
@@ -79,14 +95,14 @@ export function AutenticacionCliente({ onRegresar, onSalir, onEnviar }: Autentic
               inputMode="numeric"
               autoComplete="tel"
               value={celular}
-              onChange={(e) => setCelular(e.target.value)}
+              onChange={(e) => onCambiarDatos({ celular: e.target.value })}
             />
             <TextField
               label="Correo electrónico"
               type="email"
               autoComplete="email"
               value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
+              onChange={(e) => onCambiarDatos({ correo: e.target.value })}
             />
           </div>
 

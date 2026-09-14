@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ArrowLeft } from '@carbon/icons-react';
 
 import { AppBar } from '../../calipso/components/AppBar/AppBar';
@@ -10,8 +9,8 @@ import { List } from '../../calipso/components/List';
 import { ListItem } from '../../calipso/components/List/ListItem';
 import { SelectBottomSheet } from '../../calipso/components/Select';
 import type { SelectOption } from '../../calipso/components/Select';
-import { dependencias, tieneFirmaDisponible } from '../../datos/convenios';
-import type { Convenio } from '../../datos/convenios';
+import { dependencias, firmaInicial, tieneFirmaDisponible, tiposDeFirma } from '../../datos/convenios';
+import type { DatosSolicitud } from '../../datos/convenios';
 import './NuevaSolicitud.css';
 
 /**
@@ -26,46 +25,25 @@ import './NuevaSolicitud.css';
  *
  * Mismo shell que la home: alto completo, columna de ancho móvil centrada, y
  * solo el bloque de contenido scrollea.
+ *
+ * Controlada por App.tsx (`datos` + `onCambiarDatos`): si el usuario regresa
+ * a esta pantalla, lo que ya había elegido sigue ahí.
  */
-
-const tiposDeFirma = [
-  { value: 'autografa', label: 'Firma autógrafa' },
-  { value: 'digital', label: 'Firma digital' },
-] as const;
-
-type TipoDeFirma = (typeof tiposDeFirma)[number]['value'];
-
-/**
- * Propuesta cuando el convenio admite las dos. Sin convenio no se propone
- * nada: la pantalla no presume una respuesta antes de tener con qué.
- */
-const FIRMA_PROPUESTA: TipoDeFirma = 'autografa';
 
 const opcionesDependencia: SelectOption[] = dependencias.map((d) => ({
   value: d.nombre,
   label: d.nombre,
 }));
 
-/**
- * Qué firma queda seleccionada al elegir un convenio. Si solo admite una, esa
- * queda fija; si admite las dos, se propone la autógrafa y el usuario decide.
- */
-function firmaInicial(convenio: Convenio): TipoDeFirma | '' {
-  if (convenio.firmaAutografa && convenio.firmaDigital) return FIRMA_PROPUESTA;
-  if (convenio.firmaAutografa) return 'autografa';
-  if (convenio.firmaDigital) return 'digital';
-  return '';
-}
-
 export type NuevaSolicitudProps = {
+  datos: DatosSolicitud;
+  onCambiarDatos: (parcial: Partial<DatosSolicitud>) => void;
   onRegresar: () => void;
   onComenzar: () => void;
 };
 
-export function NuevaSolicitud({ onRegresar, onComenzar }: NuevaSolicitudProps) {
-  const [dependencia, setDependencia] = useState('');
-  const [convenio, setConvenio] = useState('');
-  const [firma, setFirma] = useState<TipoDeFirma | ''>('');
+export function NuevaSolicitud({ datos, onCambiarDatos, onRegresar, onComenzar }: NuevaSolicitudProps) {
+  const { dependencia, convenio, firma } = datos;
 
   const dependenciaElegida = dependencias.find((d) => d.nombre === dependencia);
   const convenioElegido = dependenciaElegida?.convenios.find((c) => c.nombre === convenio);
@@ -79,28 +57,29 @@ export function NuevaSolicitud({ onRegresar, onComenzar }: NuevaSolicitudProps) 
     })) ?? [];
 
   const elegirDependencia = (valor: string) => {
-    setDependencia(valor);
     // el convenio anterior no existe en la nueva dependencia
     const d = dependencias.find((x) => x.nombre === valor);
     // con un solo convenio no hay nada que elegir: se preselecciona aunque no
     // tenga firma disponible — así el callejón sin salida se ve, en vez de
     // dejar el campo vacío sin explicar por qué no avanza
     const unico = d?.convenios.length === 1 ? d.convenios[0] : undefined;
-    setConvenio(unico?.nombre ?? '');
-    setFirma(unico ? firmaInicial(unico) : '');
+    onCambiarDatos({
+      dependencia: valor,
+      convenio: unico?.nombre ?? '',
+      firma: unico ? firmaInicial(unico) : '',
+    });
   };
 
   const elegirConvenio = (valor: string) => {
-    setConvenio(valor);
     const c = dependenciaElegida?.convenios.find((x) => x.nombre === valor);
     if (!c) {
-      setFirma('');
+      onCambiarDatos({ convenio: valor, firma: '' });
       return;
     }
     // si lo que ya venía marcado sigue siendo válido, se respeta
     const sigueValiendo =
       (firma === 'autografa' && c.firmaAutografa) || (firma === 'digital' && c.firmaDigital);
-    setFirma(sigueValiendo ? firma : firmaInicial(c));
+    onCambiarDatos({ convenio: valor, firma: sigueValiendo ? firma : firmaInicial(c) });
   };
 
   const puedeComenzar = convenioElegido != null && firma !== '';
@@ -183,7 +162,7 @@ export function NuevaSolicitud({ onRegresar, onComenzar }: NuevaSolicitudProps) 
                           value: tipo.value,
                           checked: firma === tipo.value,
                           disabled: firmaDeterminada,
-                          onChange: () => setFirma(tipo.value),
+                          onChange: () => onCambiarDatos({ firma: tipo.value }),
                         }}
                       />
                     }
